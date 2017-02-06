@@ -31,30 +31,31 @@ html(lang='en')
             button Insurance
         div.user-log
           div.user-name
-            i.user-name-value &nbsp;&nbsp;name user
-          .dropdown.col-md-8
+            i.user-name-value name user
+          .dropdown
             button.btn.btn-default(type='button', data-toggle='dropdown')
               i.fa.fa-user
             ul.dropdown-menu.dropdown-menu-right#dropdown-menu-users
               li.divider
-          .dropdown.col-md-4
-            button.btn.btn-default(type='button', data-toggle='dropdown')
-              i.fa.fa-gear
-            ul.dropdown-menu.dropdown-menu-right
-              li
-                a#button-administrator-view(href='#') Administrator View
-              li
-                a#button-user-view(href='#') User View
-              li
-                a#button-reset(href='#') Reset discussion
       .container-bot-presentation
         button.button-showDialog
           img(src="/images/avatar.png")
-        i Use our indicative calculaotr to discover how much you could borrow
-        i Do not hesitate to ask me for help            
-      .container
+        div.presentation-showDialog
+          h3 Use our indicative calculaotr to discover how much you could borrow
+          h4 Do not hesitate to ask me for help
+        .dropdown.config-view-mode
+          button.btn.btn-default(type='button', data-toggle='dropdown')
+            i.fa.fa-gear
+          ul.dropdown-menu.dropdown-menu-right
+            li
+              a#button-administrator-view(href='#') Administrator View
+            li
+              a#button-user-view(href='#') User View
+            li
+              a#button-reset(href='#') Reset discussion
+      .view-container
         .container-left
-          .effect2#calculatorContent
+          .bloc
             .calculator-header
               h5 
                 i.fa.fa-pencil
@@ -167,7 +168,7 @@ html(lang='en')
 
                   .col-xs-3
                     button.btn.btn-primary.btn-block(type='submit')#send Send
-          .step-detail.information.effect2
+          .bloc
             #group-resultData.hide-information
               div.container-title-result
                 h5 Simulation result

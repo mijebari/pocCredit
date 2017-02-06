@@ -11,48 +11,52 @@ background-color: rgba(235, 231, 222, 0.74);
 
 }
 .button-hideDialog{
-
-
-    border-radius: 50%;
-    border:0px;
+    border:0;
     background-color: transparent;
-    width: 100%;
-     position: absolute;
-    bottom: 0px;
 }
 
 .container-bot-presentation {
-  width: 100%; 
-     background-color: rgba(153, 153, 153, 0.08);
-height: 10%;
-
+    background-color: rgba(153, 153, 153, 0.08);
+    display: flex;
 }      
 
 
 .container-bot-icon-dialog {
-  width: 100%; 
-     background-color: transparent;
-height: 20%;
- position: absolute;
-    bottom: 0px;
-} 
+    display: flex;
+    justify-content: center;
+}
+
+.config-view-mode {
+    display: flex;
+    justify-content: flex-end;
+    flex: 1;
+    align-self: flex-start;
+}
+
+.config-view-mode button{
+    background: transparent;
+    border-radius: 23px;
+    border: none;
+    padding: 0;
+    align-self: center;
+    display: flex;
+    font-size: x-large;
+    color: #a12239;
+    margin-right: 14px;
+}
 
 
 .container-dialog-footer{
-      width: 100%; 
-     background-color: transparent;
-height: 30%;
-     position: relative;
-    bottom: 0px;
-    z-index: 3;
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
 }
 
-
-.container{
-    margin-right:0px;
-    margin-left:0px;
-    width: 100%;
+.view-container {
+    display: flex;
+    flex: 1;
 }
+
 .container-left{
  float: left; width: 33%;
   }
@@ -61,25 +65,24 @@ height: 30%;
      width: 33%;
 
      }
+
 .container-center{
- display: inline-block;
-  width: 33%; 
-     height: 400px;
-    position: absolute;
-    bottom: 10%;
+    width: 33%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    top: 24px;
+    position: relative;
 }
 
 .scope-dialog{
-            padding-left: 10%;
-    padding-right: 10%;
-        height: 100%;
+    padding-left: 5%;
+    padding-right: 5%;
+    display: flex;
+    flex-direction: column;
+    height: 80%;
 }
 
-#calculatorContent{
-        margin-top:15px;
-        margin-left:50px;
-
-}
 h1 {
   font-family: "Noto Sans", "Helvetica Neue", Helvetica, arial, sans-serif;
   font-size: 3em;
@@ -326,28 +329,15 @@ background-color: #b7dcfe;
 
 }
 
-#calculatorContent{
-    /*background: white;*/
-    border-left: 1px solid black;
+.bloc {
     background-color: white;
-    /*padding-top: 45px;*/
-/*box-shadow: -1px 2px 5px 1px rgba(0, 0, 0, 0.7),
-            -1px 2px 20px rgba(255, 255, 255, 0.6) inset; 
-            */
-
-}
-
-
-.effect2
-{
-  position: relative;
-      box-shadow: 0px 0px 10px 0px #888888;
-
+    margin:15px 20px;
+    box-shadow: 5px 2px 18px 0 #888888;
+    height: 85%;
 }
 
 
 .segment-header{
-    height: 60px;
  /* background: linear-gradient( #9ACD32, #5C8517); /* Standard syntax */
  /* background: -webkit-linear-gradient(to bottom right, #769E14, #5C8517); /* For Safari 5.1 to 6.0 */
     display: flex;
@@ -364,7 +354,7 @@ background-color: #b7dcfe;
 
 .icon-header img{
     align-self: center;
-    height: 26px;
+    height: 56px;
  /* background: -webkit-linear-gradient(to bottom right, #769E14, #5C8517); /* For Safari 5.1 to 6.0 */
 }
 .menu-header {
@@ -375,7 +365,7 @@ background-color: #b7dcfe;
 .menu-header .onglet {
     margin-right: 30px;
     display: flex;
-    border-bottom: 2px solid;
+    border-bottom: 2px solid transparent;
 }
 
 .menu-header .onglet button {
@@ -398,28 +388,30 @@ background-color: #b7dcfe;
 
 .user-log{
     display: flex;
-    position: absolute;
-    right:10px;
+    align-self: center;
+    flex: 1;
+    flex-direction: row;
+    justify-content: flex-end;
 }
 
 .user-log button {
     background: #da9511;
     border-radius: 23px;
     border-color: #da9511;
-    box-shadow: 2px 3px 0px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 2px 3px 0 2px rgba(0, 0, 0, 0.3);
     padding: 2px 7px;
     height: 32px;
     align-self: center;
     display: flex;
-}
-
-.user-log button {
     font-size: x-large;
     color: #881c30;
+    margin-right: 14px;
 }
 
 .user-log .user-name {
     color:#eee;
+    align-self: center;
+    margin-right: 14px;
 }
 
 #credit-form {
@@ -462,17 +454,14 @@ li > label{
 }
 #principal-page{
     background-color: #ebe7de;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .segment-footer{
-    height: 10%;
-  /*background: linear-gradient( #9ACD32, #5C8517); /* Standard syntax */
-      background: linear-gradient( #b52741, #881c30); /* Standard syntax */
-
- /* background: -webkit-linear-gradient(to bottom right, #769E14, #5C8517); /* For Safari 5.1 to 6.0 */
-    position: absolute ! important;
-bottom: 0px ! important;
-width: 100%;
+    height: 60px;
+    background: linear-gradient( #b52741, #881c30); /* Standard syntax */
 }
 
 .calculator-header{
@@ -487,16 +476,13 @@ color:#fff;
 
 
 .container-dialog-history{
-    width: 100%;
     height: 80%;
     background:linear-gradient(to bottom, rgba(0, 0, 0, 0.01),rgba(0, 0, 0, 0.16));
     border: 0px solid rgba(0, 0, 0, 0.08);
     border-left-width: 1px;
     border-right-width: 1px;
-        overflow: scroll;
-            padding-top: 11px;
-
-
+    overflow: scroll;
+    padding-top: 11px;
 }
 
 

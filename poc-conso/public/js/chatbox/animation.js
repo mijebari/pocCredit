@@ -2,18 +2,16 @@ var showDialog = function() {
       	    $('.container-right').width('33%');
   	    $('.container-left').width('33%');
   	        $('.container-center').show(300);
-    $('.container-center').css('display', 'inline-block');
 
-    }
+    };
 
 
 
     var hideDialog = function() {
   	    $('.container-center').hide(300);
-  	    $('.container-right').width('40%');
-  	    $('.container-left').width('40%');
-
-    }
+  	    $('.container-right').width('50%');
+  	    $('.container-left').width('50%');
+    };
 
 
 
