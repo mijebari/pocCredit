@@ -10,8 +10,8 @@ var showDialog = function() {
 
     var hideDialog = function() {
   	    $('.container-center').hide(300);
-  	    $('.container-right').width('40%');
-  	    $('.container-left').width('40%');
+  	    $('.container-right').width('45%');
+  	    $('.container-left').width('45%');
 
     }
 

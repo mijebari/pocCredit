@@ -21,7 +21,7 @@ html(lang='en')
     div#principal-page
       div.segment-header
         div.icon-header
-          img(src="/images/logosoprasteria.png")
+          img(src="/images/Image1.png")
         div.menu-header
           div.onglet
             button.onglet-selected Borrowing
@@ -30,7 +30,8 @@ html(lang='en')
           div.onglet
             button Insurance
         div.user-log
-          div.user-name &nbsp;&nbsp;name user
+          div.user-name
+            i.user-name-value &nbsp;&nbsp;name user
           .dropdown.col-md-8
             button.btn.btn-default(type='button', data-toggle='dropdown')
               i.fa.fa-user
@@ -46,21 +47,29 @@ html(lang='en')
                 a#button-user-view(href='#') User View
               li
                 a#button-reset(href='#') Reset discussion
+      .container-bot-presentation
+        button.button-showDialog
+          img(src="/images/avatar.png")
+        i Start now using our interactive loan calculator.
+        br
+        i Feel free to ask Alicia, our Virtual Assistant, for any advice.             
       .container
         .container-left
           .effect2#calculatorContent
             .calculator-header
               h5 
                 i.fa.fa-pencil
-                | Précisez les caracteristique de votre projet
+                | Your loan Project
             ul#credit-form
               li#group-inputFormProjectType.colored-form
-                label Type of project :
+                label Select your project :
                 select.image-picker.show-html#inputFormProjectType.form-data
                   option( selected='', value='')
                   option(data-img-src='images/car.png', data-img-class='first', data-img-alt='Page 1', value='consumer')   consommation 
-                  option(data-img-src='images/travaux.png', data-img-alt='Page 11', value='treasury')  2
-                  option(data-img-src='images/tresoererie.png', data-img-alt='Page 12', data-img-class='last', value='work')  3
+                  option(data-img-src='images/tresoererie.png', data-img-alt='Page 11', value='treasury')  2
+                  option(data-img-src='images/travaux.png', data-img-alt='Page 12', data-img-class='last', value='work')  3
+              li#group-result-projectType.hide-information.colored-form
+                  img.result-projectType(src="../images/calculate-logo.png")
               li.hide-information#group-application_fees.colored-form
                 label application fee:
                 br
@@ -82,7 +91,7 @@ html(lang='en')
                 br
                 input(type='text', name='lname', value='0.0252')#inputFormAnnualRate.form-data
               li.colored-form
-                label How much :
+                label Amount :
                 br
                 .input-group.form-amount-customized(style="margin-right: 60px")
                   input.input-border-blue.form-control.form-data#inputFormAmount(type='number' value='')
@@ -92,7 +101,7 @@ html(lang='en')
                       option(value='€') €
                       option(value='£') £
               li.colored-form
-                label Number of months :
+                label Duration :
                 br
 
                 input.form-data(type='number', data-slider-min='0', data-slider-max='84', data-slider-step='1', data-slider-value='')#inputFormTime
@@ -107,43 +116,6 @@ html(lang='en')
               li#group-executeSimulation
                 button.btn.btn-default#executeSimulation(type='button' style="right:0px")
                   img(src="../images/calculate-logo.png")
-
-          
-            #group-reglementation-consumer.hide-information
-              h4 What about the law?
-              p You wish to subscribe to an attached credit. The particularity of this credit is that it is attached to a consumer good. You can only borrow the amount of the value of the property you wish to buy. If the property is not delivered the credit will not be released and vice versa if the credit is denied to you the property will not purchase. Attention you will need to provide proof of purchase of this property. If you subscribe to this credit, You will have a 14 day deadline to reverse your decision. A credit commits you and must be repaid. Check your repayment capacity before you commit
-            #group-reglementation-treasury.hide-information
-              h4 What about the law?
-              p You wish to subscribe to a personal credit. The particularity of this credit is that it is free to use. However if you want to borrow in order to buy a property, even if the property is not issued you will be required to pay this loan. If this scenario is possible you should look at the assigned credit: make an assigned credit simulation. If you subscribe to this credit you will have a 14 day deadline to reverse your decision.A credit commits you and must be repaid. Check your repayment capacity before you commit
-            #group-reglementation-works.hide-information
-              h4 What about the law?
-
-              p You wish to take out a credit for the financing of works.If you subscribe to this credit, you will have 14 days to reverse your decision.A credit commits you and must be repaid. Check your repayment capacity before you commit
-            .hide-information#group-resultData  
-              ul
-
-                li
-                  h4 Amount by month :
-                    span.label.label-default#resultCalcul 0$
-                li
-                  h4 application fee:
-                    span.label.label-default#resultFees 0$
-                li#resultInsurance.hide-information
-                  img(src="../images/insurance.png" style="height: 100px;width: 100px;")
-                  h6 Insurance option
-
-                li
-                  h4 Insurance Monthly:
-                    span.label.label-default#resultInsuranceMonthly 0$
-                li
-                  h4 Annual Rate:
-                    span.label.label-default#resultAnnualRate 0%
-
-                li
-                  div#progressbar
-                li
-                  button#btn-download-fees.btn.btn-default.btn-lg(type='button')
-                    span.glyphicon.glyphicon-download-alt(aria-hidden='true')
               //span.label.label-success.hide-information.label-advice.label-advice-good GOOD
               //span.label.label-warning.label-advice-warning.label-advice.hide-information WARNING
               //span.label.label-danger.label-advice-bad.label-advice.hide-information BAD   
@@ -152,49 +124,83 @@ html(lang='en')
               //label(style="background:red").label-advice-bad.label-advice.hide-information notation  bad
 
         .container-center
-        .container-right
-          .panel
-            // Heading
-            .panel-heading
-              .panel-control
-                .btn-group
-                  div
-                    button.btn.btn-default(type='button', data-toggle='collapse', data-target='#demo-chat-body')
-                      i.fa.fa-chevron-down
-              //h3.panel-title Chb at
-              img(src="../images/IBMgreen.png" style="height: 40px;width: 40px; padding-left: 0px; margin-left: 50px;margin-top: 3px;")#logo-watson
-            // Widget body
-            #demo-chat-body.collapse
-              .nano.has-scrollbar(style='height:280px')
-                .nano-content.pad-all(tabindex='0', style='right: -17px;')
-                  ul.list-unstyled.media-block
-                    
-                    
-
-                .nano-pane
-                  .nano-slider(style='height: 141px; transform: translate(0px, 0px);')
-              // Widget footer
-              .panel-footer
-                .row
-                  .col-xs-9
+          div.scope-dialog
+            .container-dialog-history.nano-content
+              ul.media-block
+            .container-dialog-footer
+              div
+                .div
+                  .div
                     input.form-control.chat-input(type='text', placeholder='Enter your text')#question
+                  .div
+                    button.btn.btn-primary.btn-block.around-bottom(type='submit')#send Send          
+              .container-bot-icon-dialog         
+                button.button-hideDialog
+                  img(src="/images/avatar.png")
+        .container-right
+          .step-detail.information.effect2
+            div
+              h5 Information
+            div.information-content
 
-                  .col-xs-3
-                    button.btn.btn-primary.btn-block(type='submit')#send Send
-          .step-detail.information
-            .step-detail-content
-              h3 Your credit in 3 steps
-              ul
-                li
-                  span.REF_liste01
-                  | Simulate your consumption credit and apply online by filling out our form. Get an immediate policy response in 10 minutes.
-                li
-                  span.REF_liste01.REF_liste01_num2
-                  | Choose to print or receive your contract documents for peace of mind.
+              #group-resultData.hide-information
+                div.container-title-result
+                  h5 Simulation result
+                  button#btn-download-fees.btn.btn-default.btn-lg(type='button')
+                      span.glyphicon.glyphicon-download-alt(aria-hidden='true')
+                div
+                  ul
 
-                li
-                  span.REF_liste01.REF_liste01_num3
-                  | Return your completed, signed and dated contract documents.    
+                    li
+                      h6 Amount by month :
+                        span.label.label-default#resultCalcul 0$
+                    li
+                      h6 application fee:
+                        span.label.label-default#resultFees 0$
+
+
+                    li
+                      h6 Insurance Monthly:
+                        span.label.label-default#resultInsuranceMonthly 0$
+                    li
+                      h6 Annual Rate:
+                        span.label.label-default#resultAnnualRate 0%
+                    li#resultInsurance.hide-information
+                      img(src="../images/insurance.png" style="height: 15%;width: 15%;")
+                      i Insurance option
+                    
+                  div#progressbar
+                  
+              .step-detail-content#group-reglementation-step
+                div.container-title-step
+                  h5 Your credit in 3 steps
+                ul
+                  li
+                    span.REF_liste01
+                    | Simulate your consumption credit and apply online by filling out our form. Get an immediate policy response in 10 minutes.
+                  li
+                    span.REF_liste02
+                    | Choose to print or receive your contract documents for peace of mind.
+
+                  li
+                    span.REF_liste03
+                    | Return your completed, signed and dated contract documents.
+              #group-reglementation-consumer.hide-information
+                div.container-title-information
+                  h5 Corresponding legal information
+                .content-information
+                  p You wish to subscribe to an attached credit. The particularity of this credit is that it is attached to a consumer good. You can only borrow the amount of the value of the property you wish to buy. If the property is not delivered the credit will not be released and vice versa if the credit is denied to you the property will not purchase. Attention you will need to provide proof of purchase of this property. If you subscribe to this credit, You will have a 14 day deadline to reverse your decision. A credit commits you and must be repaid. Check your repayment capacity before you commit
+              #group-reglementation-treasury.hide-information
+                div.container-title-information
+                  h5 Corresponding legal information
+                .content-information
+
+                  p You wish to subscribe to a personal credit. The particularity of this credit is that it is free to use. However if you want to borrow in order to buy a property, even if the property is not issued you will be required to pay this loan. If this scenario is possible you should look at the assigned credit: make an assigned credit simulation. If you subscribe to this credit you will have a 14 day deadline to reverse your decision.A credit commits you and must be repaid. Check your repayment capacity before you commit
+              #group-reglementation-work.hide-information
+                div.container-title-information
+                  h5 Corresponding legal information
+                .content-information
+                  p You wish to take out a credit for the financing of works.If you subscribe to this credit, you will have 14 days to reverse your decision.A credit commits you and must be repaid. Check your repayment capacity before you commit    
 
       div.segment-footer
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js')

@@ -159,7 +159,6 @@ app.post('/chat/removeCookies', passportConfig.isAuthenticated, chatController.p
  * ChatBox routes
  */
 app.get('/conso', chatBoxController.conso);
-app.get('/conso2', chatBoxController.conso2);
 app.post('/chatbox/message', chatBoxController.message);
 app.post('/chatbox/generatePDF', chatBoxController.generatePDF);
 app.get('/chatbox/generatePDF', chatBoxController.generatePDF);

@@ -1,3 +1,51 @@
+body{
+        height: 100%;
+background-color: rgba(235, 231, 222, 0.74);
+}
+.button-showDialog{
+
+
+    border-radius: 50%;
+    border:0px;
+    background-color: transparent;
+
+}
+.button-hideDialog{
+
+
+    border-radius: 50%;
+    border:0px;
+    background-color: transparent;
+    width: 100%;
+     position: absolute;
+    bottom: 0px;
+}
+
+.container-bot-presentation {
+  width: 100%; 
+     background-color: rgba(153, 153, 153, 0.08);
+height: 10%;
+
+}      
+
+
+.container-bot-icon-dialog {
+  width: 100%; 
+     background-color: transparent;
+height: 20%;
+ position: absolute;
+    bottom: 0px;
+} 
+
+
+.container-dialog-footer{
+      width: 100%; 
+     background-color: transparent;
+height: 30%;
+     position: relative;
+    bottom: 0px;
+    z-index: 3;
+}
 
 
 .container{
@@ -16,10 +64,15 @@
 .container-center{
  display: inline-block;
   width: 33%; 
-     height: 500px;
-    background-color: red;
+     height: 400px;
     position: absolute;
-    bottom: 0px;
+    bottom: 10%;
+}
+
+.scope-dialog{
+            padding-left: 10%;
+    padding-right: 10%;
+        height: 100%;
 }
 
 #calculatorContent{
@@ -274,16 +327,15 @@ background-color: #b7dcfe;
 }
 
 #calculatorContent{
-    background: white;
+    /*background: white;*/
     border-left: 1px solid black;
-
+    background-color: white;
     /*padding-top: 45px;*/
 /*box-shadow: -1px 2px 5px 1px rgba(0, 0, 0, 0.7),
             -1px 2px 20px rgba(255, 255, 255, 0.6) inset; 
             */
 
 }
-
 
 
 .effect2
@@ -295,12 +347,15 @@ background-color: #b7dcfe;
 
 
 .segment-header{
-    display: flex;
     height: 60px;
-    background: linear-gradient( #b52741, #881c30); /* Standard syntax */
+ /* background: linear-gradient( #9ACD32, #5C8517); /* Standard syntax */
  /* background: -webkit-linear-gradient(to bottom right, #769E14, #5C8517); /* For Safari 5.1 to 6.0 */
+    display: flex;
+    background: linear-gradient( #b52741, #881c30); /* Standard syntax */
 
 }
+
+
 
 .icon-header {
     display: flex;
@@ -341,9 +396,10 @@ background-color: #b7dcfe;
     color: white;
 }
 
-.user-log,
-.user-log > div.dropdown{
+.user-log{
     display: flex;
+    position: absolute;
+    right:10px;
 }
 
 .user-log button {
@@ -363,7 +419,7 @@ background-color: #b7dcfe;
 }
 
 .user-log .user-name {
-    
+    color:#eee;
 }
 
 #credit-form {
@@ -393,9 +449,9 @@ li > label{
 #executeSimulation{
     line-height: 1em;
     text-shadow: 0px 0px 4px #3F3F3F;
-    background-color: rgba(66, 118, 60, 0.34);
+    background-color: #0097a7;
     border-radius: 2em;
-    box-shadow: 0 -1px 0 1px rgba(255,255,255,0.2) inset, 0 10px 15px 4px #D2E7B6 inset, 0px 4px 4px 0px rgba(0,0,0,0.15);
+    box-shadow: 0 -1px 0 1px rgba(255,255,255,0.2) inset, 0 10px 15px 4px rgba(235, 231, 222, 0.32) inset, 0px 4px 4px 0px rgba(0,0,0,0.15);
     color: #FFFFFF;
     font-family: HelveticaNeueBlack;
     font-size: 1.2em;
@@ -405,12 +461,14 @@ li > label{
 
 }
 #principal-page{
-
+    background-color: #ebe7de;
 }
 
 .segment-footer{
-    height: 80px;
-  background: linear-gradient( #9ACD32, #5C8517); /* Standard syntax */
+    height: 10%;
+  /*background: linear-gradient( #9ACD32, #5C8517); /* Standard syntax */
+      background: linear-gradient( #b52741, #881c30); /* Standard syntax */
+
  /* background: -webkit-linear-gradient(to bottom right, #769E14, #5C8517); /* For Safari 5.1 to 6.0 */
     position: absolute ! important;
 bottom: 0px ! important;
@@ -418,11 +476,90 @@ width: 100%;
 }
 
 .calculator-header{
-background-color: #D2E7B6;
+background-color: #0097a7;
 padding: 15px;
 color:#fff;
 
 }
 .div-picker > img{
     height:60px;
+}
+
+
+.container-dialog-history{
+    width: 100%;
+    height: 80%;
+    background:linear-gradient(to bottom, rgba(0, 0, 0, 0.01),rgba(0, 0, 0, 0.16));
+    border: 0px solid rgba(0, 0, 0, 0.08);
+    border-left-width: 1px;
+    border-right-width: 1px;
+        overflow: scroll;
+            padding-top: 11px;
+
+
+}
+
+
+.around-bottom{
+        border-radius: 0px 0px 15px 15px;
+}
+
+.container-title-step{
+    background-color: #009688;
+    color: white;
+           padding: 15px;
+                  padding-left: 30px;
+                  margin-bottom: 15px
+
+}
+
+.content-information{
+    padding-left: 40px;
+    font-size:x-small;
+}
+
+
+.container-title-information{
+    background-color: #009688;
+    color: white;
+           padding: 15px;
+                  padding-left: 30px;
+                  margin-bottom: 15px
+
+}
+.container-title-result{
+    background: linear-gradient( #b52741, #881c30);
+    color: white;
+           padding: 15px;
+                  padding-left: 30px;
+                  margin-bottom: 15px
+
+}
+
+.information{
+
+    margin-top: 15px;
+margin-right: 50px;
+}
+.information-content{
+    overflow: scroll;
+height:50%;
+}
+
+#btn-download-fees{
+        color: black;
+            right: 10px;
+    position: absolute;
+    top: 10px;
+}
+#group-resultData > div > ul > li{
+padding-bottom: 0px;
+
+}
+
+
+#group-resultData > div > ul{
+padding-left: 80px;
+ list-style-type: square;
+
 }

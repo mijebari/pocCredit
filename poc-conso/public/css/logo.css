@@ -3,13 +3,13 @@
     float: left;
     width: 29px;
     height: 29px;
-    background: url(../images/pastille.png) no-repeat;
+    background: url(../images/one.png) no-repeat;
 
 }
 
 
 
-
+/*
 .REF_liste01_num2 {
     background-position: left top;
 }
@@ -19,32 +19,40 @@
 .REF_liste01_num3 {
     background-position: -28px top;
 }
-
+*/
 .REF_liste02 {
     display: inline-block;
-    width: 39px;
-    height: 39px;
-    background: url(../images/pastille.png) no-repeat;
+    width: 29px;
+    height: 29px;
+    background: url(../images/two.png) no-repeat;
 }
 
-.REF_liste02_picto1 {
+.REF_liste03 {
+    display: inline-block;
+    width: 29px;
+    height: 29px;
+    background: url(../images/three.png) no-repeat;
+}
+
+/*.REF_liste02_picto1 {
     background-position: left -33px;
 }
 
 .REF_liste02_picto2 {
     background-position: -39px -33px;
 }
+*/
 .step-detail-content li{
 	line-height:24px;
 }
-
+/*
 .REF_liste02_picto3 {
     background-position: -78px -33px;
 }
 .REF_liste02_picto4 {
     background-position: -117px -33px;
 }
- 
+ */
 .information{
   
 background:white;

@@ -17,16 +17,6 @@ exports.conso = (req, res) => {
 };
 
 
-exports.conso2 = (req, res) => {
-        var theme = req.query.theme;
-    if (theme == null || theme == undefined || theme == "") {
-        theme = "all";
-    }
-    res.render('credit_conso/index3', {
-        title: 'conso',
-        theme:theme
-    });
-};
 
 exports.generatePDF = (req, res) => {
         var form1 = req.body.form;

@@ -129,6 +129,7 @@
 
     $(document).ready(function() {
 
+                    hideDialog();
 
         $('#logo-watson').click(function() {
             $('#logo-watson').effect("bounce", {
@@ -653,7 +654,7 @@ $("div[id^='group-reglementation']").hide();
         var blockdialog = $('.media-block');
 
 
-        blockdialog.append('<li class="mar-btm"><div class="media-left"><img class="img-circle img-sm" src="http://watson500.mybluemix.net/img/help/icon2.png"/>  </div><div class="media-body pad-hor speech-left"><div class="speech"><a class="media-heading" href="#"> Watson</a><p>' + message + '</p></div></div></li>')
+        blockdialog.append('<li class="mar-btm"><div class="media-left"><img class="img-circle img-sm" src="http://watson500.mybluemix.net/img/help/icon2.png"/>  </div><div class="media-body pad-hor speech-left"><div class="speech"><a class="media-heading" href="#"> Alicia</a><p>' + message + '</p></div></div></li>')
         $('.nano-content').animate({
             scrollTop: $('.nano-content').prop("scrollHeight")
         }, 800);
