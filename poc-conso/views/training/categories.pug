@@ -1,0 +1,58 @@
+extends ../full_layout_training
+
+
+
+
+block content
+
+  div.col-md-3.options
+    button(data-toggle='modal', data-target='#addCategoryModal')#addCategory.btn-default.btn-sm
+      span.glyphicon.glyphicon-plus-sign
+      |  Add new category
+  div.col-md-8
+    h3.title-page Manage Categories
+    ul(style="padding-bottom:20px").nav.nav-tabs
+      li(role='presentation' , class=(type == 'faq') ? 'active' : 'inactive')
+        a(href='./categories?type=faq') FAQ
+      li(role='presentation' , class=(type == 'intent') ? 'active' : 'inactive')
+        a(href='./categories?type=intent') Intent Conversation
+      li(role='presentation' ,class=(type == 'all') ? 'active' : 'inactive')
+        a(href='./categories?type=all') All
+    div.tab-content
+      table#tableTraining.table.table-striped
+        thead
+          tr
+            th.hide-information ID
+
+            th.th-center
+              p Catefory
+            if (type == 'faq')
+              th.th-center
+                p Response
+            th.th-center
+              p Type
+            th
+              p Delete
+
+
+        tbody
+          each val in nlc
+            if type=='all' || val.type==type
+              tr
+                td.hide-information=val.id
+                td=val.name
+                if (type == 'faq')
+                  td(data-toggle='modal', data-target='#responseChangeModal', data-whatever=val.response ,data-whatever2=val.id ,data-whatever3=val.name)=val.response 
+                td=val.type            
+                td
+                  button.btn.btn-warning.btn-xs.btn-rounded.del-category-data
+                    span.glyphicon.glyphicon-remove
+
+    button#generateCSVCategory.btn-default 
+      span.glyphicon.glyphicon-download-alt
+      |  Download categories
+    br
+    br
+    p Import categories
+    input(id="inputFileCategory" type="file")
+  div.col-md-1

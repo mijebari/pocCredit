@@ -1,0 +1,72 @@
+extends ../full_layout_training
+
+
+mixin selectoptionmix(correction,type)
+  select(style="width:200px")#SelectCategory.controlCategory.form-control.input-sm
+    optgroup(label="Correction")
+      option(value=correction, title="type:"+type)=correction
+    optgroup(label="FAQ")
+      each typeNLC in types
+        if typeNLC.type == "faq"
+          option(value=typeNLC.name)=typeNLC.name
+    optgroup(label="INTENT")
+      each typeNLC in types
+        if typeNLC.type == "intent"
+          option(value=typeNLC.name)=typeNLC.name
+
+mixin inputField(id)
+    div.input-group
+        input(id="field_" + id, type='text').form-control
+        span.input-group-btn
+            button(id="button_"+id,type='button', class="btn btn-success") Save
+
+
+block content
+
+    .container
+      h3.title-page Validation
+
+      div.col-md-12.options-frame.alert.alert-success
+              p This page lists all sentences that experts classified.
+              p An administrator must check each sentence to validate the data set. Data will be sent directly to the intentions' database.
+
+      .div-tableTraining
+        table#tableTraining.table.table-striped
+          thead
+            tr
+              th.hide-information ID
+              th Date
+              th Sentence
+              th Category
+              th Delete
+          tbody
+            each val in training
+              tr
+                td.hide-information=val.id
+                td #{moment(val.currentDate).format('DD/MM/Y H:mm')}
+                td(data-toggle='modal', data-target='#sentenceChangeModal', data-whatever=val.sentence ,data-whatever2=val.id )=val.sentence
+                td(data-toggle='modal', data-target='#correctionChangeModal', data-whatever=val.sentence ,data-whatever2=val.id,data-whatever3=val.correction,data-whatever4=types )=val.correction
+                td
+                  button.btn.btn-warning.btn-xs.btn-rounded.del-training-data
+                    span.glyphicon.glyphicon-remove
+
+        button.validateTrainings.btn-success
+            span.glyphicon.glyphicon-ok
+            |  Validate these sentences
+        button.deleteDataToTrained.btn-danger
+          span.glyphicon.glyphicon-trash
+          |  Delete all sentences
+
+        br
+        br
+        p Add a csv file :
+        input(id="inputFileNLC" type="file")
+
+        div#link
+        div.preloader(style="display:none")
+          i .
+          i .
+          i .
+
+
+

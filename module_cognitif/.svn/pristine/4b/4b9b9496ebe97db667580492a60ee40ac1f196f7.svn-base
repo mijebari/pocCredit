@@ -1,0 +1,1009 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dialog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="WatsonDialogDocument_1.0.xsd">  
+   <flow> 
+      <folder label="Main"> 
+         <output> 
+            <prompt> 
+               <item>[action->is_card_blocked(is_card_blocked)]</item> 
+            </prompt>  
+            <getUserInput> 
+               <input> 
+                  <grammar> 
+                     <item>*</item> 
+                  </grammar>  
+                  <if> 
+                     <cond varName="is_card_blocked" operator="EQUAL_TO_NO"/>  
+                     <output> 
+                        <prompt selectionType="RANDOM"> 
+                           <item>L'automate en question fait-il partie de notre réseau d'agences ?</item> 
+                        </prompt>  
+                        <getUserInput> 
+                           <search ref="is_agency_network"></search>  
+                           <search ref="faq"> 
+                              <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                 <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                              </classifier> 
+                           </search>  
+                           <default> 
+                              <if> 
+                                 <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                                 <goto ref="get_sentence"/> 
+                              </if>  
+                              <output> 
+                                 <prompt> 
+                                    <item>Veuillez m'excuser, je ne comprends pas ce que vous dites. L'automate en question fait-il partie de notre réseau d'agences ?</item> 
+                                 </prompt>  
+                                 <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                                 <getUserInput> 
+                                    <search ref="is_agency_network"/>  
+                                    <search ref="faq"> 
+                                       <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                          <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                       </classifier> 
+                                    </search> 
+                                 </getUserInput> 
+                              </output> 
+                           </default> 
+                        </getUserInput> 
+                     </output> 
+                  </if>  
+                  <output> 
+                     <prompt> 
+                        <item>[redirectAdvisor()]</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <input/> 
+                     </getUserInput> 
+                  </output> 
+               </input> 
+            </getUserInput> 
+         </output> 
+      </folder>  
+      <folder label="Library"> 
+         <folder label="Live Content" id="liveContent"> 
+            <folder label="Agency network" id="is_agency_network"> 
+               <input> 
+                  <grammar> 
+                     <item>$ (yes)</item> 
+                  </grammar>  
+                  <action varName="is_agency_network" operator="SET_TO_YES"/>  
+                  <goto ref="output1"/> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>$ (no)</item> 
+                  </grammar>  
+                  <action varName="is_agency_network" operator="SET_TO_NO"/>  
+                  <goto ref="output1"/> 
+               </input> 
+            </folder>  
+            <output id="output1"> 
+               <prompt> 
+                  <item>Il se peut que: - vous ayez attendu trop longtemps pour récupérer votre carte - vous ayez fait 3 erreurs consécutives dans votre code de sécurité Est-ce l'une de ces 2 options ?</item> 
+               </prompt>  
+               <getUserInput> 
+                  <search ref="two_options"/>  
+                  <search ref="faq"> 
+                     <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                        <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                     </classifier> 
+                  </search>  
+                  <default> 
+                     <if> 
+                        <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                        <goto ref="get_sentence"/> 
+                     </if>  
+                     <output> 
+                        <prompt> 
+                           <item>Veuillez m'excuser, je ne comprends pas ce que vous dites. Est-ce l'une des deux options ?</item> 
+                        </prompt>  
+                        <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                        <getUserInput> 
+                           <search ref="two_options"/>  
+                           <search ref="faq"> 
+                              <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                 <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                              </classifier> 
+                           </search> 
+                        </getUserInput> 
+                     </output> 
+                  </default> 
+               </getUserInput> 
+            </output>  
+            <folder label="Two options" id="two_options"> 
+               <input> 
+                  <grammar> 
+                     <item>$ (yes)</item> 
+                  </grammar>  
+                  <action varName="from_two_options" operator="SET_TO_YES"/>  
+                  <output> 
+                     <prompt> 
+                        <item>L'agence est-elle ouverte ou fermée ?</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <search ref="closed_open"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                           </classifier> 
+                        </search>  
+                        <search ref="faq"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                           </classifier> 
+                        </search>  
+                        <default> 
+                           <if> 
+                              <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                              <goto ref="get_sentence"/> 
+                           </if>  
+                           <output> 
+                              <prompt> 
+                                 <item>Veuillez m'excuser, je ne comprends pas ce que vous dites. L'agence est-elle ouverte ou fermée ?</item> 
+                              </prompt>  
+                              <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                              <getUserInput> 
+                                 <search ref="closed_open"> 
+                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                       <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                    </classifier> 
+                                 </search>  
+                                 <search ref="faq"> 
+                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                       <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                    </classifier> 
+                                 </search> 
+                              </getUserInput> 
+                           </output> 
+                        </default> 
+                     </getUserInput> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>$ (no)</item> 
+                  </grammar>  
+                  <action varName="from_two_options" operator="SET_TO_NO"/>  
+                  <output> 
+                     <prompt> 
+                        <item>Il se peut qu'il s'agisse d'un problème technique ou d'un vol. Votre dernière transaction a été effectuée à l'agence [agency_name] à [when_agency] (informations à récupérer dans l'historique des transactions figurant dans le CRM). Vous confirmez que votre carte s'est faite avalée à cet endroit ?</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <search ref="check_agency"/>  
+                        <search ref="faq"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                           </classifier> 
+                        </search>  
+                        <default> 
+                           <if> 
+                              <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                              <goto ref="get_sentence"/> 
+                           </if>  
+                           <output> 
+                              <prompt> 
+                                 <item>Veuillez m'excuser, je ne comprends pas ce que vous dites. Vous confirmez que votre carte s'est faite avalée à cet endroit ?</item> 
+                              </prompt>  
+                              <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                              <getUserInput> 
+                                 <search ref="check_agency"/>  
+                                 <search ref="faq"> 
+                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                       <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                    </classifier> 
+                                 </search> 
+                              </getUserInput> 
+                           </output> 
+                        </default> 
+                     </getUserInput> 
+                  </output> 
+               </input> 
+            </folder>  
+            <folder label="Agency open or closed" id="closed_open"> 
+               <input> 
+                  <grammar> 
+                     <item>closed_agency</item> 
+                  </grammar>  
+                  <if> 
+                     <cond varName="is_agency_network" operator="EQUAL_TO_NO"></cond>  
+                     <output> 
+                        <prompt> 
+                           <item>Votre carte sera renvoyée à votre agence dans un délai de 3 jours. Voulez-vous prendre un rdv avec votre conseiller pour la récupérer ou qu'on vous la renvoie par courrier ?</item> 
+                        </prompt>  
+                        <getUserInput> 
+                           <search ref="agency_closed"> 
+                              <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                 <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                              </classifier> 
+                           </search>  
+                           <search ref="faq"> 
+                              <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                 <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                              </classifier> 
+                           </search>  
+                           <default> 
+                              <if> 
+                                 <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                                 <goto ref="get_sentence"/> 
+                              </if>  
+                              <output> 
+                                 <prompt> 
+                                    <item>Veuillez m'excuser, je ne comprends pas ce que vous dites. Votre carte sera renvoyée à votre agence dans un délai de 3 jours. Voulez-vous prendre un rdv avec votre conseiller pour la récupérer ou qu'on vous la renvoie par courrier ?</item> 
+                                 </prompt>  
+                                 <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                                 <getUserInput> 
+                                    <search ref="agency_closed"> 
+                                       <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                          <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                       </classifier> 
+                                    </search>  
+                                    <search ref="faq"> 
+                                       <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                          <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                       </classifier> 
+                                    </search> 
+                                 </getUserInput> 
+                              </output> 
+                           </default> 
+                        </getUserInput> 
+                     </output> 
+                  </if>  
+                  <output> 
+                     <prompt> 
+                        <item>Votre carte sera renvoyée à votre agence dans un délai de 48h. Voulez-vous prendre un rdv avec votre conseiller pour la récupérer ou qu'on vous la renvoie par courrier ?</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <search ref="agency_closed"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                           </classifier> 
+                        </search>  
+                        <search ref="faq"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                           </classifier> 
+                        </search>  
+                        <default> 
+                           <if> 
+                              <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                              <goto ref="get_sentence"/> 
+                           </if>  
+                           <output> 
+                              <prompt> 
+                                 <item>Veuillez m'excuser, je ne comprends pas ce que vous dites. Votre carte sera renvoyée à votre agence dans un délai de 48h. Voulez-vous prendre un rdv avec votre conseiller pour la récupérer ou qu'on vous la renvoie par courrier ?</item> 
+                              </prompt>  
+                              <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                              <getUserInput> 
+                                 <search ref="agency_closed"> 
+                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                       <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                    </classifier> 
+                                 </search>  
+                                 <search ref="faq"> 
+                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                       <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                    </classifier> 
+                                 </search> 
+                              </getUserInput> 
+                           </output> 
+                        </default> 
+                     </getUserInput> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>open_agency</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>Vous pouvez entrer et demander s'il est possible de récupérer votre carte. Si cela n'est pas possible, veuillez contacter votre conseiller. Voulez-vous le contacter maintenant ?</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <search ref="call_advisor"/>  
+                        <search ref="faq"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                           </classifier> 
+                        </search>  
+                        <default> 
+                           <if> 
+                              <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                              <goto ref="get_sentence"/> 
+                           </if>  
+                           <output> 
+                              <prompt> 
+                                 <item>Veuillez m'excuser mais je n'ai pas compris votre réponse. Voulez-vous que je vous mette maintenant en contact avec un conseiller ?</item> 
+                              </prompt>  
+                              <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                              <getUserInput> 
+                                 <search ref="call_advisor"/>  
+                                 <search ref="faq"> 
+                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                       <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                    </classifier> 
+                                 </search> 
+                              </getUserInput> 
+                           </output> 
+                        </default> 
+                     </getUserInput> 
+                  </output> 
+               </input> 
+            </folder>  
+            <folder label="Agency is closed" id="agency_closed"> 
+               <input> 
+                  <grammar> 
+                     <item>take_rdv</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>[redirectAdvisor()]</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <input/> 
+                     </getUserInput> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>prefer_sending</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>Pouvez-vous confirmer que votre adresse est : [address] ?</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <search ref="check_address"/>  
+                        <search ref="faq"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                           </classifier> 
+                        </search>  
+                        <default> 
+                           <if> 
+                              <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                              <goto ref="get_sentence"/> 
+                           </if>  
+                           <output> 
+                              <prompt> 
+                                 <item>Veuillez m'excuser, je ne comprends pas votre réponse. Pouvez-vous confirmer que votre adresse est : [address] ?</item> 
+                              </prompt>  
+                              <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                              <getUserInput> 
+                                 <search ref="check_address"/>  
+                                 <search ref="faq"> 
+                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                       <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                    </classifier> 
+                                 </search> 
+                              </getUserInput> 
+                           </output> 
+                        </default> 
+                     </getUserInput> 
+                  </output> 
+               </input> 
+            </folder>  
+            <folder label="Check address" id="check_address"> 
+               <input> 
+                  <grammar> 
+                     <item>$ (yes)</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>Avez-vous des questions ?</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <search ref="if_questions"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                           </classifier> 
+                        </search>  
+                        <search ref="faq"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                           </classifier> 
+                        </search>  
+                        <default> 
+                           <if> 
+                              <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                              <goto ref="get_sentence"/> 
+                           </if>  
+                           <output> 
+                              <prompt> 
+                                 <item>soorry i dont undertsnad</item> 
+                              </prompt>  
+                              <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                              <getUserInput> 
+                                 <search ref="check_address"/>  
+                                 <search ref="faq"> 
+                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                       <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                    </classifier> 
+                                 </search> 
+                              </getUserInput> 
+                           </output> 
+                        </default> 
+                     </getUserInput> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>$ (no)</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>Quelle est votre adresse actuelle ?</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <goto ref="get_address"/> 
+                     </getUserInput> 
+                  </output> 
+               </input> 
+            </folder>  
+            <folder label="Check agency" id="check_agency"> 
+               <input> 
+                  <grammar> 
+                     <item>$ (yes)</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>[action->setVariable(is_cashpoint_down)]</item> 
+                     </prompt>  
+                     <if> 
+                        <cond varName="is_cashpoint_down" operator="EQUAL_TO_NO"/>  
+                        <output> 
+                           <prompt> 
+                              <item>Ce distributeur ne semble pas être en panne. Nous vous recommandons donc fortement de faire opposition puis de prendre rdv avec votre conseiller. Voulez-vous l'appeler maintenant ?</item> 
+                           </prompt>  
+                           <getUserInput> 
+                              <search ref="call_advisor"/>  
+                              <search ref="faq"> 
+                                 <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                 </classifier> 
+                              </search>  
+                              <default> 
+                                 <if> 
+                                    <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                                    <goto ref="get_sentence"/> 
+                                 </if>  
+                                 <output> 
+                                    <prompt> 
+                                       <item>Veuillez m'excuser mais je n'ai pas compris votre réponse. Voulez-vous que je vous mette maintenant en contact avec un conseiller ?</item> 
+                                    </prompt>  
+                                    <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                                    <getUserInput> 
+                                       <search ref="call_advisor"/>  
+                                       <search ref="faq"> 
+                                          <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                             <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                          </classifier> 
+                                       </search> 
+                                    </getUserInput> 
+                                 </output> 
+                              </default> 
+                           </getUserInput> 
+                        </output> 
+                     </if>  
+                     <output> 
+                        <prompt> 
+                           <item>Ce distributeur est en panne. L'agence est-elle ouverte ou fermée ?</item> 
+                        </prompt>  
+                        <goto ref="closed_open"/> 
+                     </output> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>$ (no)</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>Dans quelle banque votre carte s'est-elle faite avalée?</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <search ref="get_bank"/>  
+                        <search ref="faq"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                           </classifier> 
+                        </search>  
+                        <default> 
+                           <if> 
+                              <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                              <goto ref="get_sentence"/> 
+                           </if>  
+                           <output> 
+                              <prompt> 
+                                 <item>Veuillez m'excuser je n'ai pas compris votre réponse. Dans quelle banque votre carte s'est-elle faite avalée?</item> 
+                              </prompt>  
+                              <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                              <getUserInput> 
+                                 <search ref="get_bank"/>  
+                                 <search ref="faq"> 
+                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                       <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                    </classifier> 
+                                 </search> 
+                              </getUserInput> 
+                           </output> 
+                        </default> 
+                     </getUserInput> 
+                  </output> 
+               </input> 
+            </folder>  
+            <folder label="call advisor" id="call_advisor"> 
+               <input> 
+                  <grammar> 
+                     <item>$ (yes)</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>[redirectAdvisor()]</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <input/> 
+                     </getUserInput> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>$ (no)</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>Avez-vous des questions ?</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <search ref="if_questions"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                           </classifier> 
+                        </search>  
+                        <search ref="faq"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                           </classifier> 
+                        </search>  
+                        <default> 
+                           <if> 
+                              <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                              <goto ref="get_sentence"/> 
+                           </if>  
+                           <output> 
+                              <prompt> 
+                                 <item>Excusez-moi je n'ai pas compris votre question. Pourriez-vous la reformuler ?</item> 
+                              </prompt>  
+                              <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                              <getUserInput> 
+                                 <search ref="if_questions"/>  
+                                 <search ref="faq"> 
+                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                       <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                    </classifier> 
+                                 </search> 
+                              </getUserInput> 
+                           </output> 
+                        </default> 
+                     </getUserInput> 
+                  </output> 
+               </input> 
+            </folder>  
+            <input id="get_address"> 
+               <grammar> 
+                  <item>$ (address)={address}</item> 
+               </grammar>  
+               <action varName="address" operator="SET_TO">{address.source}</action>  
+               <output> 
+                  <prompt> 
+                     <item>Avez-vous des questions ?</item> 
+                  </prompt>  
+                  <getUserInput> 
+                     <search ref="if_questions"> 
+                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                           <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                        </classifier> 
+                     </search>  
+                     <search ref="faq"> 
+                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                           <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                        </classifier> 
+                     </search>  
+                     <default> 
+                        <if> 
+                           <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                           <goto ref="get_sentence"/> 
+                        </if>  
+                        <output> 
+                           <prompt> 
+                              <item>sorry i don't understand</item> 
+                           </prompt>  
+                           <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                           <getUserInput> 
+                              <search ref="if_questions"/>  
+                              <search ref="faq"> 
+                                 <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                 </classifier> 
+                              </search> 
+                           </getUserInput> 
+                        </output> 
+                     </default> 
+                  </getUserInput> 
+               </output> 
+            </input>  
+            <folder label="Get bank" id="get_bank"> 
+               <input> 
+                  <grammar> 
+                     <item>$ (bank)={bank}</item> 
+                  </grammar>  
+                  <action varName="bank" operator="SET_TO">{bank.value:main}</action>  
+                  <output> 
+                     <prompt> 
+                        <item>[action->setVariable(is_cashpoint_down)]</item> 
+                     </prompt>  
+                     <if> 
+                        <cond varName="is_cashpoint_down" operator="EQUAL_TO_NO"/>  
+                        <output> 
+                           <prompt> 
+                              <item>Ce distributeur ne semble pas être en panne. Nous vous recommandons donc fortement de faire opposition puis de prendre rdv avec votre conseiller. Voulez-vous l'appeler maintenant ?</item> 
+                           </prompt>  
+                           <getUserInput> 
+                              <search ref="call_advisor"> 
+                                 <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                 </classifier> 
+                              </search>  
+                              <search ref="faq"> 
+                                 <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                 </classifier> 
+                              </search>  
+                              <default> 
+                                 <if> 
+                                    <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                                    <goto ref="get_sentence"/> 
+                                 </if>  
+                                 <output> 
+                                    <prompt> 
+                                       <item>Veuillez m'excuser mais je n'ai pas compris votre réponse. Voulez-vous que je vous mette maintenant en contact avec un conseiller ?</item> 
+                                    </prompt>  
+                                    <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                                    <getUserInput> 
+                                       <search ref="call_advisor"/>  
+                                       <search ref="faq"> 
+                                          <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                             <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                          </classifier> 
+                                       </search> 
+                                    </getUserInput> 
+                                 </output> 
+                              </default> 
+                           </getUserInput> 
+                        </output> 
+                     </if>  
+                     <output> 
+                        <prompt> 
+                           <item>Ce distributeur est en panne. L'agence est-elle ouverte ou fermée ?</item> 
+                        </prompt>  
+                        <getUserInput> 
+                           <search ref="closed_open"> 
+                              <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                 <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                              </classifier>  
+                              <search ref="faq"> 
+                                 <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                 </classifier> 
+                              </search> 
+                           </search>  
+                           <default> 
+                              <if> 
+                                 <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                                 <goto ref="get_sentence"/> 
+                              </if>  
+                              <output> 
+                                 <prompt> 
+                                    <item>Veuillez m'excuser, je ne comprends pas ce que vous dites. L'agence est-elle ouverte ou fermée ?</item> 
+                                 </prompt>  
+                                 <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                                 <getUserInput> 
+                                    <search ref="closed_open"> 
+                                       <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                          <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                       </classifier> 
+                                    </search>  
+                                    <search ref="faq"> 
+                                       <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                          <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                       </classifier> 
+                                    </search> 
+                                 </getUserInput> 
+                              </output> 
+                           </default> 
+                        </getUserInput> 
+                     </output> 
+                  </output> 
+               </input> 
+            </folder>  
+            <input id="get_sentence"> 
+               <grammar> 
+                  <item>$ (sentence)={sentence}</item> 
+               </grammar>  
+               <action varName="sentence" operator="SET_TO">{sentence.source}</action>  
+               <output> 
+                  <prompt> 
+                     <item>[action->getTopic({sentence})]</item> 
+                  </prompt>  
+                  <getUserInput> 
+                     <input/> 
+                  </getUserInput> 
+               </output> 
+            </input>  
+            <folder label="FAQ" id="faq"> 
+               <input> 
+                  <grammar> 
+                     <item>do_opposition_def</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>Lorsque l'avalement de votre carte ne s'explique pas par 3 erreurs de code, ni par un oubli, il est conseillé de faire opposition en appelant le 0 892 705 705. Certains escrocs mettent en place des mécanismes permettant de récupérer une carte bancaire à l'insu de son détenteur lorsque ce dernier utilise un distributeur. Exemple de technique utilisée : les fraudeurs installent une bande plastifiée dans la fente du distributeur, ce qui leur permet de bloquer la carte. Son détenteur pense alors que sa carte a été avalée par l'appareil. Les fraudeurs viendront ensuite la récupérer une fois que la victime aura quitté les lieux. Ce cas de figure doit d'autant plus être envisagé lorsqu'une personne a tenté de vous porter assistance après l'avalement présumé de votre carte. Il est possible que cette personne soit un complice du fraudeur, et qu'elle ait tenté de voir votre code secret en faisant mine de vous aider.</item> 
+                     </prompt>  
+                     <goto ref="otherQuestions"/> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>card_recovery_time</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>Si votre carte a été avalée par un automate relié à notre réseau d'agences, alors celle-ci sera renvoyée à votre agence dans un délai de 48 heures, sauf si celle-ci a été mise en opposition. Dans ce cas vous devrez contacter votre conseiller. Si vous optez pour l'envoi par courrier le délai sera rallongé. Si votre carte a été avalée par un automate non relié à notre réseau d'agences, alors celle-ci sera renvoyée à votre agence dans un délai compris entre 3 et 5 jours. Si vous optez pour l'envoi par courrier, le délai sera rallongé. Si vous faites opposition, une nouvelle carte vous sera renvoyée dans un délai de 5 jours environ, avec un nouveau numéro et un nouveau code</item> 
+                     </prompt>  
+                     <goto ref="otherQuestions"/> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>card_new_cost</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>Si vous avez souscrit à un ensemble de services bancaire, la mise en opposition et le renouvellement de la carte sont généralement gratuits. Sinon, cela coûte environ 10 euros.</item> 
+                     </prompt>  
+                     <goto ref="otherQuestions"/> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>swallowed_card_abroad</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>Si votre carte est avalée dans un automate dans un pays étranger, faites opposition en appelant le 33 442 605 303 puis contacter votre conseiller. Enregistrez votre déclaration aux autorités de police ou au consulat si vous êtes à l’étranger. Prévenez votre Agence par lettre recommandée accompagnée du récépissé de votre déclaration.</item> 
+                     </prompt>  
+                     <goto ref="otherQuestions"/> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>why_swallowed_card</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>Un distributeur peut avaler une carte bancaire pour plusieurs raisons: - un délai trop long avant que le client ne récupère sa carte - 3 codes erronés consécutifs - un problème technique - une carte mise en opposition par vous-même ou par la banque - une tentative de vol</item> 
+                     </prompt>  
+                     <goto ref="otherQuestions"/> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>opposition_signification</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>Si votre carte est en opposition, cela signifie que vous l'avez-vous-même mise en opposition, ou que votre banque l'a fait. Votre banque peut prendre la décision de bloquer votre carte si vous en faites une utilisation allant à l'encontre des règles prévues dans votre contrat. Cela ne signifie pas forcément que vous soyez fiché au FICP (fichier national des incidents de remboursement de crédits aux particuliers). Veuillez contacter votre conseiller pour de plus amples explications.</item> 
+                     </prompt>  
+                     <goto ref="otherQuestions"/> 
+                  </output> 
+               </input> 
+            </folder>  
+            <output id="otherQuestions"> 
+               <prompt selectionType="RANDOM"> 
+                  <item>Avez-vous d'autres questions ?</item> 
+               </prompt>  
+               <getUserInput> 
+                  <search ref="if_questions"> 
+                     <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                        <customParams>nlcmodelid=3a84cfx63-nlc-9551</customParams> 
+                     </classifier> 
+                  </search>  
+                  <search ref="faq"> 
+                     <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                        <customParams>nlcmodelid=3a84cfx63-nlc-9551</customParams> 
+                     </classifier> 
+                  </search>  
+                  <default> 
+                     <if> 
+                        <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                        <goto ref="get_sentence"/> 
+                     </if>  
+                     <output> 
+                        <prompt> 
+                           <item>Excusez-moi je n'ai pas compris votre question. Pourriez-vous la reformuler ?</item> 
+                        </prompt>  
+                        <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                        <getUserInput> 
+                           <search ref="if_questions"> 
+                              <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                 <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                              </classifier> 
+                           </search>  
+                           <search ref="faq"> 
+                              <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                 <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                              </classifier> 
+                           </search> 
+                        </getUserInput> 
+                     </output> 
+                  </default> 
+               </getUserInput> 
+            </output>  
+            <folder label="If other questions" id="if_questions"> 
+               <input> 
+                  <grammar> 
+                     <item>oui</item>  
+                     <item>bien sûr</item>
+                     <item>oui bien sûr</item>
+                     <item>effectivement</item>
+                     <item>évidemment</item>
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>Je vous écoute. Quelle est votre question ?</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <search ref="faq"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=3a84cfx63-nlc-9551</customParams> 
+                           </classifier> 
+                        </search>  
+                        <default> 
+                           <if> 
+                              <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                              <goto ref="get_sentence"/> 
+                           </if>  
+                           <output> 
+                              <prompt> 
+                                 <item>Excusez-moi je n'ai pas compris votre question. Pourriez-vous la reformuler ?</item> 
+                              </prompt>  
+                              <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                              <getUserInput> 
+                                 <search ref="faq"> 
+                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                       <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                    </classifier> 
+                                 </search>  
+                                 <default> 
+                                    <search ref="faq"> 
+                                       <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                          <customParams>nlcmodelid=3a84dfx64-nlc-18176</customParams> 
+                                       </classifier> 
+                                    </search> 
+                                 </default> 
+                              </getUserInput> 
+                           </output> 
+                        </default> 
+                     </getUserInput> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>non</item>  
+                     <item>ce n'est pas vrai</item>
+                     <item>absolument pas</item>
+                  </grammar>  
+                  <output> 
+                     <prompt selectionType="RANDOM"> 
+                        <item>Merci, au revoir ! [action->endConversation()]</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <input/> 
+                     </getUserInput> 
+                  </output> 
+               </input> 
+            </folder> 
+         </folder> 
+      </folder> 
+   </flow>  
+   <entities> 
+      <entity name="address"> 
+         <value> 
+            <grammar> 
+               <item>*</item> 
+            </grammar> 
+         </value> 
+      </entity>  
+      <entity name="cashpoint"> 
+         <value> 
+            <grammar> 
+               <item>*</item> 
+            </grammar> 
+         </value> 
+      </entity>  
+      <entity name="bank"> 
+         <value name="soc_gen" value="societe generale"> 
+            <grammar> 
+               <item>societe generale</item>  
+               <item>société générale</item> 
+            </grammar> 
+         </value>  
+         <value name="bnpparibas" value="bnpparibas"> 
+            <grammar> 
+               <item>bnpparibas</item>  
+               <item>bnp paribas</item> 
+            </grammar> 
+         </value> 
+      </entity>  
+      <entity name="yes"> 
+         <value name="yes"> 
+            <grammar> 
+               <item>oui</item>  
+               <item>bien sûr</item>
+               <item>oui bien sûr</item>
+               <item>effectivement</item>
+               <item>évidemment</item>
+            </grammar> 
+         </value> 
+      </entity>  
+      <entity name="no"> 
+         <value name="no"> 
+            <grammar> 
+               <item>non</item>  
+               <item>ce n'est pas vrai</item>
+               <item>absolument pas</item>
+            </grammar> 
+         </value> 
+      </entity>  
+      <entity name="sentence"> 
+         <value> 
+            <grammar> 
+               <item>*</item> 
+            </grammar> 
+         </value> 
+      </entity> 
+   </entities>  
+   <variables> 
+      <var_folder name="Home"> 
+         <var name="current_state" type="TEXT"/>  
+         <var name="is_card_blocked" type="YESNO" initValue="No"/>  
+         <var name="out_of_scope_count" type="NUMBER" initValue="0"/>  
+         <var name="is_agency_network" type="YESNO"/>  
+         <var name="address" type="TEXT"/>  
+         <var name="bank" type="TEXT"/>  
+         <var name="is_cashpoint_down" type="YESNO" initValue="No"/>  
+         <var name="agency_name" type="TEXT"/>  
+         <var name="when_agency" type="TEXT"/>  
+         <var name="sentence" type="TEXT"/>  
+         <var name="from_two_options" type="YESNO"/>  
+         <var name="open_or_closed" type="TEXT"/>  
+         <var name="confirmation_bank" type="YESNO"/>  
+         <var name="advisor_or_sending" type="TEXT"/>  
+         <var name="want_advisor" type="YESNO"/> 
+      </var_folder> 
+   </variables>  
+   <settings> 
+      <setting name="USE_SPELLING_CORRECTIONS">2</setting>  
+      <setting name="USE_STOP_WORDS">2</setting>  
+      <setting name="USE_AUTOMATIC_STOPWORDS_DETECTION">1</setting>  
+      <setting name="LANGUAGE" type="USER">fr-FR</setting>  
+      <setting name="CLS_SEARCH_MODE">0</setting>  
+      <setting name="CLS_MODEL">0</setting>  
+      <setting name="CLS_MODELNAME">3a84dfx64-nlc-18176</setting>  
+      <setting name="CLS_ENDPOINT">https://gateway.watsonplatform.net/natural-language-classifier/api</setting>  
+      <setting name="CLS_USERNAME">83c61bbd-6c2e-4a92-b924-807e321afcb4</setting>  
+      <setting name="CLS_PASSWORD">YOda0hQRbiJ8</setting>  
+      <setting name="CLS_ADVANCED_SETTINGS">true</setting>  
+      <setting name="CLS_MAXNBEST">3</setting>  
+      <setting name="CLS_USE_OFFTOPIC">false</setting> 
+   </settings> 
+</dialog>

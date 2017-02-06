@@ -1,0 +1,838 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog xsi:noNamespaceSchemaLocation="WatsonDialogDocument_1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <flow>
+        <folder label="Main">
+             <output>
+                <prompt selectionType="RANDOM">
+                    <item>
+                        Do you have a specific project or do you need cash resources ?
+                    </item>
+                </prompt>
+                 <getUserInput> 
+                    <search ref="project_type"/>
+                     <default>
+                        <output>
+                            <prompt>
+                                <item>I don't understand what you are saying. Which project is it? </item>
+                            </prompt>
+                            <getUserInput>
+                                <search ref="project_type"/>
+                            </getUserInput>
+                        </output>
+                    </default>
+                 </getUserInput>
+            </output> 
+        </folder>
+        <folder label="Library">
+            <folder label="Live Content" id="liveContent">
+                <!--<folder label="dialog" id="dialog">-->
+                    <folder label="Project types" id="project_type">
+                        <action varName="current_state" operator="SET_TO">project_type</action>
+                        <input>
+                            <grammar>                                
+                                <item>$ (hire_specific_project)={hire_specific_project}</item>
+                            </grammar>
+                            <action varName="hire_specific_project" operator="SET_TO">
+                                {hire_specific_project.value:main}
+                            </action>
+                            <action varName="is_specific_project" operator="SET_TO_YES"/>
+                            <goto ref="three_types_loan"/>
+                        </input>
+                        <input>
+                            <grammar>                                                                
+                                <item>$ (other_specific_project)={other_specific_project}</item>
+                            </grammar>
+                            <action varName="other_specific_project" operator="SET_TO">
+                                {other_specific_project.value:main}
+                            </action>
+                            <action varName="is_specific_project" operator="SET_TO_YES"/>
+                            <goto ref="two_types_loan"/>
+                        </input>
+                        <input>
+                            <grammar>
+                                <!--<item>$ specific project</item>
+                                <item>$ specific</item>
+                                <item>$ is_specific_project</item>-->
+                                <item>$ (is_specific_project)</item>
+                            </grammar>
+                            <action varName="is_specific_project" operator="SET_TO_YES"/>
+                            <output>
+                                <prompt selectionType="RANDOM">
+                                    <item>Which specific project do you have ? </item>
+                                    <item>Which project is it ? </item>
+                                    <item>Which one ?</item>
+                                </prompt>
+                                <getUserInput>
+                                    <search ref="project_type"/>
+                                </getUserInput>
+                            </output>
+                        </input>
+                        <default>
+                            <search ref="questions"/>
+                        </default>                        
+                    </folder>
+                    <output id="two_types_loan">
+                        <prompt>
+                            <item>
+                                For this kind of project, we can suggest you two types of financing: installment credit or revolving credit.
+                            </item>
+                        </prompt>
+                        <getUserInput>
+                            <search ref="loan_type"/>
+                            <default>
+                                <output>
+                                    <prompt>
+                                        <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                    </prompt>
+                                    <getUserInput>
+                                        <search ref="loan_type"/>
+                                    </getUserInput>
+                                </output>
+                            </default>
+                        </getUserInput>
+                    </output>
+                    <output id="three_types_loan">
+                        <prompt>
+                            <item>
+                                For this kind of project, we can suggest you three types of financing: installment credit, revolving credit, or hire purchase.
+                            </item>
+                        </prompt>
+                        <getUserInput>
+                            <search ref="loan_type"/>
+                            <default>
+                                <output>
+                                    <prompt>
+                                        <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                    </prompt>
+                                    <getUserInput>
+                                        <search ref="loan_type"/>
+                                    </getUserInput>
+                                </output>
+                            </default>
+                        </getUserInput>
+                    </output>
+                    <folder label="Two types of loan" id="loan_type">
+                        <action varName="current_state" operator="SET_TO">loan_type</action>                <input>
+                            <grammar>
+                                <item>$ (type_of_credit)={loan_type_choice}</item>
+                            </grammar>
+                            <action varName="loan_type_choice" operator="SET_TO">
+                                {loan_type_choice.value:main}
+                            </action>
+                        
+                            <if matchType="ALL">                             
+                                <cond varName="loan_type_choice" operator="CONTAINS">hire purchase</cond>
+                                <cond varName="other_specific_project" operator="HAS_VALUE"/>
+                                <output>
+                                    <prompt>
+                                        <item>Sorry but for your type of project you can only choose between installment credit or revolving credit. Hire purchase is not included. Please choose between installment credit and revolving credit.</item>
+                                    </prompt>
+                                    <getUserInput>
+                                        <search ref="loan_type"/>
+                                        <default>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                                </prompt>
+                                                <getUserInput>
+                                                    <search ref="loan_type"/>
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                        
+                        
+                            <output>
+                                <prompt>
+                                    <item>Do you want an insurance ? </item>
+                                </prompt> 
+                                <getUserInput>
+                                    <search ref="insurance"/>
+                                    <default>
+                                        <output>
+                                            <prompt>
+                                                <item>Sorry I didn't understand. Could you repeat yourself ? Do you want an insurance ? </item>
+                                            </prompt>
+                                            <getUserInput>
+                                                <search ref="insurance"/>
+                                            </getUserInput>
+                                        </output>
+                                    </default>
+                                </getUserInput>
+                            </output>
+                        </input>
+                        <default>
+                            <search ref="questions"/>
+                        </default>
+                    </folder>
+                    <folder label="Insurance" id="insurance">
+                        <action varName="current_state" operator="SET_TO">insurance</action>
+                        <input>
+                            <grammar>
+                                <item>$ (want_insurance)</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Insurance for consumer credit is not mandatory but optional. The main insurance offered by banks and credit companies are:
+                                    - death insurance
+                                    - disability insurance that supports your credit in case of total and permanent disability,
+                                    - health insurance that supports your monthly payments in case of sick leave recognized by Social Security,
+                                    - the loss of employment insurance (under a permanent contract). 
+                                    Which one is your choice ?
+                                    </item>
+                                </prompt>
+                                <getUserInput>
+                                    <search ref="insurance"/>
+                                    <default>
+                                        <output>
+                                            <prompt>
+                                                <item>Sorry I didn't understand. Could you repeat it please ? </item>
+                                            </prompt>
+                                            <getUserInput>
+                                                <search ref="insurance"/>
+                                            </getUserInput>
+                                        </output>
+                                    </default>
+                                </getUserInput>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>$ (insurances)</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Insurance for consumer credit is not mandatory but optional. The main insurance offered by banks and credit companies are:
+                                    - death insurance
+                                    - disability insurance that supports your credit in case of total and permanent disability,
+                                    - health insurance that supports your monthly payments in case of sick leave recognized by Social Security,
+                                    - the loss of employment insurance (under a permanent contract). 
+                                    Which one is your choice ?
+                                    </item>
+                                </prompt>
+                                <getUserInput>
+                                    <search ref="insurance"/>
+                                     <default>
+                                        <output>
+                                            <prompt>
+                                                <item>Sorry I didn't understand. Could you repeat yourself ?</item>
+                                            </prompt>
+                                            <getUserInput>
+                                                <search ref="insurance"/>
+                                            </getUserInput>
+                                        </output>
+                                    </default>
+                                </getUserInput>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>$ (type_of_insurance)={insurance_choice}</item>
+                            </grammar>
+                            <action varName="insurance_choice" operator="SET_TO">
+                                {insurance_choice.value:main}
+                            </action>
+                            <goto ref="your_address"/>
+                        </input>
+                        <input>
+                            <grammar>
+                               <item>$ (no_insurance)</item>
+                            </grammar>
+                            <action varName="insurance_choice" operator="SET_TO">no_insurance</action>
+                            <goto ref="your_address"/>
+                        </input>
+                         <output id="your_address">
+                            <prompt>
+                                <item>
+                                    Let's check your postal address. Is [address] correct?
+                                </item>
+                            </prompt>
+                            <getUserInput>
+                                <goto ref="check_address"/>
+                                <default>
+                                    <output>
+                                        <prompt>
+                                            <item>Sorry I didn't understand. Could you please repeat you postal address ? </item>
+                                        </prompt>
+                                        <getUserInput>
+                                            <search ref="check_address"/>
+                                        </getUserInput>
+                                    </output>
+                                </default>
+                            </getUserInput>
+                        </output>
+                        <default>
+                            <search ref="questions"/>
+                        </default>
+                    </folder>
+                    <folder label="FandQ" id="questions">                        
+                        <input>
+                            <grammar>
+                                <item>$ no thanks</item>
+                                <item>$ no</item>
+                                <item>$ no thank you</item>
+                                <item>$ it's all right</item>
+                                <item>$ alright</item>
+                                <item>$ allright</item>
+                                <item>$ bye</item>
+                                <item>$ goodbye</item>
+                            </grammar>
+                           
+                            <if>
+                                <cond varName="current_state" operator="EQUALS">loan_type</cond>
+                                <cond varName="loan_type_choice" operator="IS_BLANK"/>
+                                <cond varName="hire_specific_project" operator="HAS_VALUE"/>
+                                <output>
+                                    <prompt>
+                                        <item>We have 3 types of credit : installment credit, revolving credit and hire purchase. Which one do you want ?</item>
+                                    </prompt>
+                                    <getUserInput>
+                                        <search ref="loan_type"/>
+                                        <default>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                                </prompt>
+                                                <getUserInput>
+                                                    <search ref="loan_type"/>
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                             <if>
+                                <cond varName="current_state" operator="EQUALS">loan_type</cond>
+                                <cond varName="loan_type_choice" operator="IS_BLANK"/>
+                                <cond varName="other_specific_project" operator="HAS_VALUE"/>
+                                <output>
+                                    <prompt>
+                                        <item>We have 2 types of credit : installment credit and revolving credit. Which one do you want ?</item>
+                                    </prompt>
+                                    <getUserInput>
+                                        <search ref="loan_type"/>
+                                        <default>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                                </prompt>
+                                                <getUserInput>
+                                                    <search ref="loan_type"/>
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                            <if>
+                                <cond varName="current_state" operator="EQUALS">insurance</cond>
+                                <cond varName="insurance_choice" operator="IS_BLANK"/>
+                                <output>
+                                    <prompt>
+                                        <item>Do you want an insurance ?</item>
+                                    </prompt>
+                                    <getUserInput>
+                                        <search ref="insurance"/>
+                                         <default>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                                </prompt>
+                                                <getUserInput>
+                                                    <search ref="insurance"/>
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                            <if>
+                                <cond varName="current_state" operator="EQUALS">project_type</cond>
+                                <cond varName="is_specific_project" operator="IS_BLANK"/>
+                                <output>
+                                    <prompt>
+                                        <item>Do you have a specific project or do you want cash resources ?</item>
+                                    </prompt>
+                                    <getUserInput>
+                                        <search ref="project_type"/>
+                                         <default>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                                </prompt>
+                                                <getUserInput>
+                                                    <search ref="project_type"/>
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                            <if>
+                                <cond varName="current_state" operator="EQUALS">project_type</cond>
+                                <cond varName="is_specific_project" operator="EQUAL_TO_YES"/>
+                                <cond varName="hire_specific_project" operator="IS_BLANK"/>
+                                <cond varName="other_specific_project" operator="IS_BLANK"/>
+                                <output>
+                                    <prompt>
+                                        <item>
+                                            What is your project ?
+                                        </item>
+                                    </prompt>
+                                    <getUserInput>
+                                        <search ref="project_type"/>
+                                         <default>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                                </prompt>
+                                                <getUserInput>
+                                                    <search ref="project_type"/>
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                            <if>
+                                <cond varName="current_state" operator="EQUALS">check_address</cond>
+                                <cond varName="is_address_correct" operator="IS_BLANK"/>
+                                <output>
+                                    <prompt>
+                                        <item>
+                                            Let's check your postal address. Is [address] correct?</item>
+                                    </prompt>
+                                    <getUserInput>
+                                        <goto ref="check_address"/>
+                                        <default>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat you postal address ? </item>
+                                                </prompt>
+                                                <getUserInput>
+                                                    <search ref="check_address"/>
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                            
+                             <output>
+                                <prompt selectionType="RANDOM">
+                                    <item>Thank you, goodbye! [action->endConversation()] </item>
+                                    <item>All right, bye! [action->endConversation()] </item>
+                                    <item>Bye bye! [action->endConversation()]</item>
+                                </prompt>
+                                <getUserInput>
+                                    <input/>
+                                </getUserInput>
+                            </output>
+                            
+                            
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>$ yes</item>
+                                <item>$ of course</item>
+                                <item>$ sure</item>
+                                <item>$ yeah</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item> All right, I'm listening. What's your question ?</item>
+                                </prompt>
+                                <getUserInput>
+                                    <search ref="questions"/>
+                                    <default>
+                                        <output>
+                                            <prompt>
+                                                <item>Sorry I didn't understand. Can you repeat your question ? </item>
+                                            </prompt>
+                                            <getUserInput>
+                                                <search ref="questions"/>
+                                            </getUserInput>
+                                        </output>
+                                    </default>
+                                </getUserInput>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>$ question 1</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Answer to question 1</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>$ question 2</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Answer to question 2</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>$ question 3</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Answer to question 3</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>not_found</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Sorry, your question is not found. Would you mind rephrasing it ? </item>
+                                </prompt>
+                                <getUserInput>
+                                    <search ref="questions"/>
+                                </getUserInput>
+                            </output>
+                        </input>
+                </folder>
+                    <output id="otherQuestions">
+                        <prompt selectionType="RANDOM">
+                            <item>Any other questions ?</item>
+                            <item>Do you have any other questions ?</item>
+                        </prompt>
+                        <getUserInput>
+                            <search ref="questions"/>
+                            <default>
+                                <goto ref="get_sentence"/>
+                            </default>
+                        </getUserInput>
+                    </output>
+                    <folder label="Check user address" id="check_address">
+                        <action varName="current_state" operator="SET_TO">check_address</action>
+                        <input>
+                            <grammar>
+                                <item>$ (correct_address)</item>
+                            </grammar>
+                            <action varName="is_address_correct" operator="SET_TO_YES"/>
+                             <output>
+                                <prompt>
+                                    <item>All right. [action->getFiche({loan_type_choice},{insurance_choice})] Do you have questions?
+                                    </item>
+                                </prompt>
+                                <getUserInput>
+                                    <search ref="questions"/>
+                                     <default>
+                                         <goto ref="get_sentence"/>
+                                    </default>
+                                </getUserInput>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>$ (wrong_address)</item>
+                            </grammar>
+                            <action varName="is_address_correct" operator="SET_TO_NO"/>
+                            <output>
+                                <prompt>
+                                    <item>I see. So what's your postal address ? </item>
+                                </prompt>
+                                <getUserInput>
+                                    <goto ref="get_address"/>
+                                    <default>
+                                        <output>
+                                            <prompt>
+                                                <item>Sorry I didn't understand. Could you please repeat you postal address ? </item>
+                                            </prompt>
+                                            <getUserInput>
+                                                <search ref="get_address"/>
+                                            </getUserInput>
+                                        </output>
+                                    </default>
+                                </getUserInput>
+                            </output>
+                        </input>
+                        <default>
+                            <search ref="questions"/>
+                        </default>
+                    </folder>
+                <!--</folder>-->
+                <input id="get_address">
+                    <grammar>
+                        <item>$ (address)={address}</item>
+                    </grammar>
+                    <action varName="address" operator="SET_TO">{address.source}</action>
+                    <output>
+                        <prompt>
+                            <item>All right. [action->getFiche({loan_type_choice},{insurance_choice})] Do you have questions?
+                            </item>
+                        </prompt>
+                        <getUserInput>
+                            <search ref="questions"/>
+                             <default>
+                                <output>
+                                    <prompt>
+                                        <item>Sorry I didn't understand. Do you have any other questions. </item>
+                                    </prompt>
+                                    <getUserInput>
+                                        <search ref="questions"/>
+                                    </getUserInput>
+                                </output>
+                            </default>
+                        </getUserInput>
+                    </output>
+                </input>
+                <input id="get_sentence">
+                     <grammar>
+                        <item>$ (sentence)={sentence}</item>
+                    </grammar>
+                    <action varName="sentence" operator="SET_TO">{sentence.source}</action>
+                    <output>
+                        <prompt>
+                            <item>[action->getTopic({sentence})]</item>
+                        </prompt>
+                        <getUserInput>
+                            <input/>
+                        </getUserInput>
+                    </output>
+                </input>
+            </folder>
+        </folder> 
+    </flow>
+    <entities>                          
+        <entity name="yes">
+            <value name="yes" value="yes">
+                <grammar>
+                    <item>$ yes</item>                    
+                    <item>$ allright</item>                    
+                    <item>$ all right</item>
+                    <item>$ alright</item>
+                    <item>$ sure</item>
+                    <item>$ of course</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="no">
+            <value name="no" value="no">
+                <grammar>
+                    <item>$ no</item>
+                    <item>$ rather not</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="hire_specific_project">
+             <value name="equipment" value="equipment">
+                <grammar>
+                    <item>equipment</item>
+                    <item>$ furniture</item>
+                    <item>$ domestic applicance</item>
+                    <item>$ computer equipment</item>
+                    <item>$ mower</item>
+                </grammar>
+            </value>
+            <value name="car" value="car">
+                <grammar>
+                    <item>car_acquisition</item>
+                    <item>$ buy a car</item>
+                    <item>$ car acquisition</item>
+                    <item>$ rent a car</item>
+                </grammar>
+            </value>
+            <value name="motorcycle" value="motorcycle">
+                <grammar>
+                    <item>$ motorcycle</item>
+                    <item>$ scooter</item>
+                    <item>$ minibike</item>
+                    <item>$ buy a motorcycle</item>
+                    <item>$ rent a motorcycle</item>
+                    <item>motorcycle</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="other_specific_project">
+              <value name="travel" value="travel">
+                <grammar>
+                    <item>$ travel</item>
+                    <item>$ trip</item>
+                    <item>$ excursion</item>
+                    <item>$ touring</item>
+                    <item>travel</item>
+                </grammar>
+            </value>
+            <value name="works" value="works">
+                <grammar>
+                    <item>works</item>
+                    <item>$ repair works</item>
+                    <item>home repairing</item>
+                    <item>house repairing</item>
+                    <item></item>
+                </grammar>
+            </value>
+            <value name="student_loan" value="studen loan">
+                <grammar>
+                    <item>student_loan</item>
+                    <item>$ student loan</item>                    
+                </grammar>
+            </value>
+             <value name="cash" value="cash resources">
+                <grammar>
+                    <item>cash_resources</item>
+                    <item>$ cash resources</item>                   
+                </grammar>
+            </value>
+        </entity>
+        <entity name="type_of_credit">
+            <value name="revolving_credit" value="revolving credit">
+                <grammar>
+                    <item>revolving_credit</item>
+                    <item>$ revolving credit</item>
+                    <item>$ revolving loan</item>
+                </grammar>
+            </value>
+            <value name="installment_credit" value="installment credit">
+                <grammar>
+                    <item>installment_credit</item>
+                    <item>$ installment credit</item>
+                    <item>$ installment loan</item>
+                    <item>$ installment</item>
+                </grammar>
+            </value>  
+            <value name="hire_purchase" value="hire purchase">
+                <grammar>
+                    <item>hire_purchase</item>
+                    <item>$ hire purchase</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="type_of_insurance">
+            <value name="death_insurance" value="death insurance">
+                <grammar>
+                    <item>death_insurance</item>
+                    <item>$ death insurance</item>
+                </grammar>
+            </value>
+            <value name="disability_insurance" value="disability insurance">
+                <grammar>
+                    <item>disability_insurance</item>
+                    <item>$ disability insurance</item>
+                </grammar>
+            </value>           
+            <value name="loss_of_employment_insurance" value="loss of employment insurance">
+                <grammar>
+                    <item>job_loss_insurance</item>
+                    <item>$ loss of employment insurance</item>
+                    <item>$ loss of job insurance</item>
+                    <item>$ loss of work insurance</item>
+                    <item>$ loss of job</item>
+                    <item>$ loss of employment</item>
+                    <item>$ loss of work</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="address">
+            <value>
+                <grammar>
+                    <item>*</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="sentence">
+            <value>
+                <grammar>
+                    <item>*</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="is_specific_project">
+            <value name="is_specific_project">
+                <grammar>
+                    <item>is_specific_project</item>
+                    <item>$ specific project</item>                
+                    <item> $ specific one</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="insurances">
+            <value name="insurances" value="insurances">
+                <grammar>
+                    <item>insurances</item>
+                    <item>$ what insurance</item>
+                    <item>$ what do you have</item>
+                    <item>$ what are your suggestions</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="correct_address">
+            <value name="correct_address">
+                <grammar>
+                     <item>$ yes</item>
+                    <item>$ correct</item>
+                    <item>$ all right</item>
+                    <item>$ right</item>
+                    <item>correct_address</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="wrong_address">
+            <value name="wrong_address">
+                <grammar>
+                    <item>$ wrong</item>
+                    <item>$ not correct</item>
+                    <item>$ no</item>
+                    <item>$ not right</item>
+                    <item>$ not</item>
+                    <item>$ nope</item>
+                    <item>wrong_address</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="want_insurance">
+            <value name="want_insurance">
+                <grammar>
+                     <item>$ yes</item>
+                    <item>$ sure</item>
+                    <item>$ of course</item>
+                    <item>want_insurance</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="no_insurance">
+            <value name="no_insurance">
+                <grammar>
+                    <item>$ no</item>
+                    <item>$ I don't want</item>
+                    <item>$ I don't need</item>
+                    <item>no_insurance</item>
+                </grammar>
+            </value>
+        </entity>
+    </entities>
+    <variables>
+        <var_folder name="Home">             
+            <var name="is_specific_project" type="YESNO"/>
+            <var name="is_address_correct" type="YESNO"/>
+            <var name="loan_type_choice" type="TEXT"/>
+            <var name="insurance_choice" type="TEXT"/>
+            <var name="address" type="TEXT"/>
+            <var name="sentence" type="TEXT"/>
+            <var name="current_state" type="TEXT"/>
+            <var name="hire_specific_project" type="TEXT"/>
+            <var name="other_specific_project" type="TEXT"/>
+        </var_folder>
+    </variables>
+    <settings>
+        <setting name="USE_SPELLING_CORRECTIONS">2</setting>
+        <setting name="USE_STOP_WORDS">2</setting>
+        <setting name="USE_AUTOMATIC_STOPWORDS_DETECTION">1</setting>
+    </settings>
+</dialog>

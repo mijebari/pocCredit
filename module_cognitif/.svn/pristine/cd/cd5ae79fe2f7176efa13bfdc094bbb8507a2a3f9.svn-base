@@ -1,0 +1,18 @@
+<h2>POC WATSON - Feedback</h2>
+<p><strong>From : </strong><%= Email %></p>
+<p><strong>Expectation : </strong><%= Expectation %></p>
+<p><strong>Comment : </strong><%= Comment %></p>
+
+<p><strong>Dialog with client_id <%= Client_id %> :</strong></p>
+<table>
+    <tr>
+        <th><strong>Input</strong></th>
+        <th><strong>Output</strong></th>
+    </tr>
+    <% for(var i=0; i < Inputs.length; i++) { %>
+       <tr>
+         <td><%= Inputs[i]%></td>
+         <td><%= Outputs[i]%></td>
+       </tr>
+    <% } %>
+</table>

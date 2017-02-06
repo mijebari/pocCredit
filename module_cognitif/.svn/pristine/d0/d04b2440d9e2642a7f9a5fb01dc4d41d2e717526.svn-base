@@ -1,0 +1,38 @@
+/**
+ * Created by rlespagnol on 27/09/2016.
+ */
+
+module.exports = {
+    schema: true,
+
+    attributes: {
+        name: {
+            type: 'string',
+            required: true,
+            unique : true
+        },
+
+        type: {
+            type: 'string',
+            required: true,
+            enum : ['faq','intent'],
+            defaultTo : 'faq'
+        },
+        toJSON() {
+            return this.toObject();
+        }
+    },
+
+    beforeUpdate: (values, next) => next(),
+    beforeCreate: (values, next) => next(),
+
+    findAllType(cb){
+        NLC.find().exec(function(err, res){
+            if(err){
+                cb(err,null);
+                return;
+            }
+            cb(null, res);
+        })
+    }
+};

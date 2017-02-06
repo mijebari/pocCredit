@@ -1,0 +1,62 @@
+"use strict";
+
+/**
+ * Conversation Controller
+ */
+
+const _ = require('lodash');
+const shortid = require('shortid');
+
+const sugar_id = "26196b38-be49-fb8f-0c13-57723fccf91b";
+
+
+module.exports = {
+    index(req, res) {
+        sails.log('============= Call Webservice - ' + new Date().toISOString().substring(0, 20) + ' ==============')
+
+        var client_id = (!req.param('client_id') || req.param('client_id') === '') ? shortid.generate() : req.param('client_id');
+        var input = !req.param('user_input') ? 'none' : req.param('user_input');
+        var ginger = req.param('ginger') ? req.param('ginger') : true;
+        var _sugar_id = req.param('sugar_id');
+
+        ConversationService.algo(client_id,input,ginger,_sugar_id, function(err, result){
+            sails.log('============= End Call Webservice - ' + new Date().toISOString().substring(0, 20) + ' ==============')
+            if(err) return res.json(err);
+            else return res.json(result);
+        })
+
+        
+    },
+    sendFeedback(req, res){
+        sails.log("------- Send mail--------------")
+
+        const client_id = req.param('client_id');
+        const email = req.param('email');
+        const expect = req.param('expect');
+        const comment = req.param('comment');
+
+        Logs.find({client_id: client_id}).exec(function (error, result) {
+            if (error) {
+                sails.log(error)
+                res.json(error);
+            }
+
+            sails.log("=> Get Logs : " + result)
+
+            if (result.length > 0) {
+                const inputs = _.map(result, _.property('user_input'));
+                const outputs = _.map(result, _.property('output'));
+
+                Mailer.sendFeedBackMail({
+                    client_id, email, expect, comment, inputs, outputs
+                })
+
+                res.json({result: 'OK'});
+            }
+            else {
+                res.json({error: 'No conversation found.'});
+            }
+        })
+    }
+};
+

@@ -1,0 +1,32 @@
+extends ../full_layout
+
+block content
+    .container
+      .alert.alert-warning
+        | This test is expensive, are you sure you want to continue?
+        | You will lost the last campaign.
+      .btn.btn-warning#run(data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Running...")
+        i.fa.fa-check-circle-o
+        | Run tests
+      #test_result
+        h4 Last campaign
+        table.table.table-striped#result_tests
+          thead
+            tr
+              th Result
+              th Name
+              th Expected
+              th Obtained
+          tbody
+              each item in tests
+                tr
+                  th(scope="row")
+                    =item.passed
+                  td
+                    =item.name
+                  td
+                    =item.expected_result
+                  td
+                    =item.obtained_result
+
+

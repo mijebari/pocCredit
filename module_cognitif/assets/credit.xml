@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog xsi:noNamespaceSchemaLocation="WatsonDialogDocument_1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <flow>
+        <folder label="Main">
+             <output>
+                <prompt selectionType="RANDOM">
+                    <item>Specific project ? </item>
+                </prompt>
+                 <getUserInput> 
+                    <search ref="dialog"/>
+                     <default>
+                        <output>
+                            <prompt>
+                                <item>I don't understand what you are saying. Which project is it? </item>
+                            </prompt>
+                            <getUserInput>
+                                <search ref="dialog"/>
+                            </getUserInput>
+                        </output>
+                    </default>
+                 </getUserInput>
+            </output> 
+            <output id="output4">
+                <prompt>
+                    <item>
+                        Please fill in this simulation form pre-registered with your data.
+                        [Action : getFormular(short_term_loan, revolving_credit,special_occasion)]
+                    </item>
+                </prompt>
+                <getUserInput>
+                    <search ref="liveContent"/>
+                </getUserInput>
+            </output>
+            <output id="wrong_theme">
+                <prompt>
+                    <item>All right. How can I help you then?</item>
+                </prompt>
+                <getUserInput>
+                    <search ref="liveContent"/>
+                </getUserInput>
+            </output>
+        </folder>
+        <folder label="Library">
+            <folder label="Live Content" id="liveContent">
+                <folder label="dialog" id="dialog">
+                    <folder label="Specific projects">
+                        <input>
+                            <grammar>
+                                <item>$ (specific_project)={specific_project}</item>
+                            </grammar>
+                            <action varName="specific_project" operator="SET_TO">
+                                {specific_project.value:main}
+                            </action>
+                            <action varName="is_specific_project" operator="SET_TO_YES"/>
+                            <goto ref="two_types_loan"/>
+                        </input>
+                    </folder>
+                    <output id="two_types_loan">
+                        <prompt>
+                            <item>Two types of loan : revolving credit and amortizable credit</item>
+                        </prompt>
+                        <getUserInput>
+                            <search ref="dialog"/>
+                        </getUserInput>
+                    </output>
+                    <folder label="Two types of loan">
+                        <input>
+                            <grammar>
+                                <item>$ difference</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Explanation : the difference between the two types of loan</item>
+                                </prompt>
+                                <getUserInput>
+                                    <search ref="dialog"/>         
+                                </getUserInput>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>$ (type_of_credit)={loan_type_choice}</item>
+                            </grammar>
+                            <action varName="loan_type_choice" operator="SET_TO">
+                                {loan_type_choice.value:main}
+                            </action>
+                            <output>
+                                <prompt>
+                                    <item>Want insurance ? </item>
+                                </prompt> 
+                                <getUserInput>
+                                    <search ref="insurance"/>
+                                    <default>
+                                        <output>
+                                            <prompt>
+                                                <item>Sorry I didn't understand. Could you repeat yourself ?</item>
+                                            </prompt>
+                                            <getUserInput>
+                                                <search ref="insurance"/>
+                                            </getUserInput>
+                                        </output>
+                                    </default>
+                                </getUserInput>
+                            </output>
+                        </input>
+                    </folder>
+                    <folder label="Insurance" id="insurance">
+                        <input>
+                            <grammar>
+                                <item>$ what insurance</item>
+                                <item>$ what do you have</item>
+                                <item>$ what are your suggestions</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>ADD insurance, loss of employment insurance
+                                    </item>
+                                </prompt>
+                                <getUserInput>
+                                    <search ref="insurance"/>
+                                     <default>
+                                        <output>
+                                            <prompt>
+                                                <item>Sorry I didn't understand. Could you repeat yourself ?</item>
+                                            </prompt>
+                                            <getUserInput>
+                                                <search ref="insurance"/>
+                                            </getUserInput>
+                                        </output>
+                                    </default>
+                                </getUserInput>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>$ (type_of_insurance)={insurance_choice}</item>
+                            </grammar>
+                            <action varName="insurance_choice" operator="SET_TO">
+                                {insurance_choice.value:main}
+                            </action>
+                            <goto ref="your_address"/>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>$ no</item>
+                            </grammar>
+                            <goto ref="your_address"/>
+                        </input>
+                         <output id="your_address">
+                            <prompt>
+                                <item>
+                                    Your postal address please?
+                                </item>
+                            </prompt>
+                            <getUserInput>
+                                <goto ref="get_address"/>
+                            </getUserInput>
+                        </output>
+                    </folder>
+                    <folder label="FandQ" id="questions">
+                        <input>
+                            <grammar>
+                                <item>$ no thanks</item>
+                                <item>$ no</item>
+                                <item>$ no thank you</item>
+                                <item>$ it's all right</item>
+                                <item>$ alright</item>
+                                <item>$ allright</item>
+                            </grammar>
+                            <output>
+                                <prompt selectionType="RANDOM">
+                                    <item>Thank you, goodbye! [endConversation()] </item>
+                                    <item>All right, bye! [endConversation()] </item>
+                                    <item>Bye bye! [endConversation()]</item>
+                                </prompt>
+                                <getUserInput>
+                                    <input/>
+                                </getUserInput>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>$ question 1</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Answer to question 1</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>$ question 2</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Answer to question 2</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>$ question 3</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Answer to question 3</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                    </folder>
+                    <output id="otherQuestions">
+                    <prompt selectionType="RANDOM">
+                        <item>Any other questions ?</item>
+                        <item>Do you have any other questions ?</item>
+                    </prompt>
+                    <getUserInput>
+                        <search ref="questions"/>
+                    </getUserInput>
+                </output>
+                </folder>
+                <input id="get_address">
+                    <grammar>
+                        <item>$ (address)={address}</item>
+                    </grammar>
+                    <action varName="address" operator="SET_TO">{address.source}</action>
+                    <output>
+                        <prompt>
+                            <item>All right. [Action : getFiche(?,?,?)] Do you have questions?
+                            </item>
+                        </prompt>
+                        <getUserInput>
+                            <search ref="questions"/>
+                        </getUserInput>
+                    </output>
+                </input>
+               
+            </folder>
+        </folder>        
+    </flow>
+    <entities>                          
+        <entity name="yes">
+            <value name="yes" value="yes">
+                <grammar>
+                    <item>$ yes</item>                    
+                    <item>$ allright</item>                    
+                    <item>$ all right</item>
+                    <item>$ alright</item>
+                    <item>$ sure</item>
+                    <item>$ of course</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="no">
+            <value name="no" value="no">
+                <grammar>
+                    <item>$ no</item>
+                    <item>$ rather not</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="specific_project">
+            <value name="repairing_home" value="repairing home">
+                <grammar>
+                    <item>repair * house</item>
+                    <item>home repairing</item>
+                    <item>house repairing</item>
+                    <item>house_repairing</item>
+                </grammar>
+            </value>
+            <value name="car_acquisition" value="car acquisition">
+                <grammar>
+                    <item>$ buy a car</item>
+                    <item>$ car acquisition</item>
+                    <item>$ car_acquisition</item>
+                </grammar>
+            </value>
+            <value name="student_fees" value="student fees">
+                <grammar>
+                    <item>$ student loans</item>
+                    <item>$ student loan</item>
+                    <item>$ student fees</item>
+                    <item>$ education fees</item>
+                    <item>education_fees</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="type_of_credit">
+            <value name="revolving_credit" value="revolving credit">
+                <grammar>
+                    <item>$ revolving credit</item>
+                    <item>$ revolving loan</item>
+                </grammar>
+            </value>
+            <value name="amortizable_credit" value="amortizable credit">
+                <grammar>
+                    <item>$ amortizable credit</item>
+                    <item>$ amortizable loan</item>
+                    <item>$ amortizing loan</item>
+                    <item>$ amortizing credit</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="type_of_insurance">
+            <value name="ad_d_insurance" value="accidental death and dismemberment insurance">
+                <grammar>
+                    <item>$ ADD insurance</item>
+                    <item>$ accidental death and dismemberment insurance</item>
+                </grammar>
+            </value>
+            <value name="loss of employment insurance" value="loss of employment insurance">
+                <grammar>
+                    <item>$ loss of employment insurance</item>
+                    <item>$ loss of job insurance</item>
+                    <item>$ loss of job</item>
+                    <item>$ loss of employment</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="address">
+            <value>
+                <grammar>
+                    <item>*</item>
+                </grammar>
+            </value>
+        </entity>
+        
+
+    </entities>
+    <variables>
+        <var_folder name="Home">             
+            <var name="is_specific_project" type="YESNO"/>
+            <var name="specific_project" type="TEXT"/>
+            <var name="loan_type_choice" type="TEXT"/>
+            <var name="insurance_choice" type="TEXT"/>
+            <var name="address" type="TEXT"/>
+        </var_folder>
+    </variables>
+    
+</dialog>

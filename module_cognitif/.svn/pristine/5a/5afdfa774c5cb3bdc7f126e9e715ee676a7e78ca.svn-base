@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dialog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="WatsonDialogDocument_1.0.xsd">  
+   <flow> 
+      <folder label="Main"> 
+         <output> 
+            <prompt> 
+               <item>Was your card stolen in France or abroad ?</item> 
+            </prompt>  
+            <getUserInput> 
+               <search ref="france_or_abroad"> 
+                  <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                     <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                  </classifier> 
+               </search>  
+               <search ref="faq"> 
+                  <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                     <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                  </classifier> 
+               </search>  
+               <default> 
+                  <if> 
+                     <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                     <goto ref="get_sentence"/> 
+                  </if>  
+                  <output> 
+                     <prompt> 
+                        <item>Excuse me I did not understand. Did you lose your card in France or abroad ?</item> 
+                     </prompt>  
+                     <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                     <getUserInput> 
+                        <search ref="france_or_abroad"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                           </classifier> 
+                        </search>  
+                        <search ref="faq"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                           </classifier> 
+                        </search> 
+                     </getUserInput> 
+                  </output> 
+               </default> 
+            </getUserInput> 
+         </output> 
+      </folder>  
+      <folder label="Library"> 
+         <folder label="Live Content" id="liveContent"> 
+            <folder label="France or abroad" id="france_or_abroad"> 
+               <action varName="out_of_scope_count" operator="SET_TO">0</action>  
+               <input> 
+                  <grammar> 
+                     <item>theft_france</item> 
+                  </grammar>  
+                  <action varName="france_or_abroad" operator="SET_TO">france</action>  
+                  <output> 
+                     <prompt> 
+                        <item>As soon as the loss of your credit card, you must immediately make opposition by calling the 0 892 705 705. You must then confirm in writing the opposition. In which department you are you actually steal your card?</item> 
+                     </prompt>  
+                     <goto ref="which_region"/> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>theft_abroad</item> 
+                  </grammar>  
+                  <action varName="france_or_abroad" operator="SET_TO">abroad</action>  
+                  <output> 
+                     <prompt> 
+                        <item>If you have lost your card abroad, make opposition by calling the 33 442 605 303. You must then confirm in writing the opposition with your bank by registered letter with acknowledgement of receipt. Save your return to the Consulate if you are abroad. What country have you been stealing your card?</item> 
+                     </prompt>  
+                     <goto ref="which_country"/> 
+                  </output> 
+               </input> 
+            </folder>  
+            <output id="which_region"> 
+               <prompt> 
+                  <item>As soon as the loss of your credit card, you must immediately make opposition by calling the 0 892 705 705. You must then confirm in writing the opposition. In which department you are you actually steal your card?</item> 
+               </prompt>  
+               <getUserInput> 
+                  <goto ref="get_country_or_region"/> 
+               </getUserInput> 
+            </output>  
+            <output id="which_country"> 
+               <prompt> 
+                  <item>If you have lost your card abroad, make opposition by calling the 33 442 605 303. You must then confirm in writing the opposition with your bank by registered letter with acknowledgement of receipt. Save your return to the Consulate if you are abroad. What country have you been stealing your card?</item> 
+               </prompt>  
+               <getUserInput> 
+                  <goto ref="get_country_or_region"/> 
+               </getUserInput> 
+            </output>  
+            <input id="get_country_or_region"> 
+               <grammar> 
+                  <item>$ (country_or_region)={country_or_region}</item> 
+               </grammar>  
+               <action varName="address" operator="SET_TO">{country_or_region.source}</action>  
+               <output> 
+                  <prompt> 
+                     <item>All right. Can you confirm that the following address is your place of residence: [address]</item> 
+                  </prompt>  
+                  <getUserInput> 
+                     <search ref="check_address"/>  
+                     <search ref="faq"> 
+                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                           <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                        </classifier> 
+                     </search>  
+                     <default> 
+                        <if> 
+                           <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                           <goto ref="get_sentence"/> 
+                        </if>  
+                        <output> 
+                           <prompt> 
+                              <item>Excuse me I did not understand. Can you confirm that the following address is your place of residence: [address]</item> 
+                           </prompt>  
+                           <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                           <getUserInput> 
+                              <search ref="check_address"/>  
+                              <search ref="faq"> 
+                                 <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                    <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                                 </classifier> 
+                              </search> 
+                           </getUserInput> 
+                        </output> 
+                     </default> 
+                  </getUserInput> 
+               </output> 
+            </input>  
+            <input id="get_address"> 
+               <grammar> 
+                  <item>$ (address)={address}</item> 
+               </grammar>  
+               <action varName="address" operator="SET_TO">{address.source}</action>  
+               <output> 
+                  <prompt> 
+                     <item>Thank you. You will now be brought into relation with the centre in opposition. [redirectAdvisor()]</item> 
+                  </prompt>  
+                  <getUserInput> 
+                     <input/> 
+                  </getUserInput> 
+               </output> 
+            </input>  
+            <input id="get_sentence"> 
+               <grammar> 
+                  <item>$ (sentence)={sentence}</item> 
+               </grammar>  
+               <action varName="sentence" operator="SET_TO">{sentence.source}</action>  
+               <output> 
+                  <prompt> 
+                     <item>[action->getTopic({sentence})]</item> 
+                  </prompt>  
+                  <getUserInput> 
+                     <input/> 
+                  </getUserInput> 
+               </output> 
+            </input>  
+            <folder label="Check address" id="check_address"> 
+               <input> 
+                  <grammar> 
+                     <item>$ (yes)</item> 
+                  </grammar>  
+                  <action varName="address_confirmation" operator="SET_TO_YES"/>  
+                  <output> 
+                     <prompt> 
+                        <item>Thank you. You will now be brought into relation with the centre in opposition. [redirectAdvisor()]</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <input/> 
+                     </getUserInput> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>$ (no)</item> 
+                  </grammar>  
+                  <action varName="address_confirmation" operator="SET_TO_NO"/>  
+                  <output> 
+                     <prompt> 
+                        <item>What is your current address?</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <goto ref="get_address"/> 
+                     </getUserInput> 
+                  </output> 
+               </input> 
+            </folder>  
+            <output id="otherQuestions"> 
+               <prompt selectionType="RANDOM"> 
+                  <item>Do you have any other questions?</item> 
+               </prompt>  
+               <getUserInput> 
+                  <search ref="if_questions"> 
+                     <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                        <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                     </classifier> 
+                  </search>  
+                  <search ref="faq"> 
+                     <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                        <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                     </classifier> 
+                  </search>  
+                  <default> 
+                     <if> 
+                        <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                        <goto ref="get_sentence"/> 
+                     </if>  
+                     <output> 
+                        <prompt> 
+                           <item>I am sorry I did not understand your question. Could you rephrase?</item> 
+                        </prompt>  
+                        <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                        <getUserInput> 
+                           <search ref="if_questions"> 
+                              <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                 <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                              </classifier> 
+                           </search>  
+                           <search ref="faq"> 
+                              <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                 <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                              </classifier> 
+                           </search>  
+                           <default> 
+                              <goto ref="get_sentence"/> 
+                           </default> 
+                        </getUserInput> 
+                     </output> 
+                  </default> 
+               </getUserInput> 
+            </output>  
+            <folder label="If other questions" id="if_questions"> 
+               <action varName="out_of_scope_count" operator="SET_TO">0</action>  
+               <input> 
+                  <grammar> 
+                     <item>yes</item>  
+                     <item>Of course</item>
+                     <item>yes of course</item>
+                     <item>all right</item>
+                     <item>exactly</item>
+                     <item>i think so</item>
+                     <item>it is possible</item>
+                     <item>indeed</item>
+                     <item>it seems to me</item>
+                     <item>it could be</item>
+                     <item>of course</item>
+                     <item>absolutely</item>
+                     <item>obviously</item>
+                     <item>certainly</item>
+                     <item>surely</item>
+                     <item>yeah</item>
+                     <item>yep</item>
+                     <item>exactly</item>
+                     <item>apparently</item>
+                     <item>clearly</item>
+                     <item>no doubt</item>
+                     <item>alright</item>
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>I'm listening to you. What is your question?</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <search ref="faq"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                           </classifier> 
+                        </search>  
+                        <default> 
+                           <if> 
+                              <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                              <goto ref="get_sentence"/> 
+                           </if>  
+                           <output> 
+                              <prompt> 
+                                 <item>I am sorry I did not understand your question. Could you rephrase?</item> 
+                              </prompt>  
+                              <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                              <getUserInput> 
+                                 <search ref="faq"> 
+                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                       <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                                    </classifier> 
+                                 </search> 
+                              </getUserInput> 
+                           </output> 
+                        </default> 
+                     </getUserInput> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>no</item>  
+                     <item>it is not true</item>
+                     <item>I don't think so</item>
+                     <item>it is impossible</item>
+                     <item>it doesn't seem to me</item>
+                     <item>no way</item>
+                     <item>of course not</item>
+                     <item>not at all</item>
+                     <item>certainly not</item>
+                     <item>absolutely not</item>
+                     <item>not in the least</item>
+                     <item>not sure at all</item>
+                     <item>not really</item>
+                  </grammar>  
+                  <if> 
+                     <cond varName="france_or_abroad" operator="IS_BLANK"/>  
+                     <output> 
+                        <prompt> 
+                           <item>Was your card stolen in France or abroad ?</item> 
+                        </prompt>  
+                        <getUserInput> 
+                           <search ref="france_or_abroad"></search>  
+                           <search ref="faq"> 
+                              <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                 <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                              </classifier> 
+                           </search>  
+                           <default> 
+                              <if> 
+                                 <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                                 <goto ref="get_sentence"/> 
+                              </if>  
+                              <output> 
+                                 <prompt> 
+                                    <item>Was your card stolen in France or abroad ?</item> 
+                                 </prompt>  
+                                 <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                                 <getUserInput> 
+                                    <search ref="france_or_abroad"/>  
+                                    <search ref="faq"> 
+                                       <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                          <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                                       </classifier> 
+                                    </search> 
+                                 </getUserInput> 
+                              </output> 
+                           </default> 
+                        </getUserInput> 
+                     </output> 
+                  </if>  
+                  <if> 
+                     <cond varName="address_confirmation" operator="IS_BLANK"/>  
+                     <output> 
+                        <prompt> 
+                           <item>All right. Can you confirm that the following address is your place of residence: [address]</item> 
+                        </prompt>  
+                        <getUserInput> 
+                           <search ref="check_address"></search>  
+                           <search ref="faq"> 
+                              <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                 <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                              </classifier> 
+                           </search>  
+                           <default> 
+                              <if> 
+                                 <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>  
+                                 <goto ref="get_sentence"/> 
+                              </if>  
+                              <output> 
+                                 <prompt> 
+                                    <item>All right. Can you confirm that the following address is your place of residence: [address]</item> 
+                                 </prompt>  
+                                 <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>  
+                                 <getUserInput> 
+                                    <search ref="address_confirmation"/>  
+                                    <search ref="faq"> 
+                                       <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                          <customParams>nlcmodelid=2374f9x68-nlc-737</customParams> 
+                                       </classifier> 
+                                    </search> 
+                                 </getUserInput> 
+                              </output> 
+                           </default> 
+                        </getUserInput> 
+                     </output> 
+                  </if> 
+               </input> 
+            </folder>  
+            <folder label="FAQ" id="faq"> 
+               <action varName="out_of_scope_count" operator="SET_TO">0</action>  
+               <input> 
+                  <grammar> 
+                     <item>stolen_card</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>As soon as the theft of your credit card, you must immediately make opposition by calling the 0 892 705 705. You must then confirm in writing the opposition with your bank by registered letter with acknowledgement of receipt. Save your declaration to the police authorities.</item> 
+                     </prompt>  
+                     <goto ref="otherQuestions"/> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>lost_card</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>As soon as the loss of your credit card, you must immediately make opposition by calling the 0 892 705 705. You must then confirm in writing the opposition with your bank by registered letter with acknowledgement of receipt. Save your declaration to the police authorities.</item> 
+                     </prompt>  
+                     <goto ref="otherQuestions"/> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>cost_new_card</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>If you have subscribed to a banking service, opposition development and the renewal of the card are usually free. Otherwise, it costs about 10 euros.</item> 
+                     </prompt>  
+                     <goto ref="otherQuestions"/> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>cancel_opposition</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>You can not go on an opposition. If, after an opposition, you find your card after having thought that it was lost or stolen, you will therefore not apply to validate again. It will therefore be necessary to request a new credit card.</item> 
+                     </prompt>  
+                     <goto ref="otherQuestions"/> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>refund_opposition</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>All payments made through the card after the opposition date shall be refunded by the Bank. For payments made before the date of opposition, you can be reimbursed after possible deduction of a portion of the amounts committed. This deduction may not exceed 150 euros (article L132-2 of the monetary and financial Code).</item> 
+                     </prompt>  
+                     <goto ref="otherQuestions"/> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>deadline_obtention_card</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>After opposition, a new credit card you will be made available with a new secret code. The new card will be available for a period of 5 working days.</item> 
+                     </prompt>  
+                     <goto ref="otherQuestions"/> 
+                  </output> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>not_found</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>I am sorry I did not understand your question. Could you rephrase?</item> 
+                     </prompt>  
+                     <goto ref="otherQuestions"/> 
+                  </output> 
+               </input> 
+            </folder> 
+         </folder> 
+      </folder> 
+   </flow>  
+   <entities> 
+      <entity name="country_or_region"> 
+         <value> 
+            <grammar> 
+               <item>*</item> 
+            </grammar> 
+         </value> 
+      </entity>  
+      <entity name="sentence"> 
+         <value> 
+            <grammar> 
+               <item>*</item> 
+            </grammar> 
+         </value> 
+      </entity>  
+      <entity name="address"> 
+         <value> 
+            <grammar> 
+               <item>*</item> 
+            </grammar> 
+         </value> 
+      </entity>  
+      <entity name="yes"> 
+         <value name="yes"> 
+            <grammar> 
+               <item>yes</item>  
+               <item>Of course</item>
+               <item>yes of course</item>
+               <item>all right</item>
+               <item>exactly</item>
+               <item>i think so</item>
+               <item>it is possible</item>
+               <item>indeed</item>
+               <item>it seems to me</item>
+               <item>it could be</item>
+               <item>of course</item>
+               <item>absolutely</item>
+               <item>obviously</item>
+               <item>certainly</item>
+               <item>surely</item>
+               <item>yeah</item>
+               <item>yep</item>
+               <item>exactly</item>
+               <item>apparently</item>
+               <item>clearly</item>
+               <item>no doubt</item>
+               <item>alright</item>
+            </grammar> 
+         </value> 
+      </entity>  
+      <entity name="no"> 
+         <value name="no"> 
+            <grammar> 
+               <item>no</item>  
+               <item>it is not true</item>
+               <item>I don't think so</item>
+               <item>it is impossible</item>
+               <item>it doesn't seem to me</item>
+               <item>no way</item>
+               <item>of course not</item>
+               <item>not at all</item>
+               <item>certainly not</item>
+               <item>absolutely not</item>
+               <item>not in the least</item>
+               <item>not sure at all</item>
+               <item>not really</item>
+            </grammar> 
+         </value> 
+      </entity> 
+   </entities>  
+   <variables> 
+      <var_folder name="Home"> 
+         <var name="address" type="TEXT"/>  
+         <var name="france_or_abroad" type="TEXT"/>  
+         <var name="country_or_region" type="TEXT"/>  
+         <var name="sentence" type="TEXT"/>  
+         <var name="out_of_scope_count" type="NUMBER" initValue="0"/>  
+         <var name="address_confirmation" type="YESNO"/> 
+      </var_folder> 
+   </variables>  
+   <settings> 
+      <setting name="USE_SPELLING_CORRECTIONS">2</setting>  
+      <setting name="USE_STOP_WORDS">2</setting>  
+      <setting name="USE_AUTOMATIC_STOPWORDS_DETECTION">1</setting>  
+      <setting name="LANGUAGE" type="USER">en-US</setting>  
+      <setting name="CLS_SEARCH_MODE">0</setting>  
+      <setting name="CLS_MODEL">0</setting>  
+      <setting name="CLS_MODELNAME">2374f9x68-nlc-737</setting>  
+      <setting name="CLS_ENDPOINT">https://gateway.watsonplatform.net/natural-language-classifier/api</setting>  
+      <setting name="CLS_USERNAME">354b4b56-5b81-44d2-ae42-67d5ca459ba8</setting>  
+      <setting name="CLS_PASSWORD">oZ5WjSQZ1hdj</setting>  
+      <setting name="CLS_ADVANCED_SETTINGS">true</setting>  
+      <setting name="CLS_MAXNBEST">3</setting>  
+      <setting name="CLS_USE_OFFTOPIC">false</setting> 
+   </settings> 
+</dialog>

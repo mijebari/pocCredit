@@ -1,0 +1,66 @@
+{
+  "title": "Person",
+  "type": "object",
+  "id": "person",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Test name",
+      "minLength": 4
+    },
+    "inputs": {
+      "type": "array",
+      "format": "table",
+      "options": {
+        "collapsed": true
+      },
+      "items": {
+        "type": "string"
+      }
+    },
+    "result": {
+      "type": "string"
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "card": {
+          "type": "array",
+          "format": "table",
+          "options": {
+            "collapsed": true
+          },
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "client": {
+          "type": "array",
+          "format": "table",
+          "options": {
+            "collapsed": true
+          },
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

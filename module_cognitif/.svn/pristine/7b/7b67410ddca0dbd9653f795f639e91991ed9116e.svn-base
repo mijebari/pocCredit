@@ -1,0 +1,390 @@
+/**
+ * Created by rlespagnol on 27/09/2016.
+ */
+/**
+ * Created by rlespagnol on 25/04/2016.
+ */
+var fs = require('fs');
+var csvWriter = require('csv-write-stream');
+var csvParser = require('csv-parser');
+
+module.exports = {
+
+    uploadFile(req, res) {
+        const type = req.param('type');
+        if (!type && (type === 'faq' || type == 'intent')) return res.badRequest(null, {
+            message: 'You should specify a "data_sentence" parameter!'
+        });
+        req.file('csv').upload({
+            maxBytes: Number.MAX_VALUE
+        }, function (err, uploadedFiles) {
+            if (err) return res.send(500, err);
+
+            if (uploadedFiles.length === 0) return res.badRequest(null, {
+                message: 'You should send a csv file'
+            });
+
+           // sails.log(uploadedFiles);
+            if (uploadedFiles[0] != null && uploadedFiles[0] != undefined) {
+                var filePath = uploadedFiles[0].fd;
+                var streamData=fs.createReadStream(uploadedFiles[0].fd).pipe(csvParser(['sentence', 'class_name']));
+                streamData.on('data', function(data) {
+                 //   sails.log("NEW SENTENCE:"+data.sentence+" "+ data.class_name+" "+ type);
+
+                    TrainingData.newNLCData(data.sentence, data.class_name, type);
+                });
+                streamData.on('end', function () {
+                    sails.log("All csv data are add")
+                    return res.json({
+                        file: "receive"
+                    });
+                });
+
+            }
+        });
+
+
+    },
+    getFile(req, res) {
+        const type = req.param('type');
+        if (!type) return res.badRequest(null, {
+            message: 'You should specify a "data_sentence" parameter!'
+        });
+        res.setHeader('Content-disposition', 'attachment; filename=' + type + '.csv');
+        res.writeHead(200, {
+            'Content-Type': 'text/csv'
+        });
+        res.charset = 'UTF-8';
+//res.write("Hello, world");
+        TrainingData.find({
+            type: type,
+            state: 'alreadyTrained'
+        }).exec(function (err, results) {
+            if (err) {
+                sails.log(err);
+                return res.json({
+                    error: err
+                });
+            }
+
+            if (results) {
+                sails.log("generate  csv");
+                // sails.log(results);
+                var writer = csvWriter({
+                    sendHeaders: false
+                });
+                writer.pipe(res);
+                results.forEach(function (arrayItem) {
+                    writer.write({
+                        sentence:arrayItem.sentence,
+                        class: arrayItem.correction
+                    });
+
+                });
+                writer.end();
+
+                res.end();
+            }
+        });
+        // res.download('public/'+type + '.csv')
+    },
+
+    new(req, res) {
+        const sentence = req.param('sentence');
+        const class_suggestion_faq = req.param('class_suggestion_faq');
+        const confidence_class_suggestion_faq = req.param('confidence_class_suggestion_faq');
+        const class_suggestion_intent = req.param('class_suggestion_intent');
+        const confidence_class_suggestion_intent = req.param('confidence_class_suggestion_intent');
+
+        if (!sentence) return res.badRequest(null, {
+            message: 'You should specify a "data_sentence" parameter!'
+        });
+        if (!class_suggestion_faq) return res.badRequest(null, {
+            message: 'You should specify a "class_suggestion_faq" parameter!'
+        });
+        if (!confidence_class_suggestion_faq) return res.badRequest(null, {
+            message: 'You should specify a "confidence_class_suggestion_faq" parameter!'
+        });
+        if (!class_suggestion_intent) return res.badRequest(null, {
+            message: 'You should specify a "class_suggestion_intent" parameter!'
+        });
+        if (!confidence_class_suggestion_intent) return res.badRequest(null, {
+            message: 'You should specify a "confidence_class_suggestion_intent" parameter!'
+        });
+        var sentence2 = sentence.replace(/'/g, "").replace(/"/g, "");
+        TrainingData.create({
+            sentence: sentence2,
+            class_suggestion_faq: class_suggestion_faq,
+            confidence_class_suggestion_faq: confidence_class_suggestion_faq,
+            class_suggestion_intent: class_suggestion_intent,
+            confidence_class_suggestion_intent: confidence_class_suggestion_intent,
+
+        }).exec(function (err, results) {
+            if (err) {
+                sails.log(err);
+            }
+
+            if (results) {
+                //sails.log(results);
+                return res.json(results);
+
+            }
+        })
+
+
+    },
+
+    findAllByState(req, res) {
+        const state = req.param('state');
+
+        if (!state) return res.badRequest(null, {
+            message: 'You should specify a "state" parameter!'
+        });
+        NLC.find().exec(function (err, listNLCType) {
+
+            if (err) {
+                sails.log({
+                    error: err
+                });
+                return res.json({
+                    error: err
+                });
+            }
+
+            TrainingData.find({
+                state: state
+            }).exec(function (err, results) {
+                if (err) {
+                    sails.log({
+                        error: err
+                    });
+                    return res.json({
+                        error: err
+                    });
+                }
+
+                if (results) {
+                    return res.json({
+                        types: listNLCType,
+                        data: results
+                    });
+                }
+            });
+
+        });
+
+
+    },
+    findAllByStates(req, res) {
+        const states = req.param('states');
+//sails.log("findbystates"+states);
+        if (!states) return res.badRequest(null, {
+            message: 'You should specify a "state" parameter!'
+        });
+        NLC.find().exec(function (err, listNLCType) {
+
+            if (err) {
+                sails.log({
+                    error: err
+                });
+                return res.json({
+                    error: err
+                });
+            }
+
+            TrainingData.find({
+                state: states
+            }).exec(function (err, results) {
+                if (err) {
+                    sails.log({
+                        error: err
+                    });
+                    return res.json({
+                        error: err
+                    });
+                }
+
+                if (results) {
+                    return res.json({
+                        types: listNLCType,
+                        data: results
+                    });
+                }
+            });
+
+        });
+
+
+    },
+    deleteAll(req, res) {
+        TrainingData.destroy().exec(function (err, results) {
+            if (err) {
+                sails.log(err);
+                return res.json({
+                    error: err
+                });
+            }
+            if (results) {
+                // sails.log(results);
+                return res.json(results);
+            }
+        });
+    },
+    deleteAllByType(req, res) {
+        const state = req.param('state');
+
+        if (!state) return res.badRequest(null, {
+            message: 'You should specify a "state" parameter!'
+        });
+        TrainingData.destroy({
+            state: state
+        }).exec(function (err, results) {
+            if (err) {
+                sails.log(err);
+                return res.json({
+                    error: err
+                });
+            }
+            if (results) {
+                //  sails.log(results);
+                return res.json(results);
+            }
+        });
+    },
+    delete(req, res) {
+
+        const id = req.param('id');
+        // sails.log("delete training test" + id);
+
+        if (!id) return res.badRequest(null, {
+            message: 'You should specify a "data_id" parameter!'
+        });
+        TrainingData.destroy({
+            id: id
+        }).exec(function (err, results) {
+            sails.log("delete training test" + id);
+            if (err) {
+                sails.log(err);
+                return res.json({
+                    error: err
+                });
+            }
+            if (results) {
+                // sails.log(results);
+                return res.json(results);
+            }
+        });
+    },
+
+    training(req, res) {
+        const id = req.param('id');
+
+        const correction = req.param('correction');
+
+
+        NLC.getTypeOfNLC(correction, function (e, r) {
+            if (e) {
+                sails.log(e);
+                return res.json({
+                    error: e
+                });
+            }
+            var type = r;
+
+            /*  sails.log("trainig training test:" + id);
+             sails.log("correction:" + correction);
+             sails.log("type:" + type);
+             */
+            if (!id) return res.badRequest(null, {
+                message: 'You should specify a "data_id" parameter!'
+            });
+            if (!correction) return res.badRequest(null, {
+                message: 'You should specify a "correction" parameter!'
+            });
+            TrainingData.update({
+                id: id
+            }, {
+                type: type,
+                correction: correction,
+                validate: true,
+                state: 'toTrained'
+            }).exec(function (err, update) {
+                if (err) {
+                    sails.log(err);
+                    return res.json({
+                        error: err
+                    });
+                }
+                if (update) {
+                    // sails.log(update);
+                    return res.json(update);
+                }
+            });
+
+
+        });
+
+
+    },
+    modifySentence(req, res) {
+        const sentence = req.param('sentence');
+        const newsentence = req.param('newsentence');
+
+
+        if (!sentence) return res.badRequest(null, {
+            message: 'You should specify a "sentence" parameter!'
+        });
+        if (!newsentence) return res.badRequest(null, {
+            message: 'You should specify a "newsentence" parameter!'
+        });
+
+        TrainingData.update({
+            sentence: sentence
+        }, {
+            sentence: newsentence,
+
+        }).exec(function (err, update) {
+            if (err) {
+                sails.log(err);
+                return res.json({
+                    error: err
+                });
+            }
+            if (update) {
+                //sails.log(update);
+                return res.json(update);
+            }
+        });
+
+
+    },
+
+    validateTrainings(req, res) {
+        //sails.log("HTTP validate trainings");
+        TrainingData.update({
+            state: 'toTrained'
+        }, {
+            state: 'alreadyTrained'
+        }).exec(function (err, update) {
+            if (err) {
+                sails.log(err);
+                return res.json({
+                    error: err
+                });
+            }
+            if (update) {
+                // sails.log("update :"+update.length);
+                return res.json({nbdata: update.length});
+            }
+        });
+
+
+    }
+
+
+
+
+
+
+
+};

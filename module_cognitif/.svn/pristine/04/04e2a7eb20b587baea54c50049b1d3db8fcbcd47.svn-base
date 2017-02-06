@@ -1,0 +1,1201 @@
+{
+  "data": {
+    "branch": [
+      {
+        "id": 1,
+        "createdAt": "2016-10-19T09:34:00.981Z",
+        "updatedAt": "2016-10-19T09:34:00.981Z"
+      },
+      {
+        "id": 2,
+        "createdAt": "2016-10-19T09:34:00.983Z",
+        "updatedAt": "2016-10-19T09:34:00.983Z"
+      },
+      {
+        "id": 3,
+        "createdAt": "2016-10-19T09:34:00.984Z",
+        "updatedAt": "2016-10-19T09:34:00.984Z"
+      },
+      {
+        "id": 4,
+        "createdAt": "2016-10-19T09:34:00.985Z",
+        "updatedAt": "2016-10-19T09:34:00.985Z"
+      },
+      {
+        "id": 5,
+        "createdAt": "2016-10-19T09:34:00.986Z",
+        "updatedAt": "2016-10-19T09:34:00.986Z"
+      },
+      {
+        "id": 6,
+        "createdAt": "2016-10-19T09:34:00.988Z",
+        "updatedAt": "2016-10-19T09:34:00.988Z"
+      },
+      {
+        "id": 7,
+        "createdAt": "2016-10-19T09:34:00.989Z",
+        "updatedAt": "2016-10-19T09:34:00.989Z"
+      },
+      {
+        "id": 8,
+        "createdAt": "2016-10-19T09:34:00.990Z",
+        "updatedAt": "2016-10-19T09:34:00.990Z"
+      },
+      {
+        "id": 9,
+        "createdAt": "2016-10-19T09:34:00.991Z",
+        "updatedAt": "2016-10-19T09:34:00.991Z"
+      },
+      {
+        "id": 10,
+        "createdAt": "2016-10-19T09:34:00.992Z",
+        "updatedAt": "2016-10-19T09:34:00.992Z"
+      },
+      {
+        "id": 11,
+        "createdAt": "2016-10-19T09:34:00.993Z",
+        "updatedAt": "2016-10-19T09:34:00.993Z"
+      },
+      {
+        "id": 12,
+        "createdAt": "2016-10-19T09:34:00.994Z",
+        "updatedAt": "2016-10-19T09:34:00.994Z"
+      },
+      {
+        "id": 13,
+        "createdAt": "2016-10-19T09:34:00.996Z",
+        "updatedAt": "2016-10-19T09:34:00.996Z"
+      },
+      {
+        "id": 14,
+        "createdAt": "2016-10-19T09:34:00.997Z",
+        "updatedAt": "2016-10-19T09:34:00.997Z"
+      }
+    ],
+    "conversationclient": [
+      {
+        "createdAt": "2016-10-19T12:44:01.348Z",
+        "updatedAt": "2016-10-19T12:44:11.366Z"
+      },
+      {
+        "client_id": "SJ9Z4Wrke",
+        "workspace_id": "0f86fd0e-0867-4c3e-9257-efd52ef5399f",
+        "context": {
+          "client": {
+            "assigned_user_name": "admin-watson Bitnami",
+            "modified_by_name": "admin-watson Bitnami",
+            "created_by_name": "admin-watson Bitnami",
+            "id": "26196b38-be49-fb8f-0c13-57723fccf91b",
+            "name": "Alain Paul",
+            "date_entered": "2016-06-28 09:13:00",
+            "date_modified": "2016-10-12 08:39:16",
+            "modified_user_id": "1",
+            "created_by": "1",
+            "description": "",
+            "deleted": "0",
+            "assigned_user_id": "1",
+            "salutation": "Mr.",
+            "first_name": "Alain",
+            "last_name": "Paul",
+            "full_name": "Alain Paul",
+            "title": "",
+            "department": "Haut de seine",
+            "do_not_call": "0",
+            "phone_home": "",
+            "email": "",
+            "phone_mobile": "",
+            "phone_work": "",
+            "phone_other": "",
+            "phone_fax": "",
+            "email1": "",
+            "email2": "",
+            "invalid_email": "",
+            "email_opt_out": "",
+            "primary_address_street": "",
+            "primary_address_street_2": "",
+            "primary_address_street_3": "",
+            "primary_address_city": "",
+            "primary_address_state": "",
+            "primary_address_postalcode": "",
+            "primary_address_country": "",
+            "alt_address_street": "",
+            "alt_address_street_2": "",
+            "alt_address_street_3": "",
+            "alt_address_city": "",
+            "alt_address_state": "",
+            "alt_address_postalcode": "",
+            "alt_address_country": "",
+            "assistant": "",
+            "assistant_phone": "",
+            "email_addresses_non_primary": "",
+            "birth": "2016-06-03",
+            "address": "8 place de l&#039;iris",
+            "country": "France",
+            "phone": "0612345678",
+            "score": "50",
+            "current_location_country": "France",
+            "current_location_city": "Paris",
+            "birth_place": "Paris",
+            "accounts": [
+              {
+                "assigned_user_name": "",
+                "modified_by_name": "admin-watson Bitnami",
+                "created_by_name": "admin-watson Bitnami",
+                "id": "4e5dea3c-1744-a5ba-7c34-57f516011e3b",
+                "name": "sh",
+                "date_entered": "2016-10-05 15:03:58",
+                "date_modified": "2016-10-05 15:03:58",
+                "modified_user_id": "1",
+                "created_by": "1",
+                "description": "",
+                "deleted": "0",
+                "assigned_user_id": "",
+                "acc_number": "12123445",
+                "code_branch": "3142",
+                "rib": "300021553043455D56",
+                "code_bank": "30002",
+                "iban": "FR300021553043455D56",
+                "type": "compte_courant",
+                "auth_overdraft": "1000",
+                "balance": "3455",
+                "acc_name": "account1",
+                "id_client": "26196b38-be49-fb8f-0c13-57723fccf91b",
+                "s_client_s_account_name": "                                                                                                                                                                                                                                                              ",
+                "cards": [
+                  {
+                    "assigned_user_name": "",
+                    "modified_by_name": "admin-watson Bitnami",
+                    "created_by_name": "admin-watson Bitnami",
+                    "id": "ed940ce0-dcf9-89b4-b797-57f519f64074",
+                    "name": "card1",
+                    "date_entered": "2016-10-05 15:15:23",
+                    "date_modified": "2016-10-19 10:38:50",
+                    "modified_user_id": "1",
+                    "created_by": "1",
+                    "description": "",
+                    "deleted": "0",
+                    "assigned_user_id": "",
+                    "crd_number": "4011735583",
+                    "exp_date": "2016-10-06",
+                    "secu_key": "345",
+                    "status": "operating",
+                    "int_option": "0",
+                    "web_option": "0",
+                    "acc_number": "12123445",
+                    "opp_cause": "lost",
+                    "type": "gold_card",
+                    "out_dom_with": "200",
+                    "lim_dom_with": "2000",
+                    "out_dom_pay": "100",
+                    "lim_dom_pay": "2000",
+                    "out_int_with": "850",
+                    "lim_int_with": "1900",
+                    "only_withdrawal": "1",
+                    "out_int_pay": "200",
+                    "lim_int_pay": "2000",
+                    "s_account_s_card_name": "                                                                                                                                                                                                                                                              ",
+                    "s_client_s_card_name": "                                                                                                                                                                                                                                                              "
+                  }
+                ],
+                "transactions": [
+                  {
+                    "assigned_user_name": "",
+                    "modified_by_name": "admin-watson Bitnami",
+                    "created_by_name": "admin-watson Bitnami",
+                    "id": "97c60198-283b-2ccd-8ec4-57f51ab40cb7",
+                    "name": "location car",
+                    "date_entered": "2016-10-05 15:22:53",
+                    "date_modified": "2016-10-05 15:24:13",
+                    "modified_user_id": "1",
+                    "created_by": "1",
+                    "description": "",
+                    "deleted": "0",
+                    "assigned_user_id": "",
+                    "amount": "23",
+                    "title": "car",
+                    "type": "CB",
+                    "crd_number": "4011735583",
+                    "country": "France",
+                    "city": "Paris",
+                    "acc_number": "12123445",
+                    "s_account_s_transaction_name": "                                                                                                                                                                                                                                                              ",
+                    "s_client_s_transaction_name": "                                                                                                                                                                                                                                                              "
+                  }
+                ]
+              }
+            ]
+          },
+          "conversation_id": "db81c8ca-0766-4977-b46a-f923cc22df5d",
+          "system": {
+            "dialog_stack": [
+              {
+                "dialog_node": "root"
+              }
+            ],
+            "dialog_turn_counter": 2,
+            "dialog_request_counter": 2,
+            "_node_output_map": {
+              "node_2_1470297613885": [
+                0,
+                1
+              ],
+              "node_3_1470297622390": [
+                0,
+                1
+              ]
+            }
+          },
+          "card": {
+            "id": "ed940ce0-dcf9-89b4-b797-57f519f64074"
+          },
+          "lastOutput": [
+            "Hi Alain Paul!",
+            "How can I help you?"
+          ]
+        },
+        "createdAt": "2016-10-19T14:32:34.579Z",
+        "updatedAt": "2016-10-19T14:32:47.376Z"
+      },
+      {
+        "client_id": "HkvZ4MUJx",
+        "workspace_id": "0f86fd0e-0867-4c3e-9257-efd52ef5399f",
+        "context": {
+          "client": {
+            "assigned_user_name": "admin-watson Bitnami",
+            "modified_by_name": "admin-watson Bitnami",
+            "created_by_name": "admin-watson Bitnami",
+            "id": "dbc926e0-411f-702e-b0aa-57d7c6b8eee5",
+            "name": "Salif Gassama",
+            "date_entered": "2016-09-13 09:26:00",
+            "date_modified": "2016-10-13 11:39:42",
+            "modified_user_id": "1",
+            "created_by": "1",
+            "description": "",
+            "deleted": "0",
+            "assigned_user_id": "1",
+            "salutation": "",
+            "first_name": "Salif",
+            "last_name": "Gassama",
+            "full_name": "Salif Gassama",
+            "title": "",
+            "department": "Loiret",
+            "do_not_call": "0",
+            "phone_home": "",
+            "email": "",
+            "phone_mobile": "",
+            "phone_work": "",
+            "phone_other": "",
+            "phone_fax": "",
+            "email1": "",
+            "email2": "",
+            "invalid_email": "",
+            "email_opt_out": "",
+            "primary_address_street": "",
+            "primary_address_street_2": "",
+            "primary_address_street_3": "",
+            "primary_address_city": "",
+            "primary_address_state": "",
+            "primary_address_postalcode": "",
+            "primary_address_country": "",
+            "alt_address_street": "",
+            "alt_address_street_2": "",
+            "alt_address_street_3": "",
+            "alt_address_city": "",
+            "alt_address_state": "",
+            "alt_address_postalcode": "",
+            "alt_address_country": "",
+            "assistant": "",
+            "assistant_phone": "",
+            "email_addresses_non_primary": "",
+            "birth": "1964-01-14",
+            "address": "12",
+            "country": "France",
+            "phone": "0315063626",
+            "score": "15",
+            "current_location_country": "Corée, Sud",
+            "current_location_city": "Seoul",
+            "birth_place": "Paris",
+            "accounts": [
+              {
+                "assigned_user_name": "admin-watson Bitnami",
+                "modified_by_name": "admin-watson Bitnami",
+                "created_by_name": "admin-watson Bitnami",
+                "id": "40d04232-d154-71e5-92bc-57d7c645389b",
+                "name": "corporis",
+                "date_entered": "2016-09-13 09:26:00",
+                "date_modified": "2016-09-13 09:26:00",
+                "modified_user_id": "1",
+                "created_by": "1",
+                "description": "",
+                "deleted": "0",
+                "assigned_user_id": "1",
+                "acc_number": "1553043455D",
+                "code_branch": "3142",
+                "rib": "300021553043455D56",
+                "code_bank": "30002",
+                "iban": "FR300021553043455D56",
+                "type": "compte_titre",
+                "auth_overdraft": "0",
+                "balance": "32733",
+                "acc_name": "corporis",
+                "id_client": "dbc926e0-411f-702e-b0aa-57d7c6b8eee5",
+                "s_client_s_account_name": "                                                                                                                                                                                                                                                              ",
+                "cards": [
+                  {
+                    "assigned_user_name": "admin-watson Bitnami",
+                    "modified_by_name": "admin-watson Bitnami",
+                    "created_by_name": "admin-watson Bitnami",
+                    "id": "84c34498-83d8-adea-ef55-57d7c64563eb",
+                    "name": "4011735583",
+                    "date_entered": "2016-09-13 09:26:00",
+                    "date_modified": "2016-10-19 07:55:59",
+                    "modified_user_id": "1",
+                    "created_by": "1",
+                    "description": "",
+                    "deleted": "0",
+                    "assigned_user_id": "1",
+                    "crd_number": "4011735583",
+                    "exp_date": "0017-05-15",
+                    "secu_key": "744",
+                    "status": "operating",
+                    "int_option": "1",
+                    "web_option": "0",
+                    "acc_number": "1553043455D",
+                    "opp_cause": "null",
+                    "type": "visa_electron",
+                    "out_dom_with": "1158",
+                    "lim_dom_with": "624",
+                    "out_dom_pay": "3660",
+                    "lim_dom_pay": "3511",
+                    "out_int_with": "2998",
+                    "lim_int_with": "2415",
+                    "only_withdrawal": "0",
+                    "out_int_pay": "4397",
+                    "lim_int_pay": "3593",
+                    "s_account_s_card_name": "                                                                                                                                                                                                                                                              ",
+                    "s_client_s_card_name": "                                                                                                                                                                                                                                                              "
+                  },
+                  {
+                    "assigned_user_name": "admin-watson Bitnami",
+                    "modified_by_name": "admin-watson Bitnami",
+                    "created_by_name": "admin-watson Bitnami",
+                    "id": "bcca9128-500a-a074-a5f9-57d7c6b5050d",
+                    "name": "1429518373",
+                    "date_entered": "2016-09-13 09:26:00",
+                    "date_modified": "2016-09-13 09:26:00",
+                    "modified_user_id": "1",
+                    "created_by": "1",
+                    "description": "",
+                    "deleted": "0",
+                    "assigned_user_id": "1",
+                    "crd_number": "1429518373",
+                    "exp_date": "0018-05-19",
+                    "secu_key": "4987",
+                    "status": "operating",
+                    "int_option": "0",
+                    "web_option": "1",
+                    "acc_number": "1553043455D",
+                    "opp_cause": "null",
+                    "type": "gold_card",
+                    "out_dom_with": "1987",
+                    "lim_dom_with": "7979",
+                    "out_dom_pay": "74",
+                    "lim_dom_pay": "5847",
+                    "out_int_with": "8308",
+                    "lim_int_with": "3415",
+                    "only_withdrawal": "0",
+                    "out_int_pay": "1490",
+                    "lim_int_pay": "7363",
+                    "s_account_s_card_name": "                                                                                                                                                                                                                                                              ",
+                    "s_client_s_card_name": "                                                                                                                                                                                                                                                              "
+                  }
+                ],
+                "transactions": [
+                  {
+                    "assigned_user_name": "admin-watson Bitnami",
+                    "modified_by_name": "admin-watson Bitnami",
+                    "created_by_name": "admin-watson Bitnami",
+                    "id": "25283ee1-3059-44da-6783-57d7c6dedc92",
+                    "name": "similique",
+                    "date_entered": "1984-10-01 00:00:00",
+                    "date_modified": "2016-09-13 09:26:00",
+                    "modified_user_id": "1",
+                    "created_by": "1",
+                    "description": "",
+                    "deleted": "0",
+                    "assigned_user_id": "1",
+                    "amount": "8422",
+                    "title": "similique",
+                    "type": "withdrawal",
+                    "crd_number": "4011735583",
+                    "country": "Italie",
+                    "city": "inconnu",
+                    "acc_number": "1553043455D",
+                    "s_account_s_transaction_name": "                                                                                                                                                                                                                                                              ",
+                    "s_client_s_transaction_name": "                                                                                                                                                                                                                                                              "
+                  },
+                  {
+                    "assigned_user_name": "admin-watson Bitnami",
+                    "modified_by_name": "admin-watson Bitnami",
+                    "created_by_name": "admin-watson Bitnami",
+                    "id": "8ca17de0-9aec-b4f2-931a-57d7c6d66c9f",
+                    "name": "similique",
+                    "date_entered": "1984-10-01 00:00:00",
+                    "date_modified": "2016-09-13 09:26:00",
+                    "modified_user_id": "1",
+                    "created_by": "1",
+                    "description": "",
+                    "deleted": "0",
+                    "assigned_user_id": "1",
+                    "amount": "8987",
+                    "title": "similique",
+                    "type": "withdrawal",
+                    "crd_number": "1429518373",
+                    "country": "France",
+                    "city": "inconnu",
+                    "acc_number": "1553043455D",
+                    "s_account_s_transaction_name": "                                                                                                                                                                                                                                                              ",
+                    "s_client_s_transaction_name": "                                                                                                                                                                                                                                                              "
+                  },
+                  {
+                    "assigned_user_name": "admin-watson Bitnami",
+                    "modified_by_name": "admin-watson Bitnami",
+                    "created_by_name": "admin-watson Bitnami",
+                    "id": "c2836259-5cab-b5e0-5555-57d7c6b1797e",
+                    "name": "quae",
+                    "date_entered": "1984-10-01 00:00:00",
+                    "date_modified": "2016-09-13 09:26:00",
+                    "modified_user_id": "1",
+                    "created_by": "1",
+                    "description": "",
+                    "deleted": "0",
+                    "assigned_user_id": "1",
+                    "amount": "8705",
+                    "title": "quae",
+                    "type": "withdrawal",
+                    "crd_number": "4011735583",
+                    "country": "Italie",
+                    "city": "inconnu",
+                    "acc_number": "1553043455D",
+                    "s_account_s_transaction_name": "                                                                                                                                                                                                                                                              ",
+                    "s_client_s_transaction_name": "                                                                                                                                                                                                                                                              "
+                  }
+                ]
+              }
+            ]
+          },
+          "conversation_id": "2ef7168b-45a9-4859-8286-ce9a977f63b7",
+          "system": {
+            "dialog_stack": [
+              {
+                "dialog_node": "root"
+              }
+            ],
+            "dialog_turn_counter": 1,
+            "dialog_request_counter": 1,
+            "_node_output_map": {
+              "node_2_1470297613885": [
+                0,
+                1
+              ]
+            }
+          },
+          "card": {
+            "id": "84c34498-83d8-adea-ef55-57d7c64563eb"
+          },
+          "lastOutput": [
+            "Hi Salif Gassama!",
+            "How can I help you?"
+          ]
+        },
+        "createdAt": "2016-10-20T09:53:03.521Z",
+        "updatedAt": "2016-10-20T09:53:38.829Z"
+      }
+    ],
+    "ctu": [],
+    "cturesult": [],
+    "dialog": [],
+    "logs": [
+      {
+        "id": 1,
+        "createdAt": "2016-10-19T12:44:04.441Z",
+        "updatedAt": "2016-10-19T12:44:04.441Z"
+      },
+      {
+        "id": 2,
+        "createdAt": "2016-10-19T12:44:11.377Z",
+        "updatedAt": "2016-10-19T12:44:11.377Z"
+      },
+      {
+        "client_id": "SJ9Z4Wrke",
+        "user_input": "conversation_start",
+        "output": "Hi Alain Paul!\nHow can I help you?",
+        "id": 3,
+        "createdAt": "2016-10-19T14:32:40.420Z",
+        "updatedAt": "2016-10-19T14:32:40.420Z"
+      },
+      {
+        "client_id": "SJ9Z4Wrke",
+        "user_input": "      Jjjjj",
+        "output": "[sorry]\nI can only answer questions concerning payments. (e.g. I have a problem with my card)",
+        "id": 4,
+        "createdAt": "2016-10-19T14:32:47.383Z",
+        "updatedAt": "2016-10-19T14:32:47.383Z"
+      },
+      {
+        "client_id": "HkvZ4MUJx",
+        "user_input": "conversation_start",
+        "output": "Hi Salif Gassama!\nHow can I help you?",
+        "id": 5,
+        "createdAt": "2016-10-20T09:53:07.240Z",
+        "updatedAt": "2016-10-20T09:53:07.240Z"
+      },
+      {
+        "client_id": "HkvZ4MUJx",
+        "user_input": "What is my balance",
+        "output": "okooo\nHow can I help you?",
+        "id": 6,
+        "createdAt": "2016-10-20T09:53:13.480Z",
+        "updatedAt": "2016-10-20T09:53:13.480Z"
+      },
+      {
+        "client_id": "HkvZ4MUJx",
+        "user_input": "What is my balance",
+        "output": "ok\nHow can I help you?",
+        "id": 7,
+        "createdAt": "2016-10-20T09:53:38.850Z",
+        "updatedAt": "2016-10-20T09:53:38.850Z"
+      }
+    ],
+    "mutex": [
+      {
+        "unit_test_mutex": false,
+        "id": 1,
+        "createdAt": "2016-10-19T09:25:38.589Z",
+        "updatedAt": "2016-10-24T13:28:56.925Z"
+      }
+    ],
+    "nlc": [
+      {
+        "name": "balance",
+        "type": "faq",
+        "response": "ok",
+        "id": 62,
+        "createdAt": "2016-10-20T13:11:43.419Z",
+        "updatedAt": "2016-10-20T13:11:43.419Z"
+      },
+      {
+        "name": "limits",
+        "type": "faq",
+        "response": "jjjjjjùùù",
+        "id": 63,
+        "createdAt": "2016-10-20T13:11:43.422Z",
+        "updatedAt": "2016-10-20T13:11:43.422Z"
+      },
+      {
+        "name": "international_option",
+        "type": "faq",
+        "response": "hhhhj",
+        "id": 64,
+        "createdAt": "2016-10-20T13:11:43.425Z",
+        "updatedAt": "2016-10-20T13:11:43.425Z"
+      },
+      {
+        "name": "how_block_card",
+        "type": "faq",
+        "response": "",
+        "id": 65,
+        "createdAt": "2016-10-20T13:11:43.427Z",
+        "updatedAt": "2016-10-20T13:11:43.427Z"
+      },
+      {
+        "name": "contactless_card",
+        "type": "faq",
+        "response": "",
+        "id": 66,
+        "createdAt": "2016-10-20T13:11:43.429Z",
+        "updatedAt": "2016-10-20T13:11:43.429Z"
+      },
+      {
+        "name": "systematic_authorisation",
+        "type": "faq",
+        "response": "",
+        "id": 67,
+        "createdAt": "2016-10-20T13:11:43.431Z",
+        "updatedAt": "2016-10-20T13:11:43.431Z"
+      },
+      {
+        "name": "deferred_debit",
+        "type": "faq",
+        "response": "",
+        "id": 68,
+        "createdAt": "2016-10-20T13:11:43.434Z",
+        "updatedAt": "2016-10-20T13:11:43.434Z"
+      },
+      {
+        "name": "immediate_debit",
+        "type": "faq",
+        "response": "",
+        "id": 69,
+        "createdAt": "2016-10-20T13:11:43.437Z",
+        "updatedAt": "2016-10-20T13:11:43.437Z"
+      },
+      {
+        "name": "online_payment_cancellation",
+        "type": "faq",
+        "response": "",
+        "id": 70,
+        "createdAt": "2016-10-20T13:11:43.441Z",
+        "updatedAt": "2016-10-20T13:11:43.441Z"
+      },
+      {
+        "name": "against_fraud",
+        "type": "faq",
+        "response": "",
+        "id": 71,
+        "createdAt": "2016-10-20T13:11:43.443Z",
+        "updatedAt": "2016-10-20T13:11:43.443Z"
+      },
+      {
+        "name": "outstandings",
+        "type": "faq",
+        "response": "",
+        "id": 72,
+        "createdAt": "2016-10-20T13:11:43.445Z",
+        "updatedAt": "2016-10-20T13:11:43.445Z"
+      },
+      {
+        "name": "authorized_overdraft",
+        "type": "faq",
+        "response": "",
+        "id": 73,
+        "createdAt": "2016-10-20T13:11:43.447Z",
+        "updatedAt": "2016-10-20T13:11:43.447Z"
+      },
+      {
+        "name": "order_card",
+        "type": "faq",
+        "response": "",
+        "id": 74,
+        "createdAt": "2016-10-20T13:11:43.449Z",
+        "updatedAt": "2016-10-20T13:11:43.449Z"
+      },
+      {
+        "name": "premium_card_advantages",
+        "type": "faq",
+        "response": "",
+        "id": 75,
+        "createdAt": "2016-10-20T13:11:43.451Z",
+        "updatedAt": "2016-10-20T13:11:43.451Z"
+      },
+      {
+        "name": "internet_option",
+        "type": "faq",
+        "response": "",
+        "id": 76,
+        "createdAt": "2016-10-20T13:11:43.453Z",
+        "updatedAt": "2016-10-20T13:11:43.453Z"
+      },
+      {
+        "name": "password",
+        "type": "faq",
+        "response": "",
+        "id": 77,
+        "createdAt": "2016-10-20T13:11:43.454Z",
+        "updatedAt": "2016-10-20T13:11:43.454Z"
+      },
+      {
+        "name": "price_new_card",
+        "type": "faq",
+        "response": "",
+        "id": 78,
+        "createdAt": "2016-10-20T13:11:43.456Z",
+        "updatedAt": "2016-10-20T13:11:43.456Z"
+      },
+      {
+        "name": "new_card",
+        "type": "intent",
+        "response": "",
+        "id": 79,
+        "createdAt": "2016-10-20T13:11:43.458Z",
+        "updatedAt": "2016-10-20T13:11:43.458Z"
+      },
+      {
+        "name": "pb_card",
+        "type": "intent",
+        "response": "",
+        "id": 80,
+        "createdAt": "2016-10-20T13:11:43.459Z",
+        "updatedAt": "2016-10-20T13:11:43.459Z"
+      },
+      {
+        "name": "pb_withdrawal",
+        "type": "intent",
+        "response": "",
+        "id": 81,
+        "createdAt": "2016-10-20T13:11:43.460Z",
+        "updatedAt": "2016-10-20T13:11:43.460Z"
+      }
+    ],
+    "script": [
+      {
+        "name": "withdraw",
+        "id": 1,
+        "createdAt": "2016-10-19T09:34:00.947Z",
+        "updatedAt": "2016-10-19T09:34:00.947Z"
+      }
+    ],
+    "trainingdata": [
+      {
+        "sentence": "rouge",
+        "correction": "",
+        "class_suggestion_faq": "null",
+        "confidence_class_suggestion_faq": "0",
+        "class_suggestion_intent": "null",
+        "confidence_class_suggestion_intent": "0",
+        "state": "toValidate",
+        "validate": false,
+        "type": "null",
+        "currentDate": "Wed Oct 19 2016 14:09:22 GMT+0200 (CEST)",
+        "id": 3,
+        "createdAt": "2016-10-19T12:09:55.146Z",
+        "updatedAt": "2016-10-19T12:09:55.146Z"
+      }
+    ],
+    "variable": [
+      {
+        "name": "problem_type",
+        "type": "KEYWORDS",
+        "keys": [
+          {
+            "key": "card",
+            "values": [
+              "card",
+              "credit card",
+              "visa card"
+            ]
+          },
+          {
+            "key": "check",
+            "values": [
+              "check",
+              "bank cheques",
+              "cheques"
+            ]
+          },
+          {
+            "key": "transfer",
+            "values": [
+              "transfer",
+              "bank transfer",
+              "credit transfer",
+              "bank payment",
+              "money payment",
+              "wire transfer"
+            ]
+          }
+        ],
+        "scenario": 1,
+        "id": 1,
+        "createdAt": "2016-10-19T09:34:00.975Z",
+        "updatedAt": "2016-10-19T09:34:00.975Z"
+      },
+      {
+        "name": "operation_type",
+        "type": "KEYWORDS",
+        "keys": [
+          {
+            "key": "payment",
+            "values": [
+              "payment"
+            ]
+          },
+          {
+            "key": "withdrawal",
+            "values": [
+              "withdraw",
+              "withdrawal"
+            ]
+          }
+        ],
+        "scenario": 1,
+        "id": 2,
+        "createdAt": "2016-10-19T09:34:00.976Z",
+        "updatedAt": "2016-10-19T09:34:00.976Z"
+      },
+      {
+        "name": "payment_type",
+        "type": "KEYWORDS",
+        "keys": [
+          {
+            "key": "online",
+            "values": [
+              "online"
+            ]
+          },
+          {
+            "key": "physical",
+            "values": [
+              "physical"
+            ]
+          }
+        ],
+        "scenario": 1,
+        "id": 3,
+        "createdAt": "2016-10-19T09:34:00.977Z",
+        "updatedAt": "2016-10-19T09:34:00.977Z"
+      },
+      {
+        "name": "is_france",
+        "type": "BOOL",
+        "keys": [
+          {
+            "key": "france",
+            "values": [
+              "france",
+              "paris",
+              "strasbourg"
+            ]
+          }
+        ],
+        "entities": [
+          "COUNTRY",
+          "CITY"
+        ],
+        "scenario": 1,
+        "id": 4,
+        "createdAt": "2016-10-19T09:34:00.979Z",
+        "updatedAt": "2016-10-19T09:34:00.979Z"
+      },
+      {
+        "name": "amount",
+        "type": "AMOUNT",
+        "entities": [
+          "Quantity"
+        ],
+        "scenario": 1,
+        "id": 5,
+        "createdAt": "2016-10-19T09:34:00.980Z",
+        "updatedAt": "2016-10-19T09:34:00.980Z"
+      }
+    ]
+  },
+  "schema": {
+    "branch": {
+      "name": {
+        "type": "string"
+      },
+      "values": {
+        "type": "array"
+      },
+      "scenario": {
+        "type": "integer",
+        "model": "script",
+        "foreignKey": true,
+        "alias": "scenario"
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "conversationclient": {
+      "client_id": {
+        "type": "string",
+        "unique": true,
+        "primaryKey": true
+      },
+      "workspace_id": {
+        "type": "string"
+      },
+      "context": {
+        "type": "json"
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "ctu": {
+      "default_context": {
+        "type": "json"
+      },
+      "tests": {
+        "type": "array"
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "cturesult": {
+      "passed": {
+        "type": "boolean"
+      },
+      "name": {
+        "type": "string"
+      },
+      "expected_result": {
+        "type": "string"
+      },
+      "obtained_result": {
+        "type": "string"
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "dialog": {
+      "name": {
+        "type": "string"
+      },
+      "dialog_id": {
+        "type": "string"
+      },
+      "lang": {
+        "type": "string"
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "logs": {
+      "client_id": {
+        "type": "string"
+      },
+      "user_input": {
+        "type": "string"
+      },
+      "output": {
+        "type": "string"
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "mutex": {
+      "unit_test_mutex": {
+        "type": "boolean",
+        "defaultsTo": false
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "nlc": {
+      "name": {
+        "type": "string",
+        "unique": true
+      },
+      "type": {
+        "type": "string",
+        "enum": [
+          "faq",
+          "intent"
+        ],
+        "defaultsTo": "faq"
+      },
+      "response": {
+        "type": "string",
+        "defaultsTo": ""
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "script": {
+      "name": {
+        "type": "string"
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "trainingdata": {
+      "sentence": {
+        "type": "string",
+        "unique": true
+      },
+      "correction": {
+        "type": "string",
+        "defaultsTo": ""
+      },
+      "class_suggestion_faq": {
+        "type": "string"
+      },
+      "confidence_class_suggestion_faq": {
+        "type": "string"
+      },
+      "class_suggestion_intent": {
+        "type": "string"
+      },
+      "confidence_class_suggestion_intent": {
+        "type": "string"
+      },
+      "state": {
+        "type": "string",
+        "enum": [
+          "toValidate",
+          "toTrained",
+          "alreadyTrained"
+        ],
+        "defaultsTo": "toValidate"
+      },
+      "validate": {
+        "type": "boolean",
+        "defaultsTo": false
+      },
+      "type": {
+        "type": "string",
+        "defaultsTo": "null"
+      },
+      "currentDate": {
+        "type": "string",
+        "defaultsTo": "2016-10-24T13:28:55.665Z"
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "variable": {
+      "name": {
+        "type": "string"
+      },
+      "type": {
+        "type": "string"
+      },
+      "keys": {
+        "type": "array"
+      },
+      "entities": {
+        "type": "array"
+      },
+      "scenario": {
+        "type": "integer",
+        "model": "script",
+        "foreignKey": true,
+        "alias": "scenario"
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    }
+  },
+  "counters": {
+    "branch": {
+      "id": 14
+    },
+    "conversationclient": {},
+    "ctu": {},
+    "cturesult": {},
+    "dialog": {},
+    "logs": {
+      "id": 7
+    },
+    "mutex": {
+      "id": 1
+    },
+    "nlc": {
+      "id": 81
+    },
+    "script": {
+      "id": 1
+    },
+    "trainingdata": {
+      "id": 5
+    },
+    "variable": {
+      "id": 5
+    }
+  }
+}

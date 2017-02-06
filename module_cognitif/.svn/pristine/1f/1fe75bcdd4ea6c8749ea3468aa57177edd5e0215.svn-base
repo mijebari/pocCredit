@@ -1,0 +1,24 @@
+/**
+ * Created by rlespagnol on 01/08/2016.
+ */
+var watson = require('watson-developer-cloud');
+
+module.exports = {
+    message(credentials, input, workspace_id, context, cb){
+        var conversation = watson.conversation(credentials);
+
+        conversation.message({
+            input: { text : input },
+            workspace_id: workspace_id,
+            context : context
+        }, function(err, response) {
+            if (err) {
+                sails.log(err)
+                cb(err, null)
+            } else {
+                cb(null, response)
+            }
+        });
+    }
+
+};

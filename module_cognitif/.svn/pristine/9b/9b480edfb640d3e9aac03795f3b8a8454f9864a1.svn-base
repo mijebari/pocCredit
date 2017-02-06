@@ -1,0 +1,58 @@
+/**
+ * Created by rlespagnol on 27/09/2016.
+ */
+
+module.exports = {
+    schema: true,
+
+    attributes: {
+        name: {
+            type: 'string',
+            required: true,
+            unique: true
+        },
+
+        type: {
+            type: 'string',
+            required: true,
+            enum: ['faq', 'intent'],
+            defaultsTo: 'faq'
+        },
+        toJSON() {
+            return this.toObject();
+        }
+    },
+
+    beforeUpdate: (values, next) => next(),
+    beforeCreate: (values, next) => next(),
+    
+    getTypeOfNLC(class_name, cb) {
+
+        NLC.find({
+            name: class_name
+        }).exec(function(err, res) {
+            if (err) {
+                cb(err, null);
+                return;
+            }
+            if (typeof res !== 'undefined' && res.length > 0) {
+                cb(null, res[0].type);
+
+
+            } else {
+                cb('no NLC with name ' + class_name, null);
+                return;
+
+            }
+        })
+    },
+    findAllType(cb) {
+        NLC.find().exec(function(err, res) {
+            if (err) {
+                cb(err, null);
+                return;
+            }
+            cb(null, res);
+        })
+    }
+};

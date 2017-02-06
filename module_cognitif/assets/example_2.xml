@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog xsi:noNamespaceSchemaLocation="WatsonDialogDocument_1.0.xsd"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <flow>
+        <folder label="Main">
+            <output>
+                <prompt selectionType="RANDOM">
+                    <item>
+                        Do you have a specific project or do you need cash resources ?
+                    </item>
+                </prompt>
+                <getUserInput>
+                    <search ref="project_type">
+                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.85" exactMatchFirst="true"
+                                    fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                            </customParams>
+                        </classifier>
+                    </search>
+                    <default>
+                        <output>
+                            <prompt>
+                                <item>I don't understand what you are saying. Which project is it?</item>
+                            </prompt>
+                        </output>
+                    </default>
+                </getUserInput>
+            </output>
+        </folder>
+        <folder label="Library">
+            <folder label="Live Content" id="liveContent">
+                <folder label="Project types" id="project_type">
+                    <input>
+                        <grammar>
+                            <item>equipment</item>
+                            <item>$ furniture</item>
+                        </grammar>
+                        <output>
+                            <prompt selectionType="RANDOM">
+                                <item>Equipment</item>
+                            </prompt>
+                        </output>
+                    </input>
+
+                    <default>
+                        <output>
+                            <prompt selectionType="RANDOM">
+                                <item>DEFAULT</item>
+                            </prompt>
+                        </output>
+                    </default>
+                </folder>
+            </folder>
+        </folder>
+    </flow>
+
+    <settings>
+        <setting name="USE_SPELLING_CORRECTIONS">2</setting>
+        <setting name="USE_STOP_WORDS">2</setting>
+        <setting name="USE_AUTOMATIC_STOPWORDS_DETECTION">1</setting>
+
+        <setting name="LANGUAGE" type="USER">en-US</setting>
+        <setting name="CLS_SEARCH_MODE">1</setting>
+        <setting name="CLS_MODEL">0</setting>
+        <setting name="CLS_MODELNAME">3a84dfx64-nlc-5988</setting>
+        <setting name="CLS_ENDPOINT">https://gateway.watsonplatform.net/natural-language-classifier/api</setting>
+        <setting name="CLS_USERNAME">354b4b56-5b81-44d2-ae42-67d5ca459ba8</setting>
+        <setting name="CLS_PASSWORD">oZ5WjSQZ1hdj</setting>
+        <setting name="CLS_ADVANCED_SETTINGS">true</setting>
+        <setting name="CLS_MAXNBEST">3</setting>
+        <setting name="CLS_USE_OFFTOPIC">false</setting>
+    </settings>
+</dialog>

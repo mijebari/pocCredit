@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dialog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="WatsonDialogDocument_1.1.xsd">  
+   <flow> 
+      <folder label="Main"> 
+         <output> 
+            <prompt selectionType="RANDOM"> 
+               <item>Do you enter a correct pin code ?</item>  
+               <item>Do you want to pay with a payment card ?</item>
+            </prompt>  
+            <getUserInput> 
+               <search ref="card_problem"> 
+                  <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                     <customParams>nlcmodelid=3a84d1x62-nlc-20224</customParams> 
+                  </classifier> 
+               </search>  
+               <default> 
+                  <output> 
+                     <prompt> 
+                        <item>Sorry I don't understand. Could you please rephrase it.</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <search ref="card_problem"> 
+                           <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                              <customParams>nlcmodelid=3a84d1x62-nlc-20224</customParams> 
+                           </classifier> 
+                        </search> 
+                     </getUserInput> 
+                  </output> 
+               </default> 
+            </getUserInput> 
+         </output> 
+      </folder>  
+      <folder label="Library"> 
+         <folder label="Live Content" id="liveContent"> 
+            <folder label="Problem with payment card or pin code" id="card_problem"> 
+               <input> 
+                  <grammar> 
+                     <item>pin_code_fine</item> 
+                  </grammar>  
+                  <goto ref="maximum_amount"/> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>$ (yes)</item> 
+                  </grammar>  
+                  <goto ref="maximum_amount"/> 
+               </input> 
+            </folder>  
+            <output id="maximum_amount"> 
+               <prompt> 
+                  <item>Probably, you have reached the maximum amount of payment by card. You can change this maximum amount with the mobile or web banking application. Can you access to the sopra steria banking application ?</item> 
+               </prompt>  
+               <getUserInput> 
+                  <search ref="problem_explanation"> 
+                     <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                        <customParams>nlcmodelid=3a84d1x62-nlc-20224</customParams> 
+                     </classifier> 
+                  </search>  
+                  <default> 
+                     <output> 
+                        <prompt> 
+                           <item>Sorry I don't understand. Could you please rephrase it. Probably, you have reached the maximum amount of payment by card. You can change this maximum amount with the mobile or web banking application. Can you access to the sopra steria banking application ?</item> 
+                        </prompt>  
+                        <getUserInput> 
+                           <search ref="problem_explanation"> 
+                              <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false"> 
+                                 <customParams>nlcmodelid=3a84d1x62-nlc-20224</customParams> 
+                              </classifier> 
+                           </search> 
+                        </getUserInput> 
+                     </output> 
+                  </default> 
+               </getUserInput> 
+            </output>  
+            <folder label="Problem explanation" id="problem_explanation"> 
+               <input> 
+                  <grammar> 
+                     <item>$ (no)</item>  
+                     <item>password_forgotten</item> 
+                  </grammar>  
+                  <goto ref="check_identity"/> 
+               </input>  
+               <input> 
+                  <grammar> 
+                     <item>change_limitation</item>  
+                     <item>$ (yes)</item> 
+                  </grammar>  
+                  <output> 
+                     <prompt> 
+                        <item>It is very simple : you only need to enter payment card limitation in the search bar. You can also navigate to the card contextual menu and select the payment card limitation entry. It will take effect immediatly.</item> 
+                     </prompt>  
+                     <getUserInput> 
+                        <search ref="end_messages"/> 
+                     </getUserInput> 
+                  </output> 
+               </input> 
+            </folder>  
+            <output id="check_identity"> 
+               <prompt> 
+                  <item>I can do it for you. Could you please tell me your mobile phone number, the 10 digits without spaces in between them ?</item> 
+               </prompt>  
+               <getUserInput> 
+                  <goto ref="get_phone_number"/>  
+                  <default> 
+                     <output> 
+                        <prompt> 
+                           <item>Sorry I don't understand. Could you please rephrase it. I can do it for you. Could you please tell me your mobile phone number, the 10 digits without spaces in between them ?</item> 
+                        </prompt>  
+                        <getUserInput> 
+                           <goto ref="get_phone_number"/> 
+                        </getUserInput> 
+                     </output> 
+                  </default> 
+               </getUserInput> 
+            </output>  
+            <input id="get_phone_number"> 
+               <grammar> 
+                  <item>! \d{9}</item> 
+               </grammar>  
+               <action varName="phone_number" operator="SET_TO_USER_INPUT"/>  
+               <output> 
+                  <prompt> 
+                     <item>[action->checkPhoneNumber({phone_number}, action_result)]</item> 
+                  </prompt>  
+                  <getUserInput> 
+                     <input> 
+                        <grammar> 
+                           <item>*</item> 
+                        </grammar>  
+                        <if> 
+                           <cond varName="action_result" operator="EQUALS">KO</cond>  
+                           <output> 
+                              <prompt selectionType="RANDOM"> 
+                                 <item>I didn't find this phone number {phone_number}. Please retry.</item>  
+                                 <item>Sorry,this phone number {phone_number} is not in the customer database. Please enter a correct phone number.</item>
+                              </prompt>  
+                              <getUserInput> 
+                                 <goto ref="get_phone_number"/> 
+                              </getUserInput> 
+                           </output> 
+                        </if>  
+                        <output> 
+                           <prompt> 
+                              <item>OK, thank you [firstname]. What are the 4 last digits of your payment card ?</item> 
+                           </prompt>  
+                           <getUserInput> 
+                              <goto ref="get_digits"/>  
+                              <default> 
+                                 <output> 
+                                    <prompt> 
+                                       <item>Sorry I don't understand. Could you please rephrase it. OK, thank you [firstname]. What are the 4 last digits of your payment card ?</item> 
+                                    </prompt>  
+                                    <getUserInput> 
+                                       <goto ref="get_digits"/> 
+                                    </getUserInput> 
+                                 </output> 
+                              </default> 
+                           </getUserInput> 
+                        </output> 
+                     </input> 
+                  </getUserInput> 
+               </output> 
+            </input>  
+            <input id="get_digits"> 
+               <grammar> 
+                  <item>! \d{4}</item> 
+               </grammar>  
+               <action varName="payment_card_4_last_numbers" operator="SET_TO_USER_INPUT"/>  
+               <output> 
+                  <prompt> 
+                     <item>[action->checkCardNumber({payment_card_4_last_numbers}, action_result)]</item> 
+                  </prompt>  
+                  <getUserInput> 
+                     <input> 
+                        <grammar> 
+                           <item>*</item> 
+                        </grammar>  
+                        <if> 
+                           <cond varName="action_result" operator="EQUALS">KO</cond>  
+                           <output> 
+                              <prompt selectionType="RANDOM"> 
+                                 <item>These 4 last numbers of your payment card {payment_card_4_last_numbers} are not available. Please retry.</item>  
+                                 <item>Sorry,these 4 last numbers of your payment card {payment_card_4_last_numbers} are not good. Please enter another one the 4 last digits.</item>
+                              </prompt>  
+                              <getUserInput> 
+                                 <goto ref="get_digits"/> 
+                              </getUserInput> 
+                           </output> 
+                        </if>  
+                        <output> 
+                           <prompt> 
+                              <item>How much do you need to pay in euros ?</item> 
+                           </prompt>  
+                           <getUserInput> 
+                              <goto ref="get_amount"/>  
+                              <default> 
+                                 <output> 
+                                    <prompt> 
+                                       <item>Sorry I don't understand. Could you please rephrase it. How much do you need to pay in euros ?</item> 
+                                    </prompt>  
+                                    <getUserInput> 
+                                       <goto ref="get_amount"/> 
+                                    </getUserInput> 
+                                 </output> 
+                              </default> 
+                           </getUserInput> 
+                        </output> 
+                     </input> 
+                  </getUserInput> 
+               </output> 
+            </input>  
+            <input id="get_amount"> 
+               <grammar> 
+                  <item>! \d{4}</item> 
+               </grammar>  
+               <action varName="next_payments_by_card" operator="SET_TO_USER_INPUT"/>  
+               <output> 
+                  <prompt> 
+                     <item>Your demand for a new maximum amount of payments by card is in process [action->changePaymentLimit({next_payments_by_card})]</item> 
+                  </prompt>  
+                  <getUserInput> 
+                     <input> 
+                        <grammar> 
+                           <item>*</item> 
+                        </grammar>  
+                        <output> 
+                           <prompt> 
+                              <item>@(demand_sucess)</item> 
+                           </prompt>  
+                           <getUserInput> 
+                              <search ref="end_messages"/>  
+                              <default> 
+                                 <output> 
+                                    <prompt> 
+                                       <item>Sorry I don't understand. Could you please rephrase it. Your payment limit is successfully changed.</item> 
+                                    </prompt>  
+                                    <getUserInput> 
+                                       <search ref="end_messages"/> 
+                                    </getUserInput> 
+                                 </output> 
+                              </default> 
+                           </getUserInput> 
+                        </output> 
+                     </input> 
+                  </getUserInput> 
+               </output> 
+            </input>  
+            <folder label="End messages" id="end_messages"> 
+               <input> 
+                  <grammar> 
+                     <item>I will remember this and I will do the operations.</item>  
+                     <item>You have been helpfull and efficient.</item>
+                     <item>You are incredible !</item>
+                     <item>$ Thank you</item>
+                     <item>$ goodbye</item>
+                     <item>$ thanks</item>
+                     <item>$ thanks a lot</item>
+                     <item>$ incredible</item>
+                     <item>$ thx</item>
+                  </grammar>  
+                  <output> 
+                     <prompt selectionType="RANDOM"> 
+                        <item>Good bye [firstname]. I am happy to be of service. Please, do not forget to post your feedback on the facebook page of soprasteria universal bank. [action->endConversation()]</item>  
+                        <item>It was a real pleasure to help you [firstname], see you next time. You can post your feedback on the facebook page of soprasteria universal bank. [action->endConversation()]</item>
+                        <item>Fell free to contact me if you have new needs [firstname] and post your feedback on the facebook page of soprasteria universal bank.[action->endConversation()]</item>
+                     </prompt>  
+                     <getUserInput> 
+                        <input/> 
+                     </getUserInput> 
+                  </output> 
+               </input> 
+            </folder> 
+         </folder> 
+      </folder> 
+   </flow>  
+   <entities> 
+      <entity name="yes"> 
+         <value name="yes"> 
+            <grammar> 
+               <item>yes</item>  
+               <item>correct</item>
+               <item>right</item>
+               <item>yeah</item>
+               <item>that's right</item>
+               <item>true</item>
+               <item>affirmative</item>
+            </grammar> 
+         </value> 
+      </entity>  
+      <entity name="no"> 
+         <value name="no"> 
+            <grammar> 
+               <item>no</item>  
+               <item>wrong</item>
+               <item>negative</item>
+               <item>no way</item>
+               <item>not at all</item>
+               <item>absolutely not</item>
+            </grammar> 
+         </value> 
+      </entity> 
+   </entities>  
+   <variables> 
+      <var_folder name="Home"> 
+         <var name="total_of_previous_payments" type="NUMBER" initValue="0" description="the sum of the payments done by card during the current period"/>  
+         <var name="max_amount_of_payments_by_card" type="NUMBER" initValue="0" description="the maximum amount allowed to payments by card during a period"/>  
+         <var name="next_payments_by_card" type="TEXT" initValue="0" description="the next payments by card that the customer will have to do"/>  
+         <var name="action_request" type="TEXT" initValue="none" description="Internal : action required from Bluemix Tier to Excel Tier"/>  
+         <var name="action_result" type="TEXT" initValue="Ok" description="Internal : result of action done by Excel Tier transmitted to Bluemix Tier"/>  
+         <var name="List_of_inputs" type="TEXT" initValue="LoI00" description="Internal : the id of the list of the possibilities for the next input"/>  
+         <var name="phone_number" type="TEXT" initValue="102030405" description="the mobile phone number of the customer"/>  
+         <var name="device_id" type="TEXT" description="id of the customer's device"/>  
+         <var name="customer_name" type="TEXT" description="the complete name like Mr Adam Smith"/>  
+         <var name="IVA_name" type="TEXT" initValue="James Donb" description="the name of the Intelligent Virtual Assistant depending on the voice (male, female, acccent) and/or customer preference"/>  
+         <var name="account_manager_name" type="TEXT" initValue="my account manager" description="the complete name of the account manager"/>  
+         <var name="payment_card_4_last_numbers" type="TEXT" initValue="1234" description="the four last numbers of the payment's card"/> 
+      </var_folder> 
+   </variables>  
+   <settings> 
+      <setting name="USE_SPELLING_CORRECTIONS">2</setting>  
+      <setting name="USE_STOP_WORDS">2</setting>  
+      <setting name="USE_AUTOMATIC_STOPWORDS_DETECTION">1</setting>  
+      <setting name="LANGUAGE" type="USER">en-US</setting>  
+      <setting name="CLS_SEARCH_MODE">0</setting>  
+      <setting name="CLS_MODEL">0</setting>  
+      <setting name="CLS_MODELNAME">3a84d1x62-nlc-20224</setting>  
+      <setting name="CLS_ENDPOINT">https://gateway.watsonplatform.net/natural-language-classifier/api</setting>  
+      <setting name="CLS_USERNAME">83c61bbd-6c2e-4a92-b924-807e321afcb4</setting>  
+      <setting name="CLS_PASSWORD">YOda0hQRbiJ8</setting>  
+      <setting name="CLS_ADVANCED_SETTINGS">true</setting>  
+      <setting name="CLS_MAXNBEST">3</setting>  
+      <setting name="CLS_USE_OFFTOPIC">false</setting> 
+   </settings>  
+   <specialSettings> 
+      <specialSetting label="DNR Join Statement"> 
+         <variations/> 
+      </specialSetting> 
+   </specialSettings> 
+</dialog>

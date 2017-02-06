@@ -1,0 +1,55 @@
+/**
+ * Created by rlespagnol on 24/05/2016.
+ */
+
+var watson = require('watson-developer-cloud');
+var _ = require('lodash');
+
+module.exports = {
+    keywords(text, cb){
+        CredentialService.getAlchemyAPIKey(function (e, credentials) {
+            var alchemy = watson.alchemy_language(credentials);
+            var params = {
+                text: text
+            };
+            alchemy.keywords(params, function (err, result) {
+                var map = [];
+                if (err)
+                    sails.log('error:' + err);
+                else {
+                    map = _.map(result.keywords, 'text');
+                }
+                //sails.log(JSON.stringify(result, null, 2));
+                cb(err, map);
+            });
+        })
+    },
+
+    entities(text, cb){
+        CredentialService.getAlchemyAPIKey(function (e, credentials) {
+            sails.log(credentials)
+            var alchemy = watson.alchemy_language(credentials);
+            var params = {
+                text: text
+            };
+            alchemy.entities(params, function (err, result) {
+                var map = [];
+                if (err)
+                    sails.log('error:' + JSON.stringify(err));
+                else {
+                    _.each(result.entities, function (entity) {
+                        var obj = {
+                            type: entity.type,
+                            text: entity.text
+                        }
+                        map.push(obj)
+                    });
+                }
+                //sails.log(JSON.stringify(result, null, 2));
+                cb(err, map);
+            });
+        });
+    },
+
+
+}

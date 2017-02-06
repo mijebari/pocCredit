@@ -1,0 +1,64 @@
+extends ../full_layout_training
+
+
+
+
+block content
+  div.col-md-3.options
+    table
+      tr
+        td.td-menu
+          button#generateCSVFAQ.btn-default
+            span.glyphicon.glyphicon-download-alt
+            |  Generate FAQ CSV
+      tr
+        td.td-menu
+          button#generateCSVIntent.btn-default 
+            span.glyphicon.glyphicon-download-alt
+            |  Generate Conversation CSV
+      tr
+        td.td-menu
+      tr
+        td.td-menu
+          button.btn-danger.deleteDataNlcTrained
+            span.glyphicon.glyphicon-trash
+            |  Delete all intentions
+
+  div.col-md-8
+    h3.title-page Intentions
+    ul(style="padding-bottom:20px").nav.nav-tabs
+      li(role='presentation' , class=(type == 'faq') ? 'active' : 'inactive')
+        a(href='./nlcTrained?type=faq') FAQ
+      li(role='presentation' , class=(type == 'intent') ? 'active' : 'inactive')
+        a(href='./nlcTrained?type=intent') Intent Conversation
+      li(role='presentation' ,class=(type == 'all') ? 'active' : 'inactive')
+        a(href='./nlcTrained?type=all') All
+    div.tab-content
+      table#tableTraining.table.table-striped
+        thead
+          tr
+            th.hide-information ID
+
+            th.th-center
+              p Date
+            th.th-center
+              p Sentence
+            th.th-center
+              p Category
+            th
+              p Delete
+
+
+        tbody
+          each val in training
+            if type=='all' || val.type==type
+              tr
+                td.hide-information=val.id
+                td #{moment(val.currentDate).format('DD/MM')}
+                td(data-toggle='modal', data-target='#sentenceChangeModal', data-whatever=val.sentence ,data-whatever2=val.id )=val.sentence
+                td=val.correction            
+                td
+                  button.btn.btn-warning.btn-xs.btn-rounded.del-training-data
+                    span.glyphicon.glyphicon-remove
+
+  div.col-md-1

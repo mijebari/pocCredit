@@ -1,0 +1,70 @@
+.btn-rounded{
+	    border-radius: 25px;
+
+}
+
+.th-center{
+text-align:center;
+}
+
+.thead-colored{
+	background-color:#4e5d6c;
+}
+.th-empty{
+visibility: hidden;
+}
+.td-menu{
+	padding-bottom: 2px;
+}
+
+.body-frame{
+	 padding-top: 0px; 
+}
+.btn-underFrame-little{
+
+	width:24%;
+}
+.btn-underFrame-tall{
+
+	width:70%;
+}
+.frame-size{
+
+
+}
+.div-tableTraining{
+		padding-top:50px;
+
+
+}
+.options-frame{
+	
+}
+.scroll-content{
+    font-size: 12px;
+max-height:300px;
+    overflow-x: auto;
+
+}
+.th-center{
+	text-align:"center";
+}
+
+.hide-information{
+	display:none;
+}
+.inactive{
+
+	border-bottom: 1px solid #4e5d6c;
+}
+.title-page{
+
+	text-align:center;
+	color:white;
+	padding-bottom:30px;
+}
+.nlc-result{
+	margin: 3px;
+	padding:3px;
+display: inline-block;
+}

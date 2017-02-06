@@ -1,0 +1,223 @@
+extends ../full_layout
+
+mixin accordion(name, id, question)
+    - var _id = '#' + id
+    div.panel.panel-default
+        div.panel-heading
+            h4.panel-title
+                a(role="button", data-toggle="collapse", data-parent="#accordion", href=_id, aria-expanded="false", aria-controls=name) #{name}
+        div(id=id, class="panel-collapse collapse")
+            div.panel-body
+                a.question(href="#") #{question}
+
+mixin inputField(id)
+    div.input-group
+        input(id="field_" + id, type='text').form-control
+        span.input-group-btn
+            button(id="button_"+id,type='button', class="btn btn-default") Save
+
+
+block content
+    div.container-fluid
+        div.col-md-4.options
+          form.form-horizontal
+            .alert.alert-warning.warning-message.hidden(role='alert')
+                | Reload the conversation to see your modifications
+            div
+                div.row
+                    p
+                        strong Choose the client
+                    div.form-group.col-xs-6
+                        select.form-control.input-sm#users-select
+                          option(value="0") Alain Paul
+                          option(value="1") Stéphane Berger
+                          option(value="2") Patrick Meyer
+                          option(value="3") Christophe Husson
+                          option(value="4") Rémy Lespagnol
+                          option(value="5") Salif Gassama
+                          option(value="6") Martin Meffre
+                          option(value="7") Philippe Serafin
+                          option(value="8") Ronan Lucas
+
+                div.row
+                    p
+                        strong Client
+                    div.col-md-8
+                        table.table.table-user-information
+                          tbody
+                            tr
+                              td Name:
+                              td
+                                span#name
+                            tr
+                              td Phone number:
+                              td
+                                span#phone
+                            tr
+                              td Date of Birth:
+                              td
+                                span#birth
+                            tr
+                              td City of Birth:
+                              td
+                                span#current_location_city
+                            tr
+                            tr
+                              td Home Address:
+                              td
+                                span#address
+                            tr
+                              td Balance:
+                              td
+                                span#balance
+
+                div.row
+                    a.btn.btn-default(role='button', data-toggle='collapse', href='#details', aria-expanded='false', aria-controls='details')
+                      | Details
+
+                div.row
+                    div.collapse#details
+                        div
+                            div.row
+                                p
+                                    strong Status
+                                    div.form-group.col-xs-6
+                                      select.form-control.input-sm#status
+                                        option(value="operating") Operating
+                                        option(value="opposition") Opposition
+                                        option(value="blocked_card") Blocked card
+                                        option(value="expired") Expired
+                            div.row
+                                p
+                                  strong Options
+                                div.col-xs-6
+                                  p International option
+                                  label.switch
+                                    input#int_option(type='checkbox')
+                                    .slider
+                                div.col-xs-6
+                                  p Web option
+                                  label.switch
+                                   input#web_option(type='checkbox')
+                                   .slider
+                                div.row
+                                p
+                                    strong Withdrawal
+                                div.col-xs-6
+                                  | Domestic balance
+                                  br
+                                  +inputField("out_dom_with")
+                                div.col-xs-6
+                                  | Domestic limit
+                                  br
+                                  +inputField("lim_dom_with")
+                                div.col-xs-6
+                                  | International balance
+                                  br
+                                  +inputField("out_int_with")
+                                div.col-xs-6
+                                  | International limit
+                                  br
+                                  +inputField("lim_int_with")
+                            div.row
+                                 br
+                                 p
+                                    strong Payment
+                                 div.col-xs-6
+                                   | Domestic balance
+                                   br
+                                   +inputField("out_dom_pay")
+                                 div.col-xs-6
+                                   | Domestic limit
+                                   br
+                                   +inputField("lim_dom_pay")
+                                 div.col-xs-6
+                                   | International balance
+                                   br
+                                   +inputField("out_int_pay")
+                                 div.col-xs-6
+                                   | International limit
+                                   br
+                                   +inputField("lim_int_pay")
+
+        div.col-md-6.chat
+            div.center
+                //-div.spinner(style="display:none")
+                //-        div.bounce1
+                //-        div.bounce2
+                //-        div.bounce3
+                div.preloader(style="display:none")
+                        i .
+                        i .
+                        i .
+                button.btn.btn-default#start
+                    i.fa.fa-power-off
+                    | Start conversation
+            div.commentArea.panel
+
+            div.messageContainer
+                div.input-group
+                    input.form-control#question(placeholder="Ask question...")
+                    span.input-group-btn
+                        button.btn.btn-default#send
+                            i.fa.fa-paper-plane-o.fa-lg(aria-hidden="true")
+                        button.btn.btn-default.mic.demo_btn
+                            i.fa.fa-microphone.fa-lg(aria-hidden="true")
+                        button.btn.btn-default#resetCookies
+                            i.fa.fa-refresh.fa-lg(aria-hidden="true")
+
+
+        div.col-md-2
+          //-div.row.text-right
+          //-  img.iva(src="/images/Image4.png", width="150px")
+          div.row
+            label.switch.col-xs-2
+               input#micro(type='checkbox')
+               .slider
+            p.col-xs-6 Microphone
+          div.row
+            label.switch.col-xs-2
+               input#tts(type='checkbox')
+               .slider
+            p.col-xs-6 Voice
+          div.row
+            label.switch.col-xs-2
+               input#ginger(type='checkbox')
+               .slider
+            p.col-xs-6 Grammar Checker
+
+          div.push-50
+          div.row
+            button.btn.btn-default(data-toggle="modal", data-target="#feedbackModal") Send Feedback
+              
+
+
+        div.audioParent
+            audio.audio
+                | Your browser don't support the audio speak
+    
+    .modal.fade#feedbackModal
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+            h4.modal-title Send your feedback
+          form.form-horizontal.feedback(role='form', method='post')
+            .modal-body
+              .form-group
+                label.col-sm-3.control-label(for='email') Email
+                .col-sm-9
+                    input#email.form-control(type='email', name='email', placeholder='john.doe@soprasteria.com', value=user.email required)
+              .form-group
+                  label.col-sm-3.control-label(for='expect') Expectation
+                  .col-sm-9
+                    textarea.form-control(rows='4', name='expect')
+              .form-group
+                label.col-sm-3.control-label(for='comment') Comment
+                .col-sm-9
+                  textarea.form-control(rows='4', name='comment')
+              .form-group
+                .col-sm-9.col-sm-offset-3
+            .modal-footer
+              button.btn.btn-default(type='button', data-dismiss='modal') Close
+              input#submit.send.btn.btn-primary(name='submit', type='submit', value='Send',data-loading-text="Sending...")

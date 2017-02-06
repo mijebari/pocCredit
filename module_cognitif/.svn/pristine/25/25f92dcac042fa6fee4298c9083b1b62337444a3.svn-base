@@ -1,0 +1,117 @@
+/**
+ * TrainingData.js
+ *
+ * @description :: TODO: You might write a short summary of how this model works and what it represents here.
+ * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
+ */
+module.exports = {
+    schema: true,
+
+    attributes: {
+        sentence: {
+            type: 'string',
+            required: true,
+            unique: true
+
+        },
+        correction: {
+            type: 'string',
+            defaultsTo: ""
+        },
+        class_suggestion_faq: {
+            type: 'string',
+        },
+        confidence_class_suggestion_faq: {
+            type: 'string',
+        },
+        class_suggestion_intent: {
+            type: 'string',
+        },
+        confidence_class_suggestion_intent: {
+            type: 'string',
+        },
+        state: {
+            type: 'string',
+            enum: ['toValidate', 'toTrained', 'alreadyTrained'],
+            required: true,
+            defaultsTo: 'toValidate'
+
+        },
+        validate: {
+            type: 'boolean',
+            required: true,
+            defaultsTo: false
+        },
+        type: {
+            type: 'string',
+            required: true,
+            defaultsTo: "null"
+        },
+        currentDate: {
+            type: 'string',
+            defaultsTo: new Date()
+        },
+
+        toJSON() {
+            return this.toObject();
+        }
+
+    },
+    newNLCData(sentence, class_name, type) {
+        if (!type || !sentence || !class_name) {
+            sails.log("erreur nlc newdata ");
+            sails.log(sentence);
+            sails.log(class_name);
+            sails.log(type);
+
+            return;
+        } else {
+
+
+            var sentence2 = sentence.replace(/'/g, "").replace(/"/g, "");
+            var class_name2 = class_name.replace(/'/g, "").replace(/"/g, "");
+            TrainingData.create({
+                sentence: sentence2,
+                class_suggestion_faq: 'null',
+                confidence_class_suggestion_faq: '0',
+                class_suggestion_intent: 'null',
+                confidence_class_suggestion_intent: '0',
+                currentDate: new Date(),
+                type: type,
+                state: 'toTrained',
+                validate: true,
+                correction: class_name2
+
+            }).exec(function (err, results) {
+                if (err) {
+                    sails.log(err)
+                    sails.log('failed to add NLC :' + sentence + ' = ' + class_name);
+
+                    return;
+                }
+                return;
+            });
+
+        }
+
+    },
+    newTraining(sentence, class_suggestion_faq, confidence_class_suggestion_faq, class_suggestion_intent, confidence_class_suggestion_intent, cb) {
+        var sentence2 = sentence.replace(/'/g, "").replace(/"/g, "");
+        TrainingData.create({
+            sentence: sentence2,
+            class_suggestion_faq: class_suggestion_faq,
+            confidence_class_suggestion_faq: confidence_class_suggestion_faq.substring(0, 4),
+            class_suggestion_intent: class_suggestion_intent,
+            confidence_class_suggestion_intent: confidence_class_suggestion_intent.substring(0, 4),
+            currentDate: new Date()
+        }).exec(function (err, results) {
+            if (err) {
+                cb(err, null);
+                return;
+            }
+            cb(null, results)
+
+        });
+
+    }
+};

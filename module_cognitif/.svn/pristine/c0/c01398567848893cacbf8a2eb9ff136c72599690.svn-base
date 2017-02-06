@@ -1,0 +1,16 @@
+/**
+ * Created by rlespagnol on 13/09/2016.
+ */
+
+const sorry = [
+    'Sorry, I’m afraid I don’t follow you.',
+    'Excuse me, could you repeat please ?',
+    'I’m sorry, I don’t understand. Could you say it again?',
+    'I’m confused. Could you tell me again?',
+];
+
+module.exports = {
+    getRandomSorry(){
+       return sorry[Math.floor(Math.random()*sorry.length)];
+    }
+}

@@ -1,0 +1,15 @@
+extends ../full_layout
+
+block content
+
+    //-span#valid_indicator
+    .container
+      button.btn.btn-success#submit
+       i.fa.fa-floppy-o
+       | Save
+      a(href="/unit_test/test")
+       button.btn.btn-warning
+        i.fa.fa-check-circle-o
+        | Run tests page
+      #editor_ctx_holder
+      #editor_unit_test_holder

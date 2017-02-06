@@ -1,0 +1,78 @@
+/**
+ * Created by rlespagnol on 30/09/2016.
+ */
+const shortid = require('shortid');
+const fs = require('fs');
+
+module.exports = {
+    index(req, res){
+        req.file('test_cases').upload({maxBytes: Number.MAX_VALUE}, function (err, uploadedFiles) {
+            if (err) return res.send(500, err);
+            if (uploadedFiles.length === 0) return res.badRequest(null, {message: 'You should send a json file with parameter test_cases    '});
+            if (uploadedFiles[0] != null && uploadedFiles[0] != undefined) {
+                var filePath = uploadedFiles[0].fd;
+                fs.readFile(filePath, 'utf8', function (err, contents) {
+                    if (err) throw err;
+                    var test_cases = JSON.parse(contents);
+                    var clients = [];
+
+                    /**
+                     * For each test cases, create a context and execute scenario
+                     */
+                    async.series([
+                        function(callback){
+                          CtuService.updateContext(test_cases.default_case, function(err, result){
+                              callback(err, null);
+                          })
+                        },
+                        function (callback) {
+                            async.mapSeries(test_cases.tests, function (test, _callback) {
+                                    /**
+                                     * Save the client_id to save the context
+                                     * Because, all test_cases can have different scenario
+                                     */
+                                    const client_id = shortid.generate();
+                                    clients.push(client_id);
+
+                                    /**
+                                     * Init the client's context with the test cases context
+                                     */
+                                    CtuService.initContext(client_id, test.context, function (err, result) {
+                                        _callback(err, result)
+                                    })
+                                },
+                                /**
+                                 *  When all context are ok, execute the scenario.
+                                 */
+                                function (err, results) {
+                                    if (err) return res.json(err);
+                                    callback(err, null)
+                                });
+                        },
+                        function (callback) {
+                            var wrapper = test_cases.tests.map(function (value, index) {
+                                return {index: index, value: value};
+                            })
+
+                            // Launch all tests cases
+                            async.map(wrapper, function (item, _callback) {
+                                var id = clients[item.index];
+                                var test = item.value;
+
+                                CtuService.execute(id, test.inputs, test.result, test.name, function (err, result) {
+                                    _callback(err, result)
+                                })
+                            }, function (err, results) {
+                                if (err) return res.json(err);
+                                callback(err, results)
+                            });
+                        }
+                    ], function (__e, __r) {
+                        return res.json(__r);
+                    });
+
+                });
+            }
+        });
+    }
+}

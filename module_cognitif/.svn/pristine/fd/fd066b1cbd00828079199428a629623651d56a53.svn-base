@@ -1,0 +1,219 @@
+/**
+ * Created by rlespagnol on 19/07/2016.
+ */
+
+const _ = require('lodash');
+
+const holeScript = {
+    payment_type: {
+        type: 'KEYWORDS',
+        keys: [
+            {
+                key: 'card',
+                values: ['card', 'credit card', 'visa card']
+            },
+            {
+                key: 'check',
+                values: ['check', 'bank cheques', 'cheques']
+            },
+            {
+                key: 'transfer',
+                values: ['transfer', 'bank transfer', 'credit transfer', 'bank payment', 'money payment', 'wire transfer']
+            }
+        ]
+    },
+    card_operation_type: {
+        type: 'KEYWORDS',
+        keys: [
+            {
+                key: 'payment',
+                values: ['payment']
+            }, {
+                key: 'withdraw',
+                values: ['withdraw', 'withdrawal']
+            }
+        ]
+    },
+    is_france: {
+        type: 'BOOL',
+        entity: 'COUNTRY',
+        keys: [
+            {
+                key: 'france',
+                values: ['france']
+            }
+        ]
+    },
+    amount: {
+        type : 'AMOUNT',
+        entity : 'Quantity',
+    }
+};
+
+const context = [
+    'payment_type',
+    'card_operation',
+    'is_france'
+];
+
+const dialog_id = '25fde312-6bc1-4b72-b931-8a6094653377';
+
+
+module.exports = {
+    hole(req, res){
+        sails.log('============= Call Webservice - ' + new Date().toISOString().substring(0, 20) + ' ==============')
+
+        const client_id = req.param('client_id');
+        const conversation_id = req.param('conversation_id');
+        const user_input = req.param('user_input');
+
+        const credentials = CredentialService.getCredentials('en');
+
+        // Do the processing
+        // Use alchemyAPI
+        async.waterfall([
+            function (callback) {
+                var profilesToUpdate = findVariableToUpdate(user_input, holeScript);
+
+                // AlchemyLanguageService.keywords(user_input, function (keyErr, keywords) {})
+
+                AlchemyLanguageService.entities(user_input, function (entitiesErr, entities) {
+
+                    profilesToUpdate = _.concat(profilesToUpdate, findEntityToUpdate(entities));
+
+                    callback(null, profilesToUpdate, entities);
+
+                })
+            },
+            function (profilesToUpdate, entities, callback) {
+                async.map(profilesToUpdate, function (profile, callback) {
+                        DialogService.setProfile(credentials, dialog_id, client_id, profile, function (err, profileRes) {
+                            if (err) sails.log(err);
+                            sails.log("Update variable " + profile.name.toUpperCase() + ' with value ' + profile.value.toString().toUpperCase());
+                            callback(err, profileRes);
+                        })
+                    },
+                    function (err, results) {
+                        if (err) {
+                            sails.log(err)
+                            callback(err, null)
+                        }
+                        // if (client_id) {
+                        //     DialogService.getProfiles(credentials, dialog_id, client_id, function (err, profiles) {
+                        //         if (err) sails.log(err);
+                        //         console.log(profiles)
+                        //     })
+                        // }
+
+                        DialogService.converse(credentials, dialog_id, conversation_id, client_id, user_input, function (err, result) {
+                            if (err) {
+                                sails.log(err);
+                                callback(err, null)
+                            }
+                            callback(null, {
+                                dialog: result,
+                                profile: profilesToUpdate,
+                                entities: entities,
+                            })
+                        });
+                    });
+            }
+        ], function (serErr, serRes) {
+            sails.log('============= End Webservice - ' + new Date().toISOString().substring(0, 20) + ' ==============')
+
+            if (serErr) {
+                sails.log(serErr);
+                return res.json(serErr);
+            }
+            return res.json(serRes);
+        });
+    }
+};
+
+function findEntityToUpdate(entities) {
+    var result = [];
+
+    var script = _.pickBy(holeScript, function (value) {
+        return value.hasOwnProperty('entity');
+    })
+
+    for (var i in entities) {
+        var entity = entities[i];
+        var scriptEntity = _.pickBy(script, function (value) {
+            return value.entity.toUpperCase() === entity.type.toUpperCase();
+        });
+        for (first in scriptEntity) break;
+        var currentVariable = first;
+
+        scriptEntity = _.toArray(scriptEntity);
+        scriptEntity = _.head(scriptEntity);
+
+
+
+        if (typeof scriptEntity === 'undefined' || scriptEntity.length === 0) continue;
+
+        if (scriptEntity.type === 'BOOL') {
+            for (var j in scriptEntity.keys) {
+                var key = scriptEntity.keys[j];
+                for (var k in key.values) {
+                    var value = key.values[k];
+                    if (value.toUpperCase() === entity.text.toUpperCase()) {
+                        result.push({
+                            name: currentVariable,
+                            value: 'true'
+                        })
+                    }
+                }
+            }
+        }
+        else if (scriptEntity.type == 'AMOUNT'){
+            var _entity = entity.text;
+            sails.log(_entity)
+            var amount = Number(_entity.replace(/[^0-9\.]+/g,""));
+            sails.log(amount)
+            result.push({
+                name : currentVariable,
+                value : amount
+            })
+        }
+
+    }
+    result = _.uniqBy(result, 'name');
+    return result;
+}
+
+function findVariableToUpdate(user_input, holeScript) {
+    var result = [];
+
+    var script = _.pickBy(holeScript, function (value) {
+        return !value.hasOwnProperty('entity');
+    })
+
+    for (var variable in script) {
+        if (script.hasOwnProperty(variable) && script[variable].hasOwnProperty('keys')) {
+            var keys = script[variable].keys;
+            for (var i in keys) {
+                for (var j in keys[i].values) {
+                    var value = keys[i].values[j];
+                    if (user_input.toUpperCase().indexOf(value.toUpperCase()) > -1) {
+                        //sails.log("Update variable " + variable.toUpperCase() + ' with value ' + value.toUpperCase());
+
+                        var key = keys[i].key;
+                        if (script[variable].type == 'BOOL') {
+                            key = 'true'
+                        }
+
+                        var res = {
+                            name: variable,
+                            value: keys[i].key
+                        };
+                        result.push(res);
+                    }
+                }
+            }
+        }
+    }
+    result = _.uniqBy(result, 'name');
+
+    return result;
+}

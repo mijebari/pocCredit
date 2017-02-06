@@ -1,0 +1,2123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog xsi:noNamespaceSchemaLocation="WatsonDialogDocument_1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <flow>
+        <folder label="Main">
+             <output>
+                <prompt selectionType="RANDOM">
+                    <item>
+                        Do you have a specific project or do you need cash resources ?
+                    </item>
+                </prompt>
+                 <action varName="current_state" operator="SET_TO">project_type</action>
+                 <getUserInput> 
+                     <search ref="project_type">
+                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                            </customParams>
+                        </classifier>
+                     </search>
+                     <search ref="questions">
+                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.70" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                            </customParams>
+                        </classifier>
+                     </search>
+                     <default> 
+                         <if>
+                            <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                            <goto ref="get_sentence" />
+                        </if>
+                        <output>
+                            <prompt>
+                                <item>I don't understand what you are saying. Do you have a specific project or do you need cash resources ?</item>
+                            </prompt>
+                            <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                            <getUserInput>
+                                 <search ref="project_type">
+                                     <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                        <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                        </customParams>
+                                    </classifier>
+                                 </search>
+                                 <search ref="questions">
+                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.70" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                        <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                        </customParams>
+                                    </classifier>
+                                 </search>
+                            </getUserInput>
+                        </output>
+                    </default>
+                 </getUserInput>
+            </output> 
+        </folder>
+        <folder label="Library">
+            <folder label="Live Content" id="liveContent">
+                    <folder label="Project types" id="project_type">
+                        <action varName="current_state" operator="SET_TO">project_type</action> 
+                        <action varName="out_of_scope_count" operator="SET_TO">0</action>
+                        <input>
+                            <grammar>                                
+                                <item>car_acquisition</item>
+                                <item>$ buy a car</item>
+                                <item>$ car acquisition</item>
+                                <item>$ rent a car</item>
+                            </grammar>
+                            <action varName="hire_specific_project" operator="SET_TO">car</action>
+                            <action varName="is_specific_project" operator="SET_TO_YES"/>
+                            <goto ref="three_types_loan"/>
+                        </input>
+                        <input>
+                            <grammar>                                
+                                <item>$ motorcycle</item>
+                                <item>$ scooter</item>
+                                <item>$ minibike</item>
+                                <item>$ buy a motorcycle</item>
+                                <item>$ rent a motorcycle</item>
+                                <item>motorcycle</item>
+                            </grammar>
+                            <action varName="hire_specific_project" operator="SET_TO">motorcycle</action>
+                            <action varName="is_specific_project" operator="SET_TO_YES"/>
+                            <goto ref="three_types_loan"/>
+                        </input>
+                        <input>
+                            <grammar>                                
+                                <item>equipment</item>
+                                <item>$ furniture</item>
+                                <item>$ domestic applicance</item>
+                                <item>$ computer equipment</item>
+                                <item>$ mower</item>
+                            </grammar>
+                            <action varName="hire_specific_project" operator="SET_TO">
+                                equipment
+                            </action>
+                            <action varName="is_specific_project" operator="SET_TO_YES"/>
+                            <goto ref="three_types_loan"/>
+                        </input>
+                        <input>
+                            <grammar>                                                                
+                                 <item>$ travel</item>
+                                <item>$ trip</item>
+                                <item>$ excursion</item>
+                                <item>$ touring</item>
+                                <item>travel</item>
+                            </grammar>
+                            <action varName="other_specific_project" operator="SET_TO">travel</action>
+                            <action varName="is_specific_project" operator="SET_TO_YES"/>
+                            <goto ref="two_types_loan"/>
+                        </input>
+                        <input>
+                            <grammar>                                                                
+                                <item>works</item>
+                                <item>$ repair works</item>
+                                <item>home repairing</item>
+                                <item>house repairing</item>
+                            </grammar>
+                            <action varName="other_specific_project" operator="SET_TO">works</action>
+                            <action varName="is_specific_project" operator="SET_TO_YES"/>
+                            <goto ref="two_types_loan"/>
+                        </input>
+                         <input>
+                            <grammar>                                                                
+                                <item>student_loan</item>
+                                <item>$ student loan</item>  
+                            </grammar>
+                            <action varName="other_specific_project" operator="SET_TO">student loan</action>
+                            <action varName="is_specific_project" operator="SET_TO_YES"/>
+                            <goto ref="two_types_loan"/>
+                        </input>
+                        <input>
+                            <grammar>                                                                
+                                <item>cash_resources</item>
+                                <item>$ cash resources</item>     
+                            </grammar>
+                            <action varName="other_specific_project" operator="SET_TO">cash resources</action>
+                            <action varName="is_specific_project" operator="SET_TO_YES"/>
+                            <goto ref="two_types_loan"/>
+                        </input>
+                        <input>
+                            <grammar>                                
+                                <item>is_specific_project</item>
+                                <item>$ specific project</item>                
+                                <item> $ specific one</item>
+                            </grammar>
+                            <action varName="is_specific_project" operator="SET_TO_YES"/>
+                            <output>
+                                <prompt selectionType="RANDOM">
+                                    <item>Which specific project do you have ? </item>
+                                    <item>Which project is it ? </item>
+                                    <item>Which one ?</item>
+                                </prompt>
+                                <getUserInput>
+                                    <search ref="project_type">
+                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                            </customParams>
+                                        </classifier>
+                                     </search>
+                                     <search ref="questions">
+                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                            </customParams>
+                                        </classifier>
+                                     </search>
+                                    <default> 
+                                         <if>
+                                            <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                            <goto ref="get_sentence" />
+                                        </if>
+                                        <output>
+                                            <prompt>
+                                                <item>I don't understand what you are saying. Which specific project is it ?</item>
+                                            </prompt>
+                                            <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                            <getUserInput>
+                                                 <search ref="project_type">
+                                                     <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                        <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                        </customParams>
+                                                    </classifier>
+                                                 </search>
+                                                 <search ref="questions">
+                                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.70" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                        <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                        </customParams>
+                                                    </classifier>
+                                                 </search>
+                                            </getUserInput>
+                                        </output>
+                                    </default>
+                                </getUserInput>
+                            </output>
+                        </input>
+                    </folder>
+                    <output id="two_types_loan">
+                        <action varName="out_of_scope_count" operator="SET_TO">0</action>
+                        <action varName="current_state" operator="SET_TO">loan_type</action>  
+                        <prompt>
+                            <item>
+                                For this kind of project, we can suggest you two types of financing: installment credit or revolving credit.
+                            </item>                            
+                        </prompt>
+                        <action varName="current_state" operator="SET_TO">loan_type</action>             <action varName="difference" operator="SET_TO">two_credits</action>
+                        <getUserInput>
+                            <!--<search ref="loan_type"/>-->
+                            <search ref="loan_type">
+                                 <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                    </customParams>
+                                </classifier>
+                             </search>
+                             <search ref="questions">
+                                <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                    </customParams>
+                                </classifier>
+                             </search>
+                            <default>
+                                 <if>
+                                    <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                    <goto ref="get_sentence" />
+                                </if>
+                                <output>
+                                    <prompt>
+                                        <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                    </prompt>
+                                    <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                    <getUserInput>
+                                        <!--<search ref="loan_type"/>-->
+                                        
+                                        <search ref="loan_type">
+                                             <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                </customParams>
+                                            </classifier>
+                                         </search>
+                                         <search ref="questions">
+                                            <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                </customParams>
+                                            </classifier>
+                                         </search>
+                                    </getUserInput>
+                                </output>
+                            </default>
+                        </getUserInput>
+                    </output>
+                    <output id="three_types_loan">
+                        <action varName="out_of_scope_count" operator="SET_TO">0</action>
+                        <action varName="current_state" operator="SET_TO">loan_type</action>  
+                        <prompt>
+                            <item>
+                                For this kind of project, we can suggest you three types of financing: installment credit, revolving credit, or hire purchase.
+                            </item>
+                        </prompt>
+                        <action varName="difference" operator="SET_TO">three_credits</action>
+                        <action varName="current_state" operator="SET_TO">loan_type</action>          
+                        <getUserInput>                           
+                            <search ref="loan_type">
+                                 <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                    </customParams>
+                                </classifier>
+                             </search>
+                             <search ref="questions">
+                                <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                    </customParams>
+                                </classifier>
+                             </search>
+                            
+                            <default>
+                                <if>
+                                    <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                    <goto ref="get_sentence"/>
+                                </if>
+                                <output>
+                                    <prompt>
+                                        <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                    </prompt>
+                                    <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                    <getUserInput>
+                                        <!--<search ref="loan_type"/>-->
+                                        
+                                        <search ref="loan_type">
+                                             <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                </customParams>
+                                            </classifier>
+                                         </search>
+                                         <search ref="questions">
+                                            <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                </customParams>
+                                            </classifier>
+                                         </search>
+                                    </getUserInput>
+                                </output>
+                            </default>
+                        </getUserInput>
+                    </output>
+                    <folder label="Two types of loan" id="loan_type">
+                        <action varName="current_state" operator="SET_TO">loan_type</action>              
+                        <action varName="out_of_scope_count" operator="SET_TO">0</action>
+                        <input>
+                            <grammar>
+                                <item>revolving_credit</item>
+                                <!--<item>$ revolving credit</item>
+                                <item>$ revolving loan</item>-->
+                            </grammar>
+                            <action varName="loan_type_choice" operator="SET_TO">revolving credit</action>
+                            <if matchType="ALL">                             
+                                <cond varName="loan_type_choice" operator="CONTAINS">hire purchase</cond>
+                                <cond varName="other_specific_project" operator="HAS_VALUE"/>
+                                <if>
+                                    <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                    <goto ref="get_sentence"/>
+                                </if>
+                                <output>
+                                    <prompt>
+                                        <item>Sorry but for your type of project you can only choose between installment credit or revolving credit. Hire purchase is not included. Please choose between installment credit and revolving credit.</item>
+                                    </prompt>
+                                    <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                    <action varName="difference" operator="SET_TO">two_credits</action>
+                                    <getUserInput>
+                                        <!--<search ref="loan_type"/>-->
+                                        
+                                        
+                                        <search ref="loan_type">
+                                             <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                </customParams>
+                                            </classifier>
+                                         </search>
+                                         <search ref="questions">
+                                            <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                </customParams>
+                                            </classifier>
+                                         </search>
+                                        <default>
+                                            <if>
+                                                <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                                <goto ref="get_sentence"/>
+                                            </if>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                                </prompt>
+                                                <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                                <getUserInput>
+                                                    <!--<search ref="loan_type"/>-->
+                                                    
+                                                    
+                                                    <search ref="loan_type">
+                                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                     <search ref="questions">
+                                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                            <goto ref="insurance_sequel"/>
+                            <goto ref="insurance_sequel"/>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>installment_credit</item>
+                                <!--<item>$ installment credit</item>
+                                <item>$ installment loan</item>
+                                <item>$ installment</item>-->
+                            </grammar>
+                            <action varName="loan_type_choice" operator="SET_TO">installment credit</action>
+                            <if matchType="ALL">                             
+                                <cond varName="loan_type_choice" operator="CONTAINS">hire purchase</cond>
+                                <cond varName="other_specific_project" operator="HAS_VALUE"/>
+                                <if>
+                                    <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                    <goto ref="get_sentence"/>
+                                </if>
+                                <output>
+                                    <prompt>
+                                        <item>Sorry but for your type of project you can only choose between installment credit or revolving credit. Hire purchase is not included. Please choose between installment credit and revolving credit.</item>
+                                    </prompt>
+                                    <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                    <action varName="difference" operator="SET_TO">two_credits</action>
+                                    <getUserInput>
+                                        <!--<search ref="loan_type"/>-->
+                                        
+                                        <search ref="loan_type">
+                                             <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                </customParams>
+                                            </classifier>
+                                         </search>
+                                         <search ref="questions">
+                                            <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                </customParams>
+                                            </classifier>
+                                         </search>
+                                        <default>
+                                            <if>
+                                                <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                                <goto ref="get_sentence"/>
+                                            </if>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                                </prompt>
+                                                <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                                <getUserInput>
+                                                    <!--<search ref="loan_type"/>-->
+                                                    
+                                                    <search ref="loan_type">
+                                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                     <search ref="questions">
+                                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                    
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                            <goto ref="insurance_sequel"/>
+                        </input>
+                        
+                         <input>
+                            <grammar>
+                                <item>hire_purchase</item>
+                                <!--<item>$ hire purchase</item>-->
+                            </grammar>
+                            <action varName="loan_type_choice" operator="SET_TO">hire purchase</action>
+                            <if matchType="ALL">                             
+                                <cond varName="loan_type_choice" operator="CONTAINS">hire purchase</cond>
+                                <cond varName="other_specific_project" operator="HAS_VALUE"/>
+                                <if>
+                                    <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                    <goto ref="get_sentence"/>
+                                </if>
+                                <output>
+                                    <prompt>
+                                        <item>Sorry but for your type of project you can only choose between installment credit or revolving credit. Hire purchase is not included. Please choose between installment credit and revolving credit.</item>
+                                    </prompt>
+                                    <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                    <action varName="difference" operator="SET_TO">two_credits</action>
+                                    <getUserInput>
+                                        <!--<search ref="loan_type"/>-->
+                                        
+                                        
+                                        <search ref="loan_type">
+                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                            </customParams>
+                                        </classifier>
+                                     </search>
+                                     <search ref="questions">
+                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                            </customParams>
+                                        </classifier>
+                                     </search>
+                                        <default>
+                                            <if>
+                                                <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                                <goto ref="get_sentence"/>
+                                            </if>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                                </prompt>
+                                                 <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                                <getUserInput>
+                                                    <!--<search ref="loan_type"/>-->
+                                                    
+                                                <search ref="loan_type">
+                                                     <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                        <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                        </customParams>
+                                                    </classifier>
+                                                 </search>
+                                                 <search ref="questions">
+                                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                        <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                        </customParams>
+                                                    </classifier>
+                                                 </search>
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                            <goto ref="insurance_sequel"/>
+                        </input>                        
+                        <output id="insurance_sequel">
+                                <prompt>
+                                    <item>Do you want an insurance ? </item>
+                                </prompt> 
+                                <action varName="current_state" operator="SET_TO">insurance</action>
+                                <getUserInput>
+                                    <!--<search ref="insurance"/>-->
+                                    
+                                <search ref="insurance">
+                                     <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                        <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                        </customParams>
+                                    </classifier>
+                                 </search>
+                                 <search ref="questions">
+                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                        <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                        </customParams>
+                                    </classifier>
+                                 </search>
+                                    <default>
+                                        <if>
+                                            <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                            <goto ref="get_sentence"/>
+                                        </if>
+                                        <output>
+                                            <prompt>
+                                                <item>Sorry I didn't understand. Could you repeat yourself ? Do you want an insurance ? </item>
+                                            </prompt>
+                                            <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                            <getUserInput>
+                                                <!--<search ref="insurance"/>-->
+                                                
+                                                    <search ref="insurance">
+                                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                     <search ref="questions">
+                                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                            </getUserInput>
+                                        </output>
+                                    </default>
+                                </getUserInput>
+                        </output>
+                       
+                    </folder>
+                    <folder label="Insurance" id="insurance">
+                        <action varName="current_state" operator="SET_TO">insurance</action>
+                        <action varName="out_of_scope_count" operator="SET_TO">0</action>
+                        <input>
+                            <grammar>
+                                  <item>$ yes</item>
+                                    <item>$ sure</item>
+                                    <item>$ of course</item>
+                                    <item>want_insurance</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Insurance for consumer credit is not mandatory but optional. The main insurance offered by banks and credit companies are:
+                                    - death insurance
+                                    - disability insurance that supports your credit in case of total and permanent disability,
+                                    - health insurance that supports your monthly payments in case of sick leave recognized by Social Security,
+                                    - the loss of employment insurance (under a permanent contract). 
+                                    Which one is your choice ?
+                                    </item>
+                                </prompt>
+                                <action varName="difference" operator="SET_TO">diff_insurances</action>
+                                <getUserInput>
+                                    <!--<search ref="insurance"/>-->
+                                    
+                                       <search ref="insurance">
+                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                            </customParams>
+                                        </classifier>
+                                     </search>
+                                     <search ref="questions">
+                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                            </customParams>
+                                        </classifier>
+                                     </search>
+                                    <default>
+                                        <if>
+                                            <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                            <goto ref="get_sentence"/>
+                                        </if>
+                                                                
+                                        <output>
+                                            <prompt>
+                                                <item>Sorry I didn't understand. Could you repeat it please ? </item>
+                                            </prompt>
+                                            <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                            <getUserInput>
+                                                <!--<search ref="insurance"/>-->
+                                                
+                                                   <search ref="insurance">
+                                                     <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                        <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                        </customParams>
+                                                    </classifier>
+                                                 </search>
+                                                 <search ref="questions">
+                                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                        <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                        </customParams>
+                                                    </classifier>
+                                                 </search>
+                                            </getUserInput>
+                                        </output>
+                                    </default>
+                                </getUserInput>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>insurances</item>
+                                <item>$ what insurance</item>
+                                <item>$ what do you have</item>
+                                <item>$ what are your suggestions</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Insurance for consumer credit is not mandatory but optional. The main insurance offered by banks and credit companies are:
+                                    - death insurance
+                                    - disability insurance that supports your credit in case of total and permanent disability,
+                                    - health insurance that supports your monthly payments in case of sick leave recognized by Social Security,
+                                    - the loss of employment insurance (under a permanent contract). 
+                                    Which one is your choice ?
+                                    </item>
+                                </prompt>
+                                <action varName="difference" operator="SET_TO">diff_insurances</action>
+                                <getUserInput>
+                                    <!--<search ref="insurance"/>-->
+                                    
+                                       <search ref="insurance">
+                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                            </customParams>
+                                        </classifier>
+                                     </search>
+                                     <search ref="questions">
+                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                            </customParams>
+                                        </classifier>
+                                     </search>
+                                     <default>
+                                         <if>
+                                            <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                            <goto ref="get_sentence"/>
+                                        </if>
+                                        <output>
+                                            <prompt>
+                                                <item>Sorry I didn't understand. Could you repeat yourself ?</item>
+                                            </prompt>
+                                            <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                            <getUserInput>
+                                                <!--<search ref="insurance"/>-->
+                                                
+                                                   <search ref="insurance">
+                                                     <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                        <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                        </customParams>
+                                                    </classifier>
+                                                 </search>
+                                                 <search ref="questions">
+                                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                        <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                        </customParams>
+                                                    </classifier>
+                                                 </search>
+                                            </getUserInput>
+                                        </output>
+                                    </default>
+                                </getUserInput>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>death_insurance</item>                                
+                            </grammar>
+                            <action varName="insurance_choice" operator="SET_TO">death insurance</action>
+                            <goto ref="your_address"/>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>disability_insurance</item>                                
+                            </grammar>
+                            <action varName="insurance_choice" operator="SET_TO">disability insurance</action>
+                            <goto ref="your_address"/>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>job_loss_insurance</item>                                
+                            </grammar>
+                            <action varName="insurance_choice" operator="SET_TO">loss of employment insurance</action>
+                            <goto ref="your_address"/>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>$ no</item>
+                                <item>$ I don't want</item>
+                                <item>$ I don't need</item>
+                                <item>no_insurance</item>
+                            </grammar>
+                            <action varName="insurance_choice" operator="SET_TO">no_insurance</action>
+                            <goto ref="your_address"/>
+                        </input>
+                         <output id="your_address">
+                            <prompt>
+                                <item>
+                                    Let's check your postal address. Is [address] correct?
+                                </item>
+                            </prompt>
+                             <action varName="current_state" operator="SET_TO">check_address</action>
+                            <getUserInput>
+                                <goto ref="check_address"/>
+                                <default>
+                                    <if>
+                                        <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                        <goto ref="get_sentence"/>
+                                    </if>
+                                    <output>
+                                        <prompt>
+                                            <item>Sorry I didn't understand. Could you please repeat you postal address ? </item>
+                                        </prompt>
+                                        <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                        <getUserInput>
+                                            <!--<search ref="check_address"/>-->
+                                            
+                                            <search ref="check_address">
+                                                 <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                    </customParams>
+                                                </classifier>
+                                             </search>
+                                             <search ref="questions">
+                                                <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                    </customParams>
+                                                </classifier>
+                                             </search>
+                                        </getUserInput>
+                                    </output>
+                                </default>
+                            </getUserInput>
+                        </output>
+                     
+                    </folder>
+                
+                    <folder label="Answers if questions" id="if_questions">
+                        <action varName="out_of_scope_count" operator="SET_TO">0</action>
+                        <input>
+                            <grammar>
+                                <item>$ no thanks</item>
+                                <item>$ no</item>
+                                <item>$ no thank you</item>
+                                <item>$ it's all right</item>
+                                <item>$ alright</item>
+                                <item>$ allright</item>
+                                <item>$ bye</item>
+                                <item>$ goodbye</item>
+                                <item>$ nope</item>
+                            </grammar>
+                            <if>
+                                <cond varName="current_state" operator="CONTAINS">loan_type</cond>
+                                <cond varName="loan_type_choice" operator="IS_BLANK"/>
+                                <cond varName="hire_specific_project" operator="HAS_VALUE"/>
+                                <output>
+                                    <prompt>
+                                        <item>We have 3 types of credit : installment credit, revolving credit and hire purchase. Which one do you want ?</item>
+                                    </prompt>
+                                    <action varName="difference" operator="SET_TO">three_credits</action>
+                                    <getUserInput>
+                                        <!--<search ref="loan_type"/>-->
+                                        
+                                         <search ref="loan_type">
+                                             <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                </customParams>
+                                            </classifier>
+                                         </search>
+                                         <search ref="questions">
+                                            <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                </customParams>
+                                            </classifier>
+                                         </search>
+                                        
+                                        <default>
+                                            <if>
+                                                <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                                <goto ref="get_sentence"/>
+                                            </if>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                                </prompt>
+                                                <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                                <getUserInput>
+                                                    <!--<search ref="loan_type"/>-->
+                                                    
+                                                      <search ref="loan_type">
+                                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                     <search ref="questions">
+                                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                             <if>
+                                <cond varName="current_state" operator="CONTAINS">loan_type</cond>
+                                <cond varName="loan_type_choice" operator="IS_BLANK"/>
+                                <cond varName="other_specific_project" operator="HAS_VALUE"/>
+                                <output>
+                                    <prompt>
+                                        <item>We have 2 types of credit : installment credit and revolving credit. Which one do you want ?</item>
+                                    </prompt>
+                                    <action varName="difference" operator="SET_TO">two_credits</action>
+                                    <getUserInput>
+                                        <!--<search ref="loan_type"/>-->
+                                        
+                                         <search ref="loan_type">
+                                             <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                </customParams>
+                                            </classifier>
+                                         </search>
+                                         <search ref="questions">
+                                            <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                </customParams>
+                                            </classifier>
+                                         </search>
+                                        <default>
+                                            <if>
+                                                <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                                <goto ref="get_sentence"/>
+                                            </if>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                                </prompt>
+                                                <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                                <getUserInput>
+                                                    <!--<search ref="loan_type"/>-->
+                                                    
+                                                     <search ref="loan_type">
+                                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                     <search ref="questions">
+                                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                            
+                            <if>
+                                <cond varName="current_state" operator="CONTAINS">insurance</cond>
+                                <cond varName="insurance_choice" operator="IS_BLANK"/>
+                                <output>
+                                    <prompt>
+                                        <item>Do you want an insurance ?</item>
+                                    </prompt>
+                                    <action varName="difference" operator="SET_TO">diff_insurances</action>
+                                    <getUserInput>
+                                        <!--<search ref="insurance"/>-->
+                                        
+                                         <search ref="insurance">
+                                             <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                </customParams>
+                                            </classifier>
+                                         </search>
+                                         <search ref="questions">
+                                            <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                </customParams>
+                                            </classifier>
+                                         </search>
+                                         <default>
+                                             <if>
+                                                <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                                <goto ref="get_sentence"/>
+                                            </if>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                                </prompt>
+                                                 <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                                <getUserInput>
+                                                    <!--<search ref="insurance"/>-->
+                                                     <search ref="insurance">
+                                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                     <search ref="questions">
+                                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                         </classifier>
+                                                    </search>
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                            <if>
+                                <cond varName="current_state" operator="CONTAINS">project_type</cond>
+                                <cond varName="is_specific_project" operator="IS_BLANK"/>
+                                <output>
+                                    <prompt>
+                                        <item>Do you have a specific project or do you want cash resources ?</item>
+                                    </prompt>
+                                    <getUserInput>
+                                        <!--<search ref="project_type"/>-->
+                                        
+                                        
+                                         <search ref="project_type">
+                                 <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                    </customParams>
+                                </classifier>
+                             </search>
+                             <search ref="questions">
+                                <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                    </customParams>
+                                 </classifier>
+                                        </search>
+                                        
+                                         <default>
+                                             <if>
+                                                <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                                <goto ref="get_sentence"/>
+                                            </if>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                                </prompt>
+                                                <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                                <getUserInput>
+                                                    <!--<search ref="project_type"/>-->
+                                                    
+                                                    <search ref="project_type">
+                                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                     <search ref="questions">
+                                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                            <if>
+                                <cond varName="current_state" operator="CONTAINS">project_type</cond>
+                                <cond varName="is_specific_project" operator="EQUAL_TO_YES"/>
+                                <cond varName="hire_specific_project" operator="IS_BLANK"/>
+                                <cond varName="other_specific_project" operator="IS_BLANK"/>
+                                <output>
+                                    <prompt>
+                                        <item>
+                                            What is your project ?
+                                        </item>
+                                    </prompt>
+                                    <getUserInput>
+                                        <!--<search ref="project_type"/>-->
+                                        
+                                        <search ref="project_type">
+                                 <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                    </customParams>
+                                </classifier>
+                             </search>
+                             <search ref="questions">
+                                <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                    </customParams>
+                                </classifier>
+                             </search>
+                                        
+                                         <default>
+                                             <if>
+                                                <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                                <goto ref="get_sentence"/>
+                                            </if>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                                </prompt>
+                                                <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                                <getUserInput>
+                                                    <!--<search ref="project_type"/>-->
+                                                    
+                                                    <search ref="project_type">
+                                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                     <search ref="questions">
+                                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                    
+                                                    
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                            <if>
+                                <cond varName="current_state" operator="CONTAINS">check_address</cond>
+                                <cond varName="is_address_correct" operator="IS_BLANK"/>
+                                <output>
+                                    <prompt>
+                                        <item>
+                                            Let's check your postal address. Is [address] correct?</item>
+                                    </prompt>
+                                    <getUserInput>
+                                        <search ref="check_address"/>
+                                        <default>
+                                            <if>
+                                                <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                                <goto ref="get_sentence"/>
+                                            </if>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat you postal address ? </item>
+                                                </prompt>
+                                                <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                                <getUserInput>
+                                                    <!--<search ref="check_address"/>-->
+                                                    <search ref="check_address">
+                                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                     <search ref="questions">
+                                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                            
+                             <if>
+                                <cond varName="current_state" operator="CONTAINS">project_type</cond>
+                                <cond varName="is_specific_project" operator="EQUAL_TO_YES"/>
+                                <cond varName="hire_specific_project" operator="HAS_VALUE"/>
+                                 <cond varName="loan_type_choice" operator="IS_BLANK"/>
+                                <output>
+                                    <prompt>
+                                        <item>We have 3 types of credit : installment credit, revolving credit and hire purchase. Which one do you want ?</item>
+                                    </prompt>
+                                    <action varName="difference" operator="SET_TO">three_credits</action>
+                                    <getUserInput>
+                                        <!--<search ref="loan_type"/>-->
+                                        
+                                         <search ref="loan_type">
+                                 <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                    </customParams>
+                                </classifier>
+                             </search>
+                             <search ref="questions">
+                                <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                    </customParams>
+                                </classifier>
+                             </search>
+                                        <default>
+                                            <if>
+                                                <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                                <goto ref="get_sentence"/>
+                                            </if>
+                                            <output>
+                                                <prompt>
+                                                    <item>Sorry I didn't understand. Could you please repeat which type of loan you want ?</item>
+                                                </prompt>
+                                                <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                                <getUserInput>
+                                                    <!--<search ref="loan_type"/>-->
+                                                    
+                                                     <search ref="loan_type">
+                                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                     <search ref="questions">
+                                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                            </customParams>
+                                                        </classifier>
+                                                     </search>
+                                                </getUserInput>
+                                            </output>
+                                        </default>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                            
+                            
+                            
+                             <output>
+                                <prompt selectionType="RANDOM">
+                                    <item>Thank you, goodbye! [action->endConversation()]</item>
+                                    <item>All right, bye! [action->endConversation()] </item>
+                                    <item>Bye bye! [action->endConversation()]</item>
+                                </prompt>
+                                <getUserInput>
+                                    <input/>
+                                </getUserInput>
+                            </output>
+                        </input>
+                        
+                         
+                        <input>
+                            <grammar>
+                                <item>$ yes</item>
+                                <item>$ of course</item>
+                                <item>$ sure</item>
+                                <item>$ yeah</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item> All right, I'm listening. What's your question ?</item>
+                                </prompt>
+                                <getUserInput>
+                                    <!--<search ref="questions"/>-->
+                                  
+                                     <search ref="questions">
+                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                            </customParams>
+                                        </classifier>
+                                     </search>
+                                    
+                                    <default>
+                                        <if>
+                                            <cond varName="current_state" operator="CONTAINS">check_address</cond>
+                                            <if matchType="ANY">
+                                                <cond varName="is_address_correct" operator="EQUAL_TO_YES"/>
+                                                <cond varName="address" operator="HAS_VALUE"/>
+                                                <goto ref="get_sentence"/>
+                                            </if>
+                                        </if>
+                                        <if>
+                                            <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                            <goto ref="get_sentence"/>
+                                        </if>
+                                        <output>
+                                            <prompt>
+                                                <item>Sorry I didn't understand. Can you repeat your question ? </item>
+                                            </prompt>
+                                            <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                            <getUserInput>
+                                                <!--<search ref="questions"/>-->
+                                                
+                                             <search ref="questions">
+                                                <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                    </customParams>
+                                                </classifier>
+                                             </search>
+                                            <default>
+                                                <if>
+                                                    <cond varName="address" operator="HAS_VALUE"/>
+                                                    <goto ref="get_sentence"/>
+                                                </if>
+                                                 <search ref="questions">
+                                                    <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                                        <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                                        </customParams>
+                                                    </classifier>
+                                                 </search>
+                                                
+                                            </default>    
+                                                
+                                            </getUserInput>
+                                        </output>
+                                    </default>
+                                </getUserInput>
+                            </output>
+                        </input>                        
+                        
+                    </folder>
+                
+                    <folder label="FAQ" id="questions">                        
+                        <input>
+                            <grammar>
+                                <item>difference_loan_line</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>There are plenty of "general" differences between loans and lines of credit. Bigger-ticket debts such as a house or car tend to be made through standard loans. Standard loans are more likely to be secured against an asset. Lines of credit tend to have higher rates of interest and smaller minimum payment amounts. Lines of credit usually create more immediate, larger impacts on consumer credit reports and credit scores. Closing costs, if any, are higher for loans than lines of credit on average.
+
+Many loans also require a specific purpose; for instance, you take out a student loan to pay for higher education, you are granted a mortgage to buy a property, etc. Lines of credit, however, do not typically have a specific purchase purpose. Purchases can be made on a variety of items without the lender's approval, and no assets have to be appraised.
+
+In this way, lines of credit represent a much more flexible borrowing tool.</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>information_before_signature</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>The Scrivener Act (Consumer Code) applies to all credit of greater than or equal to 3 months. It guarantees you a preliminary offer of credit for any funding application with mandatory information: the date of the offer, the identity of the parties and any guarantees, the amount of credit and the terms of the contract.
+This law gives you a cooling off period of 15 days from the issue date of the preliminary Offer of Credit. It should also be noted that the lender can not go back on his offer or modify during these 15 days.
+Once signed offer, you also have a period of 14 days to retract. The withdrawal form must necessarily be part of the preliminary Offer of Credit on the copy of the contract for the customer.</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>early_repayments</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>At any time, you can repay your advance loan fully or partially without compensation if the amount is less than or equal to 10 000. If you want to pay in advance more than € 10,000, you will have to pay compensation and its amount will depend on when you do this. So if you pay in advance your loan:
+- More than a year before the end of the initial credit, your allowances will amount to 1% of its total.
+- Less than a year before the end of the initial credit, your allownces will amount to 0.5% of its total.
+
+In all cases these benefits may not exceed the amount of interest you should have paid until the credit.
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>consumer_credit_definition</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Credit is an umbrella term that covers a range of financial services such as bank loans and credit cards. Consumer credit is a type of credit used to purchase products and services, such as a car or a package holiday, without having to pay the full amount at once. This means that you commit to paying it back at a later date in the future, usually with added interest. Consumer credit can be useful when employed wisely.</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>revolving_credit_definition</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Credit cards and lines of credit are two familiar forms of revolving credit. Your credit limit does not change when you make payments on your revolving credit account. You can return to your account to borrow additional money as often as you want, as long as you do not exceed your maximum.
+Because you are not borrowing a lump sum when the account is opened, there is no set payment plan with revolving credit. You are merely being granted the ability to borrow up to a certain amount. However, this flexibility often results in lower borrowing amounts and higher interest rates. Unsecured revolving credit account interest rates often range around 15-20% or more. The interest rate is rarely locked in, and creditors have the right to increase your rate if you fail to make payments.
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>installment_credit_definition</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Perhaps the most distinguishing features of an installment credit account are a predetermined length and an end date, which is sometimes referred to as the term of the loan. The loan agreement usually includes an amortization schedule, in which the principal is gradually reduced through installment payments over the course of several years.
+Common installment loans include mortgages, auto loans, student loans and private personal loans. With each of these loans, you generally know how much your monthly payment is and how long you will be making payments. An additional credit application is required to borrow more money.
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>difference_installment_revolving</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>The decision depends on your risk aversion.
+Installment credit is considered to be less dangerous to your credit score than revolving credit. 
+Revolving credit is considered a more dangerous way to borrow than installment credit. An enormous part of your credit score is your revolving credit card utilization rate. Carrying high balances drags down your score.
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        
+                        <input>
+                            <grammar>
+                                <item>mandatory_insurance</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Insurance for consumer credit is not mandatory but optional. The main insurance offered by banks and credit companies are:
+- death insurance
+- disability insurance that supports your credit in case of total and permanent disability,
+- the loss of employment insurance (under a permanent contract).
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        
+                        <input>
+                            <grammar>
+                                <item>end_revolving_credit</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>If you no longer wish to receive your revolving credit (formerly called "appropriation", "revolving credit", "credit standing" or "available reserve"), you can stop it.
+ Indeed, this type of credit agreement is concluded for a period of one year, renewable annually. The lender has to state three months before the expiry of the credit agreement, the conditions for renewal or extension of the contract.
+ You may refuse the proposed amendments or just express your refusal to renew with a registered letter with acknowledgment of receipt before the deadline. The special conditions of contract specify the notice.
+
+Know that the termination of the credit agreement involves the repayment of sums due. In this case, the lender must provide a staggered payment of such sums. He can not demand full repayment of the sum in one go.
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        
+                          <input>
+                            <grammar>
+                                <item>new_bank_account_consumer_credit</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>It is absolutely not mandatory to open a new bank account to obtain a consumer credit.
+The amount you borrow is paid into your usual bank or postal account by credit agencies. However, some commercial banks want to offer consumer credit promotional offers to win new customers. In this case, a bank deposit will ask you to open a new bank account for you to get the best rates.
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        
+                        <input>
+                            <grammar>
+                                <item>early_repayments_penalties</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>At any time, you can repay your advance loan fully or partially without compensation if the amount is less than or equal to 10 000. If you want to pay in advance more than € 10,000, you will have to pay compensation and its amount will depend on when you do this. So if you pay in advance your loan:
+- More than a year before the end of the initial credit, your allowances will amount to 1% of its total.
+- Less than a year before the end of the initial credit, your allownces will amount to 0.5% of its total.
+
+In all cases these benefits may not exceed the amount of interest you should have paid until the credit.
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        
+                          <input>
+                            <grammar>
+                                <item>simple_guarantee_definition</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>The Article 2011 of the Civil Code defines guarantee: Whoever guarantor of an obligation to submit to the creditor to satisfy this obligation if the debtor fails to perform himself.
+It is not there a single moral obligation but a serious act that can engage all or part of your heritage. Articles L 313-7 and L 313-8 of the Consumer Code distinguishes two kinds of guarantee.
+The simple guarantee:
+- It may ask the creditor to pursue the principal debtor first, that is to say, the borrower
+- If several people act as guarantor, it may request that the proceedings be divided between the various signatories.
+The joint surety:
+The creditor can sue the guarantor without suing the borrower or choose, in case of plurality of joint guarantees, that of their choice.
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>joint_guarantee</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>The Article 2011 of the Civil Code defines guarantee: Whoever guarantor of an obligation to submit to the creditor to satisfy this obligation if the debtor fails to perform himself.
+It is not there a single moral obligation but a serious act that can engage all or part of your heritage. Articles L 313-7 and L 313-8 of the Consumer Code distinguishes two kinds of guarantee.
+The simple guarantee:
+- It may ask the creditor to pursue the principal debtor first, that is to say, the borrower
+- If several people act as guarantor, it may request that the proceedings be divided between the various signatories.
+The joint surety:
+The creditor can sue the guarantor without suing the borrower or choose, in case of plurality of joint guarantees, that of their choice.
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>difference_simple_joint</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>The Article 2011 of the Civil Code defines guarantee: Whoever guarantor of an obligation to submit to the creditor to satisfy this obligation if the debtor fails to perform himself.
+It is not there a single moral obligation but a serious act that can engage all or part of your heritage. Articles L 313-7 and L 313-8 of the Consumer Code distinguishes two kinds of guarantee.
+The simple guarantee:
+- It may ask the creditor to pursue the principal debtor first, that is to say, the borrower
+- If several people act as guarantor, it may request that the proceedings be divided between the various signatories.
+The joint surety:
+The creditor can sue the guarantor without suing the borrower or choose, in case of plurality of joint guarantees, that of their choice.
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>guarantee_consumer_credit</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>The Article 2011 of the Civil Code defines guarantee: Whoever guarantor of an obligation to submit to the creditor to satisfy this obligation if the debtor fails to perform himself.
+It is not there a single moral obligation but a serious act that can engage all or part of your heritage. Articles L 313-7 and L 313-8 of the Consumer Code distinguishes two kinds of guarantee.
+The simple guarantee:
+- It may ask the creditor to pursue the principal debtor first, that is to say, the borrower
+- If several people act as guarantor, it may request that the proceedings be divided between the various signatories.
+The joint surety:
+The creditor can sue the guarantor without suing the borrower or choose, in case of plurality of joint guarantees, that of their choice.
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>maximum_amount_consumer_credit</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Since the Lagarde law, dating from May 2011, the maximum amount of a consumer credit rose from 21 500 euros to 75 000 euros.</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>rights_borrower_procedure</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>The Scrivener Act (Consumer Code) applies to all credit of greater than or equal to 3 months. It guarantees you a preliminary offer of credit for any funding application with mandatory information: the date of the offer, the identity of the parties and any guarantees, the amount of credit and the terms of the contract.
+This law gives you a cooling off period of 15 days from the issue date of the preliminary Offer of Credit. It should also be noted that the lender can not go back on his offer or modify during these 15 days.
+Once signed offer, you also have a period of 14 days to retract. The withdrawal form must necessarily be part of the preliminary Offer of Credit on the copy of the contract for the customer.
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>rights_borrower_reflection_period</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>The Scrivener Act (Consumer Code) applies to all credit of greater than or equal to 3 months. It guarantees you a preliminary offer of credit for any funding application with mandatory information: the date of the offer, the identity of the parties and any guarantees, the amount of credit and the terms of the contract.
+This law gives you a cooling off period of 15 days from the issue date of the preliminary Offer of Credit. It should also be noted that the lender can not go back on his offer or modify during these 15 days.
+Once signed offer, you also have a period of 14 days to retract. The withdrawal form must necessarily be part of the preliminary Offer of Credit on the copy of the contract for the customer.
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>who_obtention_consumer_credit</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>To register a consumer credit , you must: 
+- be of age
+- Receive a stable income 
+- Reside in France
+- Not be registered in the national file of payment incidents of the Bank of France .
+Other conditions are based on many criteria taken into account by the credit agencies : saving capacity , marital status, senority in service etc.
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>conditions_obtain_credit</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>To register a consumer credit , you must: 
+- be of age
+- Receive a stable income 
+- Reside in France
+- Not be registered in the national file of payment incidents of the Bank of France .
+Other conditions are based on many criteria taken into account by the credit agencies : saving capacity , marital status, senority in service etc.
+</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        
+                        <input>
+                            <grammar>
+                                <item>hire_purchase_definition</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Hire purchase means to rent a property from a financial institution for a fixed period, with option to buy at the end of the contract. The hire purchase is also called leasing. At the end of the lease, the borrower has the opportunity to acquire the property by paying the residual value.
+
+The hire purchase concerns the acquisition of a vehicle (car or motorcycle) but it can however be used for other types of goods (computer equipment, for example).
+
+The rental period generally varies between 24 months (2 years) and 72 months (6 years).
+An initial contribution, corresponding to a security deposit is usually required. The amount varies according to the importance of good.
+At the end of the rental period, the deposit is returned to you if you return the good, or it is deducted from the purchase price if you decide to keep it.
+
+The hire purchase is a suitable solution for motorists regularly changing vehicles. It offers more flexibility because it allows drivers to not to bother with the constraints related to the sale of the vehicle. However, the total cost of the hire purchase is greater than the car credit.
+</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                         <input>
+                            <grammar>
+                                <item>difference_hire_purchase_car_credit</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Hire purchase means to rent a property from a financial institution for a fixed period, with option to buy at the end of the contract. The hire purchase is also called leasing. At the end of the lease, the borrower has the opportunity to acquire the property by paying the residual value.
+
+The hire purchase concerns the acquisition of a vehicle (car or motorcycle) but it can however be used for other types of goods (computer equipment, for example).
+
+The rental period generally varies between 24 months (2 years) and 72 months (6 years).
+An initial contribution, corresponding to a security deposit is usually required. The amount varies according to the importance of good.
+At the end of the rental period, the deposit is returned to you if you return the good, or it is deducted from the purchase price if you decide to keep it.
+
+The hire purchase is a suitable solution for motorists regularly changing vehicles. It offers more flexibility because it allows drivers to not to bother with the constraints related to the sale of the vehicle. However, the total cost of the hire purchase is greater than the car credit.
+</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                         <input>
+                            <grammar>
+                                <item>credit_card_revolving_credit</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Revolving credit can be associated with a credit card. Purchases and withdrawals made with the card are then debited from the available capital.</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                         <input>
+                            <grammar>
+                                <item>documents_required</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>If you are an employee, you must provide :
+- Your last two wage slips and the last two wage slips of your spouse .
+- A canceled check or bank details .
+- Proof of residence
+- A photocopy of your ID duplex .
+- In case of other income (family allowances, alimony etc. ) A photocopy of proof of such income.
+
+If you are an entrepreneur or independent worker , you must provide your last tax notice instead of your last two wage slips.
+</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                         <input>
+                            <grammar>
+                                <item>over_indebtedness</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Over-indebtedness is the situation when a person is no longer able to meet its debts. Generally, financial institutions analyze your personal situation to protect yourself from debt. Overall, expenses (outstanding loans, rents, etc ... ) must not exceed 33% of your income. There are debt commissions where organizations try to find a solution to over-indebted people to improve their financial situations.</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                             
+                        <input>
+                            <grammar>
+                                <item>consumer_credit_refusal</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>In France, there is no right to credit. This means that your credit application can always be refused. It is even an obligation to the bank, if it considers that your debt is too high and you may experience repayment difficulties. Otherwise, if it encouraged you to borrow beyond the reasonable, that could be criticized .</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>student_loan_definition></item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>If you need financial support to assist you in your graduate studies, you can ask the bank for a student loan . This is a personal loan that you will repay when you will start your working life. Talk to your advisor to properly evaluate the amount, the term , the rate, and all the elements adapted to your project.
+It is possible that the bank ask for a guarantee to protect from the risk of lending it gives you. Your parents can make this guarantee if their income is considered sufficient. If this is not the case, the State has set up a security system that can cover your loans up to € 15,000 .
+</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <input>
+                            <grammar>
+                                <item>annual_percentage_rate</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>The annual percentage rate must necessarily appear on the preliminary offer of credit. As a percentage, the APR includes all costs required for obtaining a credit : the interest calculated on the basis of the borrowing rate , as well as the application fee , and any brokerage fees.</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                             
+                        <input>
+                            <grammar>
+                                <item>obtention_ccredit_student</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>If you are retired, you can obtain a consumer credit in the same way that an active person. The only difference is that the credit agency will require a tax notice instead of wage slips .
+However, it is very difficult or impossible to take out a consumer credit if you are a student, or if you are stuck in Bank of France or unemployed because you might not be able to repay and have serious debt. For fixed term and temporary contracts, specific formulas are offered by some banks for this type of profile. 
+Talk to your client advisor to evaluate your debt capacity.
+</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                             
+                       <input>
+                            <grammar>
+                                <item>obtention_ccredit_retirement</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>If you are retired, you can obtain a consumer credit in the same way that an active person. The only difference is that the credit agency will require a tax notice instead of wage slips .
+However, it is very difficult or impossible to take out a consumer credit if you are a student, or if you are stuck in Bank of France or unemployed because you might not be able to repay and have serious debt. For fixed term and temporary contracts, specific formulas are offered by some banks for this type of profile. 
+Talk to your client advisor to evaluate your debt capacity.
+</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                             
+                       <input>
+                            <grammar>
+                                <item>obtention_ccredit_unemployment</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>If you are retired, you can obtain a consumer credit in the same way that an active person. The only difference is that the credit agency will require a tax notice instead of wage slips .
+However, it is very difficult or impossible to take out a consumer credit if you are a student, or if you are stuck in Bank of France or unemployed because you might not be able to repay and have serious debt. For fixed term and temporary contracts, specific formulas are offered by some banks for this type of profile. 
+Talk to your client advisor to evaluate your debt capacity.
+</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                             
+                        <input>
+                            <grammar>
+                                <item>obtention_ccredit_ftcontract</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>If you are retired, you can obtain a consumer credit in the same way that an active person. The only difference is that the credit agency will require a tax notice instead of wage slips .
+However, it is very difficult or impossible to take out a consumer credit if you are a student, or if you are stuck in Bank of France or unemployed because you might not be able to repay and have serious debt. For fixed term and temporary contracts, specific formulas are offered by some banks for this type of profile. 
+Talk to your client advisor to evaluate your debt capacity.
+</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                             
+                        <input>
+                            <grammar>
+                                <item>obtention_ccredit_temp_contract</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>If you are retired, you can obtain a consumer credit in the same way that an active person. The only difference is that the credit agency will require a tax notice instead of wage slips .
+However, it is very difficult or impossible to take out a consumer credit if you are a student, or if you are stuck in Bank of France or unemployed because you might not be able to repay and have serious debt. For fixed term and temporary contracts, specific formulas are offered by some banks for this type of profile. 
+Talk to your client advisor to evaluate your debt capacity.
+</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                             
+                         <input>
+                            <grammar>
+                                <item>death_insurance_definition</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>In case of death or total and irreversible disability, the insurance will cover the payment of the installments to the lender, in part or in whole.
+Several situations are possible.
+- The loan and insurance have been concluded by one person: The outstanding capital balance is paid in full by the insurer to the lender.
+- The risk is spread between borrowers: In case of death or total and irreversible disability of a borrower, the outstanding capital balance will be refunded only proportionally to the assured part. The allocation is decided by the co-borrowers at the signature of the contract.
+</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                             
+                         <input>
+                            <grammar>
+                                <item>disability_insurance_definition</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>The insured person who is in a situation of temporary incapacity, total or partial, must declare it to the insurer in accordance with the deadlines in the general conditions of the contract. The insurer then send him a folder to complete and return it with supporting documents. If the insured meets the criteria of the incapacity for work, the insurer will cover the repayment of loan installments instead of the insured, under the conditions specified in the contract. A waiting period can be applied.</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                             
+                             
+                         <input>
+                            <grammar>
+                                <item>job_loss_insurance_definition</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>The job loss insurance relates to the repayment of the loan installments in case of unemployment, under certain conditions and within certain limits. Usually, the first 3 months of unemployment do not give rise to any compensation. The total duration of compensation is always limited in time, for example at 2 years.
+
+Warning: the guarantee does not apply in a number of cases: for example, it does not cover employees in trial period or pre-retirement period, or cases of voluntary resignation, partial unemployment, or unemployment occurring at the end of a non-renewal of fixed-term contracts.
+</item>
+                                </prompt>
+                                 <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>$ what's the difference</item>
+                                <item>$ what is the difference</item>
+                                <item>$what are the differences</item>
+                            </grammar>
+                            <if>
+                                <cond varName="difference" operator="CONTAINS">diff_insurances</cond>
+                                <output>
+                                    <prompt>
+                                        <item>
+                                            In case of death or total and irreversible disability, the death insurance will cover the payment of the installments to the lender, in part or in whole.
+                                            If the insured meets the criteria of the incapacity for work, the disability insurance will cover the repayment of loan installments instead of the insured, under the conditions specified in the contract.
+                                            The job loss insurance relates to the repayment of the loan installments in case of unemployment, under certain conditions and within certain limits. Usually, the first 3 months of unemployment do not give rise to any compensation. The total duration of compensation is always limited in time, for example at 2 years.
+                                        </item>
+                                    </prompt>
+                                    <action varName="difference" operator="SET_TO_BLANK"/>
+                                    <goto ref="otherQuestions"/>
+                                </output>
+                            </if>
+                            <if>
+                                <cond varName="difference" operator="CONTAINS">two_credits</cond>
+                                <output>
+                                    <prompt>
+                                        <item>
+                                            The decision depends on your risk aversion.
+Installment credit is considered to be less dangerous to your credit score than revolving credit. 
+Revolving credit is considered a more dangerous way to borrow than installment credit. An enormous part of your credit score is your revolving credit card utilization rate. Carrying high balances drags down your score.
+                                        </item>
+                                    </prompt>
+                                    <action varName="difference" operator="SET_TO_BLANK"/>
+                                    <goto ref="otherQuestions"/>
+                                </output>
+                            </if>
+                            <if>
+                                <cond varName="difference" operator="CONTAINS">three_credits</cond>
+                                <output>
+                                    <prompt>
+                                        <item>
+                                            The decision depends on your risk aversion.
+Installment credit is considered to be less dangerous to your credit score than revolving credit. 
+Revolving credit is considered a more dangerous way to borrow than installment credit. An enormous part of your credit score is your revolving credit card utilization rate. Carrying high balances drags down your score.
+                                             The hire purchase is a suitable solution for motorists regularly changing vehicles. It offers more flexibility because it allows drivers to not to bother with the constraints related to the sale of the vehicle. However, the total cost of the hire purchase is greater than the car credit.
+                                        </item>
+                                    </prompt>
+                                    <action varName="difference" operator="SET_TO_BLANK"/>
+                                    <goto ref="otherQuestions"/>
+                                </output>
+                            </if>
+                            <output>
+                                <prompt>
+                                    <item>I don't understand.</item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                <item>not_found</item>
+                            </grammar>
+                            <output>
+                                <prompt>
+                                    <item>Sorry, your question is not found. Would you mind rephrasing it ? </item>
+                                </prompt>
+                                <goto ref="otherQuestions"/>
+                            </output>
+                        </input>
+                        
+                        <if>
+                            <cond varName="current_state" operator="IS_BLANK"/>
+                            <goto ref="get_sentence"/>
+                        </if>
+                                                 
+                </folder>
+                    <output id="otherQuestions">
+                        <prompt selectionType="RANDOM">
+                            <item>Any other questions ?</item>
+                            <item>Do you have any other questions ?</item>
+                        </prompt>
+                        <getUserInput>
+                            <search ref="if_questions">
+                                <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                    </customParams>
+                                </classifier>
+                            </search>
+                            <search ref="questions">
+                                 <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                    </customParams>
+                                </classifier>
+                            </search>
+                            <default>
+                                <if>
+                                    <cond varName="current_state" operator="CONTAINS">check_address</cond>
+                                    <if matchType="ANY">
+                                        <cond varName="is_address_correct" operator="EQUAL_TO_YES"/>
+                                        <cond varName="address" operator="HAS_VALUE"/>
+                                        <goto ref="get_sentence"/>
+                                    </if>
+                                </if>
+                                <if>
+                                    <cond varName="out_of_scope_count" operator="GREATER_THEN">1</cond>
+                                    <goto ref="get_sentence"/>
+                                </if>
+                                <output>
+                                    <prompt>
+                                        <item>Sorry I didn't understand. Can you repeat your question ? </item>
+                                    </prompt>
+                                    <action varName="out_of_scope_count" operator="INCREMENT_BY">1</action>
+                                    <getUserInput>
+                                        <!--<search ref="questions"/>-->
+
+                                     <search ref="questions">
+                                        <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                            </customParams>
+                                        </classifier>
+                                     </search>                                   
+                                       
+
+                                    </getUserInput>
+                                </output>
+                            </default>
+                        </getUserInput>
+                    </output>
+                    <folder label="Check user address" id="check_address">
+                        <action varName="out_of_scope_count" operator="SET_TO">0</action>
+                        <action varName="current_state" operator="SET_TO">check_address</action>
+                        <input>
+                            <grammar>
+                                 <item>$ yes</item>
+                                <item>$ correct</item>
+                                <item>$ all right</item>
+                                <item>$ right</item>
+                                <item>correct_address</item>
+                            </grammar>
+                            <action varName="is_address_correct" operator="SET_TO_YES"/>
+                             <output>
+                                <prompt>
+                                    <item>All right. [action->getFiche({loan_type_choice},{insurance_choice})] You will receive the forms by post. Do you have questions?
+                                    </item>
+                                </prompt>
+                                <getUserInput>
+                                    <search ref="if_questions">
+                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                            </customParams>
+                                        </classifier>
+                                    </search>
+                                     <search ref="questions">
+                                         <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                            <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                            </customParams>
+                                        </classifier>
+                                    </search>   
+                                    <default>
+                                        <goto ref="get_sentence"/>
+                                    </default>
+                                </getUserInput>
+                            </output>
+                        </input>
+                        <input>
+                            <grammar>
+                                 <item>$ wrong</item>
+                                <item>$ not correct</item>
+                                <item>$ no</item>
+                                <item>$ not right</item>
+                                <item>$ not</item>
+                                <item>$ nope</item>
+                                <item>wrong_address</item>
+                            </grammar>
+                            <action varName="is_address_correct" operator="SET_TO_NO"/>
+                            <output>
+                                <prompt>
+                                    <item>I see. So what's your postal address ? </item>
+                                </prompt>
+                                <getUserInput>
+                                    <goto ref="get_address"/>
+                                    <default>
+                                        <output>
+                                            <prompt>
+                                                <item>Sorry I didn't understand. Could you please repeat you postal address ? </item>
+                                            </prompt>
+                                            <getUserInput>
+                                                <search ref="get_address"/>
+                                            </getUserInput>
+                                        </output>
+                                    </default>
+                                </getUserInput>
+                            </output>
+                        </input>
+                        <goto ref="questions"/>
+                    </folder>
+                <!--</folder>-->
+                <input id="get_address">
+                    <grammar>
+                        <item>$ (address)={address}</item>
+                    </grammar>
+                    <action varName="address" operator="SET_TO">{address.source}</action>
+                    <output>
+                        <prompt>
+                            <item>All right. [action->getFiche({loan_type_choice},{insurance_choice})] You will receive the forms by post. Do you have questions?
+                            </item>
+                        </prompt>
+                        <getUserInput>
+                             <search ref="if_questions">
+                                 <classifier policy="SEARCHMODE_CLASSIFIER" threshold="0.75" exactMatchFirst="true" fuzzyThreshold="0.1" trainOnInput="true" trainOnOutput="false">
+                                    <customParams>nlcmodelid=3a84dfx64-nlc-5988
+                                    </customParams>
+                                </classifier>
+                            </search>
+                             <default>
+                                <goto ref="get_sentence"/>
+                            </default>
+                        </getUserInput>
+                    </output>
+                </input>                
+                <input id="get_sentence">
+                     <grammar>
+                        <item>$ (sentence)={sentence}</item>
+                    </grammar>
+                    <action varName="sentence" operator="SET_TO">{sentence.source}</action>
+                    <output>
+                        <prompt>
+                            <item>[action->getTopic({sentence})]</item>
+                        </prompt>
+                        <getUserInput>
+                            <input/>
+                        </getUserInput>
+                    </output>
+                </input>                
+            </folder>
+        </folder> 
+    </flow>
+    <entities>                          
+        <entity name="yes">
+            <value name="yes" value="yes">
+                <grammar>
+                    <item>$ yes</item>                    
+                    <item>$ allright</item>                    
+                    <item>$ all right</item>
+                    <item>$ alright</item>
+                    <item>$ sure</item>
+                    <item>$ of course</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="no">
+            <value name="no" value="no">
+                <grammar>
+                    <item>$ no</item>
+                    <item>$ rather not</item>
+                </grammar>
+            </value>
+        </entity>       
+        <entity name="address">
+            <value>
+                <grammar>
+                    <item>*</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="sentence">
+            <value>
+                <grammar>
+                    <item>*</item>
+                </grammar>
+            </value>
+        </entity>             
+              
+    </entities>
+    <variables>
+        <var_folder name="Home">             
+            <var name="is_specific_project" type="YESNO"/>
+            <var name="is_address_correct" type="YESNO"/>
+            <var name="loan_type_choice" type="TEXT"/>
+            <var name="insurance_choice" type="TEXT"/>
+            <var name="address" type="TEXT"/>
+            <var name="sentence" type="TEXT"/>
+            <var name="current_state" type="TEXT"/>
+            <var name="hire_specific_project" type="TEXT"/>
+            <var name="other_specific_project" type="TEXT"/>
+            <var name="difference" type="TEXT"/>
+            <var name="out_of_scope_count" type="NUMBER" initValue="0"/>
+        </var_folder>
+    </variables>
+    <settings>
+        <setting name="USE_SPELLING_CORRECTIONS">2</setting>
+        <setting name="USE_STOP_WORDS">2</setting>
+        <setting name="USE_AUTOMATIC_STOPWORDS_DETECTION">1</setting>
+        
+       <setting name="LANGUAGE" type="USER">en-US</setting>
+        <setting name="CLS_SEARCH_MODE">0</setting>
+        <setting name="CLS_MODEL">0</setting>
+        <setting name="CLS_MODELNAME">3a84dfx64-nlc-5988</setting>
+        <setting name="CLS_ENDPOINT">https://gateway.watsonplatform.net/natural-language-classifier/api</setting>
+        <setting name="CLS_USERNAME">354b4b56-5b81-44d2-ae42-67d5ca459ba8</setting>
+        <setting name="CLS_PASSWORD">oZ5WjSQZ1hdj</setting>
+        <setting name="CLS_ADVANCED_SETTINGS">true</setting>
+        <setting name="CLS_MAXNBEST">3</setting>
+        <setting name="CLS_USE_OFFTOPIC">false</setting>
+    </settings>
+</dialog>

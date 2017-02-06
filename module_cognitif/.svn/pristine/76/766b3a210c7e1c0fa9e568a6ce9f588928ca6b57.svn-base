@@ -1,0 +1,53 @@
+/**
+ * Created by rlespagnol on 03/08/2016.
+ */
+
+
+module.exports = {
+    schema: true,
+
+    attributes: {
+        client_id: {
+            type: 'string',
+            required: true,
+            unique : true,
+            primaryKey : true
+        },
+
+        workspace_id: {
+            type: 'string',
+        },
+        context: {
+            type: 'json',
+        },
+        toJSON() {
+            return this.toObject();
+        }
+    },
+
+    saveConversation(client_id, workspace_id, context, cb){
+            ConversationClient.update({client_id : client_id}, {workspace_id : workspace_id, context : context}).exec(function(e, updated){
+                sails.log('Update : ' + JSON.stringify(updated))
+
+                if(e){
+                    cb(e, null);
+                    return;
+                }
+                cb(null, updated)
+            })
+    },
+
+    findOrCreateUser(client_id, workspace_id, context, cb){
+        ConversationClient.findOrCreate({client_id : client_id}, {client_id : client_id, workspace_id : workspace_id, context : {}}).exec(function(err, theUser){
+            if(err){
+                cb(err, null);
+                return;
+            }
+            cb(null, theUser)
+
+        });
+    },
+
+    beforeUpdate: (values, next) => next(),
+    beforeCreate: (values, next) => next()
+};

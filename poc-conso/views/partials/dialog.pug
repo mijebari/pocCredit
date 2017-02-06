@@ -1,0 +1,114 @@
+#sentenceChangeModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='sentenceChangeModal')
+  .modal-dialog(role='document')
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4#sentenceChangeModal.modal-title Modify sentence
+      .modal-body
+        div
+          .form-groupold-sentence
+            label.control-label old sentence:
+            p#old-sentence old sentence
+            label.control-label(for='recipient-name')  new sentence:
+            input#recipient-name.form-control(type='text')
+      .modal-footer
+        button.btn.btn-default(type='button', data-dismiss='modal') Close
+        button.btn.btn-primary.btn-change-sentence(type='button') Validate
+
+#addSentenceModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='addSentenceModal')
+  .modal-dialog(role='document')
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4#addSentenceModal.modal-title Modify sentence
+      .modal-body
+        div
+          div
+            label.control-label(for='recipient-name')  new sentence:
+            input#recipient-name.form-control(type='text')
+      .modal-footer
+        button.btn.btn-default(type='button', data-dismiss='modal') Close
+        button.btn.btn-primary.btn-add-sentence(type='button') Validate
+
+
+#testSentenceModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='testSentenceModal')
+  .modal-dialog(role='document')
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4.modal-title Test NLC
+      .modal-body
+        div
+          div
+            p#sentence-test  sentence
+          div#result-test
+      .modal-footer
+        button.btn.btn-default(type='button', data-dismiss='modal') Close
+
+
+
+#addCategoryModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='addCategoryModal')
+  .modal-dialog(role='document')
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4#addCategoryModal.modal-title Create new category
+      .modal-body
+        div.form-group-category
+          label.control-label-type Type:
+            br
+            input(type='radio', name='optradio' value="faq" checked).radio-type
+            | FAQ
+            br
+            input(type='radio', name='optradio' value="intent").radio-type
+            | Intent
+          br
+          label.control-label(for='recipient-name')  category name:
+          input#recipient-name.form-control(type='text')
+      .modal-footer
+        button.btn.btn-default(type='button', data-dismiss='modal') Close
+        button.btn.btn-primary.btn-add-category(type='button') Validate
+
+#responseChangeModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='responseChangeModal')
+  .modal-dialog(role='document')
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4#responseChangeModal.modal-title Modify response
+      .modal-body
+        div
+          .form-groupold-response
+            label.control-label old response:
+            p#old-response old response
+            label.hide-information#category-id
+            label.control-label(for='recipient-name')  new response:
+            input#recipient-name.form-control(type='text')
+      .modal-footer
+        button.btn.btn-default(type='button', data-dismiss='modal') Close
+        button.btn.btn-primary.btn-change-response(type='button') Validate
+
+
+
+#correctionChangeModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='correctionChangeModal')
+  .modal-dialog(role='document')
+    .modal-content
+      .modal-header
+        button.close(type='button', data-dismiss='modal', aria-label='Close')
+          span(aria-hidden='true') ×
+        h4#correctionChangeModal.modal-title Modify the category
+      .modal-body
+        div
+          .form-groupold-response
+            label.hide-information#category-id
+            label.control-label sentence:
+            p#correction-sentence  sentence
+            label.control-label category:
+            select(style="width:200px")#SelectCategoryCorrection.controlCategory.form-control.input-sm
+      .modal-footer
+        button.btn.btn-default(type='button', data-dismiss='modal') Close
+        button.btn.btn-primary.btn-change-correction(type='button') Validate

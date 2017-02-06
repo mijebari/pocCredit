@@ -1,0 +1,656 @@
+/**
+ * Created by rlespagnol on 25/04/2016.
+ */
+
+/**
+ * DEPRECATED
+ */
+
+const fs = require('fs');
+const _ = require('lodash');
+const request = require('request');
+var requestObj = {};
+
+module.exports = {
+    remove_create_update(req, res){
+        const name = req.param('name');
+
+        if (!name) return res.badRequest(null, {message: 'You should send param \'name\''});
+
+        var lang = req.param('lang');
+        if (!lang || (lang !== 'fr' && lang !== 'en')) lang = 'en';
+
+        const credentials = CredentialService.getCredentials(lang);
+
+        res.setTimeout(0);
+
+        req.file('dialog_xml').upload({maxBytes: Number.MAX_VALUE}, function (err, uploadedFiles) {
+            if (err) return res.send(500, err);
+
+            if (uploadedFiles.length === 0) return res.badRequest(null, {message: 'You should send a xml file'});
+
+            Dialog.find({name: name, lang: lang}).exec(function (err4, result) {
+                if (err4)
+                    return res.json({error: "The dialog to remove is not found"});
+
+                sails.log("Find Dialog");
+
+                if (result[0]) {
+                    const dialog_id = result[0].dialog_id;
+                    DialogService.deleteDialog(credentials, dialog_id, function (err, result4) {
+                        if (err)
+                            return res.json({
+                                error: err
+                            });
+
+                        sails.log("Delete Dialog");
+                        DialogService.createDialog(credentials, name, fs.createReadStream(uploadedFiles[0].fd), function (err2, result2) {
+                            sails.log("Create Dialog");
+                            DialogService.initDialogs(function (err3, result3) {
+                                if (err3)
+                                    return res.json({
+                                        error: err3
+                                    });
+                                sails.log("Init Dialog");
+                                return res.json({
+                                    error: err2,
+                                    message: result2
+                                });
+                            })
+
+
+                        });
+                    });
+                }
+
+                else {
+                    DialogService.createDialog(credentials, name, fs.createReadStream(uploadedFiles[0].fd), function (err2, result2) {
+                        DialogService.initDialogs(function (err3, result3) {
+                            if (err3)
+                                return res.json({
+                                    error: err3
+                                });
+                            return res.json({
+                                error: err2,
+                                message: result2
+                            });
+                        })
+
+
+                    });
+                }
+
+            })
+
+
+        });
+    },
+
+    /**
+     * Create a dialog instance in the Bluemix Service
+     * Need unique name for the dialog and dialog_xml file
+     * @param req
+     * @param res
+     * @returns {*}
+     */
+    create(req, res){
+        const name = req.param('name');
+
+        if (!name) return res.badRequest(null, {message: 'You should send param \'name\''});
+
+        var lang = req.param('lang');
+        if (!lang || (lang !== 'fr' && lang !== 'en')) lang = 'en';
+
+        const credentials = CredentialService.getCredentials(lang);
+
+        res.setTimeout(0);
+
+        req.file('dialog_xml').upload({maxBytes: Number.MAX_VALUE}, function (err, uploadedFiles) {
+            if (err) return res.send(500, err);
+
+            if (uploadedFiles.length === 0) return res.badRequest(null, {message: 'You should send a xml file'});
+
+            DialogService.createDialog(credentials, name, fs.createReadStream(uploadedFiles[0].fd), function (err, result) {
+                return res.json({
+                    error: err,
+                    message: result
+                });
+            })
+        });
+    },
+    /**
+     * Return the list of all dialog in the service
+     * @param req
+     * @param res
+     */
+    list (req, res){
+
+        var lang = req.param('lang');
+        if (!lang || (lang !== 'fr' && lang !== 'en')) lang = 'en';
+
+        const credentials = CredentialService.getCredentials(lang);
+
+        DialogService.getDialogs(credentials, function (err, result) {
+            return res.json({
+                error: err,
+                message: result
+            })
+        });
+    },
+    /**
+     * Delete a dialog in the service
+     * Need the dialog_id of the dialog
+     * @param req
+     * @param res
+     * @returns {*}
+     */
+    delete (req, res){
+        const dialog_id = req.param('dialog_id');
+        if (!dialog_id) return res.badRequest(null, {message: 'You should send param \'dialog_id\''});
+
+        var lang = req.param('lang');
+        if (!lang || (lang !== 'fr' && lang !== 'en')) lang = 'en';
+
+        const credentials = CredentialService.getCredentials(lang);
+
+        DialogService.deleteDialog(credentials, dialog_id, function (err, result) {
+            return res.json({
+                error: err,
+                message: result
+            });
+        });
+    },
+    /**
+     * Update
+     * @param req
+     * @param res
+     * @returns {*}
+     */
+    update (req, res){
+        const dialog_id = req.param('dialog_id');
+        if (!dialog_id) return res.badRequest(null, {message: 'You should send param \'dialog_id\''});
+
+        var lang = req.param('lang');
+        if (!lang || (lang !== 'fr' && lang !== 'en')) lang = 'en';
+
+        const credentials = CredentialService.getCredentials(lang);
+
+        req.file('dialog_xml').upload({maxBytes: Number.MAX_VALUE}, function (err, uploadedFiles) {
+            if (err) return res.send(500, err);
+
+            if (uploadedFiles.length === 0) return res.badRequest(null, {message: 'You should send a xml file'});
+
+            DialogService.update(credentials, dialog_id, fs.createReadStream(uploadedFiles[0].fd), function (err, result) {
+                return res.json({
+                    error: err,
+                    message: result
+                });
+            })
+        });
+    },
+    converse(req, res){
+        var dialog_id = req.param('dialog_id');
+        var conversation_id = req.param('conversation_id');
+        var client_id = req.param('client_id');
+        var user_input = req.param('user_input');
+
+        var lang = req.param('lang');
+        if (!lang || (lang !== 'fr' && lang !== 'en')) lang = 'en';
+
+        const credentials = CredentialService.getCredentials(lang);
+
+        var profile = {};
+        profile = req.param('profile');
+
+        var not_found = false;
+        var fake_recall = false;
+        var endConversation = false;
+
+        var var_result = null;
+
+        var parser = null;
+
+        sails.log('User input : ' + user_input + ' // with conversation_id => ' + conversation_id);
+
+        async.series([
+            function (callback) {
+                if (typeof req.allParams().dialog_id !== 'undefined') return callback(null, null)
+
+                // If the conversation started, we have no dialog_id, client_id or conversation_id
+                DialogSwitcherService.welcomeDialogId(lang, function (e, r) {
+                    if (e) return res.json({error: e});
+                    dialog_id = r
+                    conversation_id = ''
+                    client_id = ''
+                    user_input = ''
+
+                    callback(null, null)
+                });
+            },
+            function (callback) {
+                // The watson response
+                var watsonResponse = '';
+
+                console.log('user_input : ' + user_input)
+
+                // Converse with the dialog
+                DialogService.converse(credentials, dialog_id, conversation_id, client_id, user_input, function (err, result) {
+                    if (err) return res.json({error: err});
+
+                    if (typeof result === 'undefined' || typeof result.response === 'undefined')
+                        return res.json({error: "No response from cognitive server"});
+
+                    conversation_id = result.conversation_id;
+                    sails.log("SET conversation_id ==> " + result.conversation_id)
+
+                    // Parse action, redirection and variables
+                    parser = ParserService.parse(result.response);
+                    watsonResponse = result.response;
+
+                    sails.log('True Watson Response  ->  ' + JSON.stringify(watsonResponse));
+                    // Glitch before we have the advisor redirection
+                    var response = _.join(watsonResponse, ' ');
+                    if (response.indexOf('redirectAdvisor') > -1) {
+                        if (lang === 'fr')
+                            watsonResponse.push('WIP => Redirection vers un conseiller.');
+                        else
+                            watsonResponse.push('WIP => Redirection to an advisor.');
+                    }
+
+
+                    async.parallel({
+                        redirect: function (callback) {
+                            if (parser.redirections.length == 0) return callback(null, null);
+
+                            // if we need to redirect, redirect to the good dialog
+                            DialogSwitcherService.switchDialog(parser.redirections[0], lang, function (err2, redirection_id) {
+                                if (err2)
+                                    return res.json({
+                                        error: err2
+                                    });
+                                callback(null, redirection_id);
+                            });
+                        },
+                        action: function (callback) {
+
+                            console.log('action')
+
+                            _.forEach(parser.actions, function (action) {
+                                //old version
+                                /*
+                                 if (action.name === 'getTopic') {
+                                 not_found = true;
+                                 }
+                                 else if (action.name === 'endConversation') {
+                                 endConversation = true;
+                                 }
+                                 else if (action.name === 'setVariable') {
+
+                                 var param = action.params[0];
+                                 var value = '';
+                                 if (typeof(profile) !== 'undefined' && typeof(profile[param]) !== 'undefined')
+                                 value = profile[param];
+                                 var name_values = [{
+                                 name: param,
+                                 value: value
+                                 }];
+                                 DialogService.setProfile(credentials, dialog_id, client_id, name_values, function (err, result) {
+                                 if (err) return err;
+                                 });
+
+                                 var_result = value;
+                                 }
+                                 else if (action.name === 'is_card_blocked') {
+
+
+                                 // Random responses
+                                 var randYesNo = Math.random() > 0.8 ? 'Yes' : 'No';
+
+                                 if (typeof(profile) !== 'undefined' && typeof(profile['firstname']) !== 'undefined') {
+                                 if (profile['firstname'] === 'Rémy') {
+                                 randYesNo = 'No';
+                                 }
+                                 else if (profile['firstname'] === 'Kevin') {
+                                 randYesNo = 'Yes';
+                                 }
+                                 }
+
+                                 sails.log(randYesNo)
+                                 var param = action.params[0];
+                                 var name_values = [{
+                                 name: param,
+                                 value: randYesNo
+                                 }];
+                                 DialogService.setProfile(credentials, dialog_id, client_id, name_values, function (err, result) {
+                                 if (err) return err;
+                                 });
+
+                                 var_result = randYesNo;
+
+                                 fake_recall = true;
+
+                                 }
+                                 else if (action.name === 'checkPhoneNumber') {
+                                 var phone = '0102030405';
+                                 var profile_var = 'action_result';
+                                 var action_res = 'KO';
+
+                                 if (action.params.length > 1) {
+                                 phone = action.params[0];
+                                 profile_var = action.params[1];
+                                 }
+
+                                 phone = phone.replace(/\s/g,'');
+
+                                 if (phone === '0123456789' || phone === '9876543210') {
+                                 action_res = 'OK';
+                                 }
+
+                                 var name_values = [{
+                                 name: profile_var,
+                                 value: action_res
+                                 }];
+
+                                 DialogService.setProfile(credentials, dialog_id, client_id, name_values, function (err, result) {
+                                 if (err) return err;
+                                 });
+
+                                 // Recall dialog
+                                 fake_recall = true;
+
+                                 var_result = action_res;
+
+                                 }
+                                 else if (action.name === 'checkCardNumber') {
+                                 var card = '0102030405';
+                                 var profile_var = 'action_result';
+                                 var action_res = 'KO';
+
+                                 if (action.params.length > 1) {
+                                 card = action.params[0];
+                                 profile_var = action.params[1];
+                                 }
+
+                                 card = card.replace(/\s/g,'');
+
+                                 if (card === '0123' || card === '3210') {
+                                 action_res = 'OK';
+                                 }
+
+                                 var name_values = [{
+                                 name: profile_var,
+                                 value: action_res
+                                 }];
+
+                                 DialogService.setProfile(credentials, dialog_id, client_id, name_values, function (err, result) {
+                                 if (err) return err;
+                                 });
+
+                                 // Recall dialog
+                                 fake_recall = true;
+
+                                 var_result = action_res;
+
+                                 }
+                                 else if (action.name === 'changePaymentLimit') {
+                                 fake_recall = true;
+
+                                 var_result = 'OK';
+                                 }*/
+                                //end old version
+
+                                //new version
+
+                                if (action.name === 'getTopic') {
+                                    not_found = true;
+                                }
+                                else if (action.name === 'endConversation') {
+                                    endConversation = true;
+                                } else {
+                                    requestObj = {
+                                        action_name: action.name,
+                                        param: action.params,
+                                        customer_id: '123456789'
+                                    };
+                                    ActionService.querySCRM(requestObj, function (er, resp) {
+                                        if (er) {
+                                            sails.log(er);
+                                        } else {
+                                            sails.log("Response from SCRM in Dialogcontroller " + JSON.stringify(resp));
+                                            var name_values = [{
+                                                name: action.params[0],
+                                                value: resp.result
+                                            }];
+                                            DialogService.setProfile(credentials, dialog_id, client_id, name_values, function (err, result) {
+                                                if (err) return err;
+                                            });
+                                            var_result = resp.result;
+                                            fake_recall = true;
+                                        }
+                                    });
+                                }
+
+                                //end new version
+
+                                sails.log('Actions -> : ' + JSON.stringify(action));
+                            });
+                            callback(null, null)
+                        },
+                        variable: function (callback) {
+
+                            console.log('variable')
+                            if (typeof profile !== 'undefined') {
+                                // Replaces variables with profile values
+                                _.forEach(parser.variables, function (variable) {
+                                    _.forEach(watsonResponse, function (sentence, index) {
+                                        watsonResponse[index] = watsonResponse[index].replace("[" + variable + "]", profile[variable]);
+                                    })
+                                });
+                                callback(null, null);
+                            }
+                            // TODO : remove, profile is sent
+                            else {
+                                request({
+                                    url: 'http://crm-mobile.eu-gb.mybluemix.net/v1/profiles/1',
+                                }, function (err, response, body) {
+                                    if (err) return sails.log(err);
+
+                                    var obj = JSON.parse(body)
+                                    profile = obj.data;
+
+                                    _.forEach(parser.variables, function (variable) {
+                                        _.forEach(watsonResponse, function (sentence, index) {
+                                            watsonResponse[index] = watsonResponse[index].replace("[" + variable + "]", profile[variable]);
+                                        })
+                                    });
+
+                                    callback(null, null);
+                                });
+                            }
+                        },
+                        keywords: function (callback) {
+
+                            if (user_input.length <= 0) return callback(null, []);
+                            AlchemyLanguageService.keywords(user_input, function (_err, _res) {
+                                if (_err)
+                                    sails.log(_err);
+                                callback(_err, _res);
+                            });
+                        }
+                    }, function (err2, result2) {
+                        if (err2) return res.json({error: err2});
+
+                        // Remove action in response
+
+                        var regex = /\[(.*?)\]/ig;
+                        _.forEach(watsonResponse, function (value, index) {
+                            watsonResponse[index] = value.replace(regex, "");
+                        });
+
+                        //sails.log(JSON.stringify(result))
+
+                        sails.log('Watson response : ' + JSON.stringify(watsonResponse) + JSON.stringify(watsonResponse));
+
+                        // not_found or fake_recall
+                        if (not_found || fake_recall) {
+                            var message = '';
+                            if (not_found) message = 'not_found';
+                            if (fake_recall) message = 'fake_recall';
+                            sails.log('ID => ' + conversation_id)
+                            // Send the message
+                            DialogService.converse(credentials, dialog_id, conversation_id, client_id, message, function (err3, result3) {
+                                if (err)
+                                    return res.json({error: err3});
+
+                                var parser_redo = ParserService.parse(result3.response);
+                                watsonResponse = result3.response;
+
+                                if (typeof profile !== 'undefined') {
+                                    // Replaces variables with profile values
+                                    _.forEach(parser_redo.variables, function (variable) {
+                                        _.forEach(watsonResponse, function (sentence, index) {
+                                            watsonResponse[index] = watsonResponse[index].replace("[" + variable + "]", profile[variable]);
+                                        })
+                                    });
+                                    callback(null, null);
+                                }
+                                // TODO : remove, profile is sent
+                                else {
+                                    request({
+                                        url: 'http://crm-mobile.eu-gb.mybluemix.net/v1/profiles/1',
+                                    }, function (err, response, body) {
+                                        if (err) return sails.log(err);
+
+                                        var obj = JSON.parse(body)
+                                        profile = obj.data;
+
+                                        _.forEach(parser_redo.variables, function (variable) {
+                                            _.forEach(watsonResponse, function (sentence, index) {
+                                                watsonResponse[index] = watsonResponse[index].replace("[" + variable + "]", profile[variable]);
+                                            })
+                                        });
+
+                                        callback(null, null);
+                                    });
+                                }
+
+
+                                var obj = generateDialogResponse(err, dialog_id, result3, result2, watsonResponse, endConversation, parser, var_result, lang);
+                                return res.json(obj);
+                            });
+                        } else {
+                            var obj = generateDialogResponse(err, dialog_id, result, result2, watsonResponse, endConversation, parser, var_result, lang);
+                            return res.json(obj);
+                        }
+                    });
+                });
+            }
+        ])
+    },
+    conversation(req, res){
+        const dialog_id = req.param('dialog_id');
+        const date_from = req.param('date_from');
+        const date_to = req.param('date_to');
+        const limit = req.param('limit');
+        const offset = req.param('offset');
+
+        if (!dialog_id) return res.badRequest(null, {message: 'You should send param \'dialog_id\''});
+        if (!date_from) return res.badRequest(null, {message: 'You should send param \'date_from\''});
+        if (!date_to) return res.badRequest(null, {message: 'You should send param \'date_to\''});
+        if (!limit) return res.badRequest(null, {message: 'You should send param \'limit\''});
+        if (!offset) return res.badRequest(null, {message: 'You should send param \'offset\''});
+
+        var lang = req.param('lang');
+        if (!lang || (lang !== 'fr' && lang !== 'en')) lang = 'en';
+
+        const credentials = CredentialService.getCredentials(lang);
+
+        DialogService.getConversation(credentials, dialog_id, date_from, date_to, limit, offset, function (err, result) {
+            return res.json({
+                error: err,
+                message: result
+            });
+        });
+
+    },
+    profile(req, res){
+        const dialog_id = req.param('dialog_id');
+        const client_id = req.param('client_id');
+        const name = req.param('name');
+        const value = req.param('value');
+
+        if (!dialog_id) return res.badRequest(null, {message: 'You should send param \'dialog_id\''});
+        if (!client_id) return res.badRequest(null, {message: 'You should send param \'client_id\''});
+
+        var lang = req.param('lang');
+        if (!lang || (lang !== 'fr' && lang !== 'en')) lang = 'en';
+
+        const credentials = CredentialService.getCredentials(lang);
+
+        if (req.method === 'PUT') {
+            if (!name) return res.badRequest(null, {message: 'You should send param \'name\''});
+            if (!value) return res.badRequest(null, {message: 'You should send param \'value\''});
+
+            var name_values = [{
+                name: name,
+                value: value
+            }]
+
+            DialogService.setProfile(credentials, dialog_id, client_id, name_values, function (err, result) {
+                return res.json({
+                    error: err,
+                    message: result
+                });
+            });
+        }
+        else {
+            if (name) {
+                DialogService.getProfile(credentials, dialog_id, client_id, name, function (err, result) {
+                    return res.json({
+                        error: err,
+                        message: result
+                    });
+                });
+            } else {
+                DialogService.getProfiles(credentials, dialog_id, client_id, function (err, result) {
+                    return res.json({
+                        error: err,
+                        message: result
+                    });
+                });
+            }
+        }
+    },
+    updateDB(req, res){
+        DialogService.initDialogs(function (err, result) {
+            if (err)
+                return res.serverError(err);
+            return res.ok();
+        })
+    }
+};
+
+function generateDialogResponse(err, dialog_id, result, secondResult, watsonResponse, endConversation, parser, var_result, lang) {
+
+    if (typeof secondResult.keywords !== 'undefined') {
+        secondResult.keywords = [];
+    }
+
+    return {
+        error: err,
+        message: {
+            conversation_id: result.conversation_id,
+            client_id: result.client_id,
+            input: result.input,
+            confidence: result.confidence,
+            response: watsonResponse,
+            dialog_id: dialog_id
+        },
+        switchDialog: secondResult.redirect,
+        endConversation: endConversation,
+        keywords: secondResult.keywords,
+        actions: parser.actions,
+        lang: lang,
+        var_result: var_result
+    }
+}

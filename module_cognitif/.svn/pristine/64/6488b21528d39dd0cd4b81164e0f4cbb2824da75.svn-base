@@ -1,0 +1,598 @@
+"use strict";
+
+/**
+ * Conversation Controller
+ */
+
+const _ = require('lodash');
+const shortid = require('shortid');
+const gingerbread = require('gingerbread');
+
+const sugar_id = "26196b38-be49-fb8f-0c13-57723fccf91b";
+
+const classifier_id = "2d7aefx102-nlc-2536";
+const nlc_confidence = 1;
+
+const workspace_id = 'da21b5d1-1650-4c31-a479-e381709f9091';
+
+//const workspace_id = '83c497cd-e44e-4c0d-84eb-bebf33f154b2';
+
+
+module.exports = {
+    index(req, res) {
+        sails.log('============= Call Webservice - ' + new Date().toISOString().substring(0, 20) + ' ==============')
+
+        var client_id = (!req.param('client_id') || req.param('client_id') === '') ? shortid.generate() : req.param('client_id');
+        var input = !req.param('user_input') ? 'none' : req.param('user_input');
+        var ginger = req.param('ginger') ? req.param('ginger') : true;
+        var _sugar_id = req.param('sugar_id');
+
+        var ginger_input = '';
+
+        /**
+         * Execute some action in async.waterfall
+         */
+        async.waterfall(
+            [
+                function (callback) {
+                    if (ginger) {
+                        gingerbread(input, function (error, text, result, corrections) {
+                            // result contains 'The smell of flowers brings back memories.'
+                            if (error) {
+                                callback(error);
+                            } else {
+                                input = result;
+                                ginger_input = result;
+                                callback(null);
+                            }
+                        });
+                    }
+                    else {
+                        ginger_input = input;
+                        callback(null);
+                    }
+                },
+                /**
+                 * Find the current user for this session **or create the user if he doesn't exist
+                 * @param callback
+                 */
+                    function (callback) {
+                    ConversationClient.findOrCreateUser(client_id, workspace_id, null, function (err, client) {
+                        if (err)
+                            callback(err, null);
+                        callback(null, client)
+                    })
+
+                },
+                function (client, callback) {
+                    if (client.context != null && (client.context.client == undefined || client.context.client == null)) {
+                        const id = !_sugar_id ? sugar_id : _sugar_id;
+                        sails.log(id)
+                        CRMService.getClientByID(id, function (err, clientProfil) {
+                            if (err) callback(err, client);
+                            if (clientProfil === null) return res.json({error: 'SugarCRM is down'})
+                            sails.log("crm : " + JSON.stringify(clientProfil))
+                            client.context['client'] = clientProfil;
+                            callback(null, client);
+                        });
+                    } else {
+                        callback(null, client);
+                    }
+
+                },
+                /**
+                 * Call alchemy and find entities
+                 * Execute the script configuration
+                 * And add the variable to the current user context
+                 * @param client
+                 * @param callback
+                 */
+                    function (client, callback) {
+                    ScriptService.getScript('withdraw', function (error, script) {
+                        if (error) return res.json(error);
+                        if (script == null || script == undefined) {
+                            return res.json("Error : script is null or undefined!");
+                        } else {
+                            callback(null, client, script);
+                        }
+
+                    });
+                },
+                function (client, script, callback) {
+                    /**
+                     * Call the alchemy service
+                     */
+                    //callback(null, client, script)
+
+                    AlchemyLanguageService.entities(input, function (entitiesErr, entities) {
+
+                        /**
+                         * Find variables with the script
+                         */
+                        var profilesToUpdate = findVariableToUpdate(input, script);
+                        /**
+                         * Find entities with the script
+                         */
+                        profilesToUpdate = _.concat(profilesToUpdate, findEntityToUpdate(entities, script));
+
+                        /**
+                         * Push the context to the client
+                         */
+                        _.forEach(profilesToUpdate, function (profile) {
+                            client.context[profile.name] = profile.value;
+                        })
+
+                        callback(null, client, script);
+                    })
+                },
+                /**
+                 * Call the FAQ NLC
+                 * @param client
+                 * @param script
+                 */
+                    function (client, script, callback) {
+                    const credentialsNLC = CredentialService.getNLCCredentials('en');
+
+                    /**
+                     * Classify the intent of the user
+                     */
+
+                    NLCService.classify(credentialsNLC, input, classifier_id, function (err_nlc, res_nlc) {
+                        if (err_nlc) {
+                            sails.log(err_nlc);
+                            callback(err_nlc, null);
+                        }
+                        const first_class = res_nlc.classes[0];
+
+                        if (first_class.confidence >= nlc_confidence) {
+                            sails.log(JSON.stringify(first_class))
+                            CRMService.getResponseNLCFromCRM(first_class.class_name, function (err_crm, res_crm) {
+                                if (err_crm) {
+                                    sails.log(err_crm);
+                                    callback(err_crm, client, client, script)
+                                }
+                                if (res_crm.length && res_crm.length > 0) {
+                                    var nlc_response = res_crm[0].response;
+                                    const vars = nlc_response.match(/%_[^\s]+_%/g);
+                                    if (vars) {
+                                        _.forEach(vars, function (_var) {
+                                            const __var = _var.replace('%_', '').replace('_%', '');
+                                            const _value = Object.byString(client, __var);
+                                            nlc_response = nlc_response.replace(_var, _value);
+                                        });
+                                    }
+                                }
+                                client.output = {
+                                    text: [nlc_response]
+                                }
+
+                                if (typeof client.context.lastOutput !== 'undefined') {
+                                    client.output.text = client.output.text.concat(client.context.lastOutput[client.context.lastOutput.length - 1]);
+                                }
+                                callback(null, client, script, first_class, true)
+                            });
+
+                        }
+                        else {
+                            callback(null, client, script, first_class, false)
+                        }
+                    })
+                },
+                /**
+                 * Call the conversation service with the client context
+                 * @param client
+                 * @param callback
+                 */
+                    function (client, script, first_class, is_nlc_triggered, callback) {
+                    /**
+                     * Get the conversation's credentials
+                     * @type {*|{url, username, password, version, version_date}}
+                     */
+                    if (is_nlc_triggered)
+                        return callback(null, client, {
+                            context: client.context,
+                            output: {text: client.output.text},
+                            input: {text: input}
+                        }, script)
+
+                    const credentials = CredentialService.getConversationCredentials();
+
+                    var _ctx = _.cloneDeep(client.context);
+                    delete _ctx.client;
+                    delete _ctx.system;
+                    sails.log('Context => ' + JSON.stringify(_ctx));
+
+                    /**
+                     * Call the conversation service with the client's context
+                     */
+                    ConversationService.message(credentials, input, client.workspace_id, client.context, function (e, conversation) {
+                        if (e) {
+                            sails.log(e);
+                            callback(e, null)
+                        }
+
+                        /**
+                         * Add training data
+                         * @type {Array|*}
+                         */
+                        if (typeof(conversation.output) !== "undefined"
+                            && typeof(conversation.output.text) !== "undefined"
+                            && conversation.output.text.length > 0
+                            && conversation.output.text[0].toLowerCase().indexOf("[sorry]") >= 0) {
+
+                            TrainingData.newTraining(input,
+                                first_class.class_name,
+                                String(first_class.confidence),
+                                conversation.intents[0].intent,
+                                String(conversation.intents[0].confidence),
+                                function (err, training) {
+                                    if (err) {
+                                        sails.log("new training echoue");
+
+                                    } else {
+                                        sails.log("new training ");
+                                        sails.log(training);
+
+                                    }
+
+                                });
+
+                        }
+
+
+                        conversation.context['lastOutput'] = conversation.output.text;
+                        callback(null, client, conversation, script)
+                    });
+                },
+                /**
+                 * Save the context of the current user
+                 * @param client
+                 * @param conversation
+                 * @param callback
+                 */
+                    function (client, conversation, script, callback) {
+                    /**
+                     * Save the user's context
+                     */
+                    ConversationClient.saveConversation(client.client_id, client.workspace_id, conversation.context, function (err, updated) {
+                        var obj = {
+                            conversation: conversation,
+                            client: updated[0],
+                            script: script
+                        }
+                        callback(null, obj);
+                    });
+                },
+                function (result, callback) {
+                    if (result.client.context.hasOwnProperty('action')) {
+
+                        actionReCall(result.client, result.client.context.action, result.script, input, result.conversation.output.text, function (e, r) {
+                            sails.log('============= End Call Webservice - ' + new Date().toISOString().substring(0, 20) + ' ==============');
+
+                            Logs.create({
+                                client_id: client_id,
+                                user_input: input,
+                                output: r.conversation.output.text.join('\n')
+                            }).exec(function (_e, _r) {
+                                r['ginger_input'] = ginger_input;
+                                callback(null, r);
+                            });
+                        })
+                    } else {
+                        sails.log('============= End Call Webservice - ' + new Date().toISOString().substring(0, 20) + ' ==============')
+
+                        Logs.create({
+                            client_id: client_id,
+                            user_input: input,
+                            output: result.conversation.output.text.join('\n')
+                        }).exec(function (_e, _r) {
+                            result['ginger_input'] = ginger_input;
+                            callback(null, result);
+                        });
+                    }
+                },
+                function (result, callback) {
+                    if (typeof result.conversation.output.text === 'undefined') return callback(null, result);
+                    ParserService.parseSorry(result.conversation.output.text, function (err, res) {
+                        result.conversation.output.text = res;
+                        callback(null, result)
+                    })
+                }
+            ],
+            /**
+             * Send the result
+             * @param err
+             * @param result
+             */
+            function (err, result) {
+                if (err)
+                    return res.json(err);
+
+                // result.conversation.context['lastOutput'] = [result.conversation.output.text[result.conversation.output.text.length - 1]];
+                //result.conversation.context['lastOutput'] = result.conversation.output.text;
+                sails.log('LastOuput => ' + result.conversation.context['lastOutput'])
+
+                return res.json(result);
+            }
+        )
+        ;
+    },
+    sendFeedback(req, res){
+        sails.log("------- Send mail--------------")
+
+        const client_id = req.param('client_id');
+        const email = req.param('email');
+        const expect = req.param('expect');
+        const comment = req.param('comment');
+
+        Logs.find({client_id: client_id}).exec(function (error, result) {
+            if (error) {
+                sails.log(error)
+                res.json(error);
+            }
+
+            sails.log("=> Get Logs : " + result)
+
+            if (result.length > 0) {
+                const inputs = _.map(result, _.property('user_input'));
+                const outputs = _.map(result, _.property('output'));
+
+                Mailer.sendFeedBackMail({
+                    client_id, email, expect, comment, inputs, outputs
+                })
+
+                res.json({result: 'OK'});
+            }
+            else {
+                res.json({error: 'No conversation found.'});
+            }
+        })
+    }
+};
+/**
+ * Execute the action and recall this function if an another action come
+ * @param client
+ * @param action
+ * @param script
+ * @param input
+ * @param previousText
+ * @param cb
+ */
+function actionReCall(client, action, script, input, previousText, cb) {
+    const credentials = CredentialService.getConversationCredentials();
+    var needToSendUpdate = false;
+    var ctxToUpdate = action.hasOwnProperty('var') ? action.var : [];
+
+    // Concat the previous text
+    var _output = previousText;
+
+    /**
+     * Make the call to the action service
+     * @type {boolean}
+     */
+    sails.log("Action : " + JSON.stringify(action))
+
+    async.series([
+        function (callback) {
+            switch (action.type.toUpperCase()) {
+                case 'CHECK':
+                    var resultAction = ActionService.executeCheckAction(client.context.client, action.left, action.right, action.operand_type, action.eval);
+                    client.context[ctxToUpdate] = resultAction;
+                    callback(null, null);
+                    break;
+                case 'SET' :
+                    ActionService.executeSetAction(
+                        {
+                            id: action.id
+                        },
+                        action.field,
+                        action.value,
+                        action.table,
+                        action.eval,
+                        function (err, result) {
+                            needToSendUpdate = true;
+                            callback(null, null);
+                        }
+                    )
+                    break;
+                case 'VERIFY':
+                    var resultAction = ActionService.executeVerifyAction(action.value_type, input);
+                    client.context[ctxToUpdate] = resultAction;
+                    callback(null, null);
+                    break;
+                case 'CLEAN':
+                    client.context = ActionService.executeCleanAction(script.branches, action.value, client.context);
+                    callback(null, null);
+                    break;
+                default:
+                    sails.log('Error, this action is not define : ' + action.type.toUpperCase());
+                    callback(null, null);
+                    break;
+            }
+        }
+    ], function (err, result) {
+        /**
+         * Delete the action in the client's context
+         */
+        delete client.context.action;
+
+        /**
+         * Recall conversation
+         */
+        ConversationService.message(credentials, '', client.workspace_id, client.context, function (e, conversation) {
+            if (e) {
+                cb(e, null)
+            }
+
+            conversation.context['lastOutput'] = conversation.output.text;
+
+            /**
+             * Save the conversation in the db.
+             */
+            ConversationClient.saveConversation(client.client_id, client.workspace_id, conversation.context, function (err, updated) {
+                var obj = {
+                    conversation: conversation,
+                    client: updated[0]
+                }
+
+                /**
+                 * If a new action is present, recall recursively this function
+                 */
+                if (conversation.context.hasOwnProperty('action')) {
+                    actionReCall(obj.client, conversation.context.action, script, input, _output, function (e, r) {
+                        cb(null, r);
+                    });
+                    /**
+                     * Send the callback to the client
+                     */
+                } else {
+                    obj['update'] = needToSendUpdate;
+                    _output = _output.concat(obj.conversation.output.text);
+                    obj.conversation.output.text = _output;
+                    cb(null, obj);
+                }
+            });
+        });
+    });
+}
+
+/**
+ * Find all entities in the user input
+ * @param entities
+ * @param script
+ * @returns {Array}
+ */
+function findEntityToUpdate(entities, script) {
+    var result = [];
+
+    /**
+     * Select all objects that have an entity
+     * @type {Object}
+     */
+    var script = _.pickBy(script, function (value) {
+        return value.hasOwnProperty('entities');
+    });
+
+    for (var i in entities) {
+        var entity = entities[i];
+        /**
+         * Select all objects that have the current entity
+         * @type {Object}
+         */
+        var scriptEntity = _.pickBy(script, function (value) {
+            var _res = false;
+            for (var i = 0; i < value.entities.length; i++) {
+                if (value.entities[i].toUpperCase() === entity.type.toUpperCase()) {
+                    _res = true;
+                }
+            }
+            return _res;
+        });
+
+        /**
+         * Get the first entity
+         */
+        var first;
+        for (first in scriptEntity) break;
+        var currentVariable = first;
+
+        scriptEntity = _.toArray(scriptEntity);
+        scriptEntity = _.head(scriptEntity);
+
+
+        if (typeof scriptEntity === 'undefined' || scriptEntity.length === 0) continue;
+
+        if (scriptEntity.type === 'BOOL') {
+            var isSetted = false;
+            for (var j in scriptEntity.keys) {
+                var key = scriptEntity.keys[j];
+                for (var k in key.values) {
+                    var value = key.values[k];
+                    if (value.toUpperCase() === entity.text.toUpperCase()) {
+                        result.push({
+                            name: currentVariable,
+                            value: true
+                        })
+                        isSetted = true;
+                    }
+                }
+            }
+            if (!isSetted) {
+                result.push({
+                    name: currentVariable,
+                    value: false
+                })
+            }
+        }
+        else if (scriptEntity.type == 'AMOUNT') {
+            var _entity = entity.text;
+            if (_entity.indexOf('$') > -1 || _entity.indexOf('dollars') > -1
+                || _entity.indexOf('euros') > -1 || _entity.indexOf('€') > -1)
+                var amount = Number(_entity.replace(/[^0-9\.]+/g, ""));
+            result.push({
+                name: currentVariable,
+                value: amount
+            })
+        }
+
+    }
+    result = _.uniqBy(result, 'name');
+    return result;
+}
+
+/**
+ * Find all variables in the user input
+ * @param user_input
+ * @param script
+ * @returns {Array}
+ */
+function findVariableToUpdate(user_input, script) {
+    var result = [];
+
+    var script = _.pickBy(script, function (value) {
+        return !value.hasOwnProperty('entity');
+    })
+
+    for (var variable in script) {
+        if (script.hasOwnProperty(variable) && script[variable].hasOwnProperty('keys')) {
+            var keys = script[variable].keys;
+            for (var i in keys) {
+                for (var j in keys[i].values) {
+                    var value = keys[i].values[j];
+                    if (user_input.toUpperCase().indexOf(value.toUpperCase()) > -1) {
+                        //sails.log("Update variable " + variable.toUpperCase() + ' with value ' + value.toUpperCase());
+
+                        var key = keys[i].key;
+                        if (script[variable].type == 'BOOL') {
+                            key = 'true'
+                        }
+
+                        var res = {
+                            name: variable,
+                            value: keys[i].key
+                        };
+                        result.push(res);
+                    }
+                }
+            }
+        }
+    }
+    result = _.uniqBy(result, 'name');
+
+    return result;
+}
+
+Object.byString = function (o, s) {
+    s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+    s = s.replace(/^\./, '');           // strip a leading dot
+    var a = s.split('.');
+    for (var i = 0, n = a.length; i < n; ++i) {
+        var k = a[i];
+        if (k in o) {
+            o = o[k];
+        } else {
+            return;
+        }
+    }
+    return o;
+}

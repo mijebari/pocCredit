@@ -1,0 +1,77 @@
+extends ../full_layout_training
+
+
+
+mixin selectoptionmix(suggestionFAQ,faqConfidence,suggestionIntent,intentConfidence)
+  select(style="width:200px")#SelectCategory.controlCategory.form-control.input-sm
+    if suggestionFAQ!='null' && suggestionIntent!='null' 
+      optgroup(label="Watson suggestion")
+        option(value=suggestionFAQ ,title="confidence:"+faqConfidence*100+"%; type:FAQ")=suggestionFAQ 
+        option(value=suggestionIntent, title="confidence:"+intentConfidence*100+"%; type:Intent")=suggestionIntent
+    optgroup(label="FAQ")
+      each typeNLC in types
+        if typeNLC.type == "faq"
+          option(value=typeNLC.name)=typeNLC.name
+    optgroup(label="INTENT")
+      each typeNLC in types
+        if typeNLC.type == "intent"
+          option(value=typeNLC.name)=typeNLC.name
+
+
+
+
+
+block content
+  div.container
+      h3.title-page Classification
+
+      div.col-md-12.options-frame.alert.alert-success
+        p This page lists all sentences that the conversation didn't understand, nor the FAQ.
+        p An expert should classify each sentence to correct spelling mistakes and to categorize. For the final validation send them.
+
+      div.div-tableTraining
+        table#tableTraining.table.table-striped
+          thead
+            tr
+              th.hide-information ID
+              th Date
+              th Sentence
+              th Category
+
+              th Validate
+              th Delete
+          tbody
+            each val in training
+              if val.state == 'toValidate'
+                tr
+                  td.hide-information=val.id
+                  td #{moment(val.currentDate).format('DD/MM/Y H:mm')}
+                  td(data-toggle='modal', data-target='#sentenceChangeModal', data-whatever=val.sentence ,data-whatever2=val.id )=val.sentence
+                  td
+                    +selectoptionmix(val.class_suggestion_faq,val.confidence_class_suggestion_faq,val.class_suggestion_intent,val.confidence_class_suggestion_intent)
+                  td
+                    button.btn.btn-success.btn-xs.btn-rounded.val-training-data
+                      span.glyphicon.glyphicon-ok
+
+                  td
+                    button.btn.btn-warning.btn-xs.btn-rounded.del-training-data
+                      span.glyphicon.glyphicon-remove
+        button(data-toggle='modal', data-target='#addSentenceModal')#addSentence.btn-default
+            span.glyphicon.glyphicon-plus-sign
+            |  Add new sentence
+        button.deleteDataToValidate.btn-danger
+          span.glyphicon.glyphicon-trash
+          |  Delete all sentences
+
+        br
+        br
+
+      div.input-group
+        input(type='text' placeholder='Classify a sentence directly from the NLC service').form-control#test-nlc-input
+        span.input-group-btn
+          button(type='button').btn.btn-test-nlc.btn-default test NLC
+
+
+
+  
+

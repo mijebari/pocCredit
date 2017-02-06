@@ -1,0 +1,488 @@
+/**
+ * Created by rlespagnol on 25/04/2016.
+ */
+
+var fs = require('fs');
+var csvWriter = require('csv-write-stream');
+var csvParser = require('csv-parser');
+
+//const classifier_id = "8aff06x106-nlc-1235";
+const classifier_id = "8aff06x106-nlc-7752";
+
+
+module.exports = {
+    create(req, res){
+
+        const name = req.param('name');
+        var lang = req.param('lang');
+        if (!lang || (lang !== 'fr' && lang !== 'en')) lang = 'en';
+
+        const credentials = CredentialService.getNLCCredentials(lang);
+
+
+        if (!name) return res.badRequest(null, {message: 'You should specify a "name" parameter!'});
+
+
+        req.file('csv').upload({maxBytes: Number.MAX_VALUE}, function (err, uploadedFiles) {
+            if (err) return res.send(500, err);
+
+            if (uploadedFiles.length === 0) return res.badRequest(null, {message: 'You should send a csv file'});
+
+            NLCService.createClassifier(credentials, lang, name, fs.createReadStream(uploadedFiles[0].fd), function (err, result) {
+
+                if (err)
+                    return res.json({
+                        error: err
+                    });
+
+                return res.ok();
+            })
+
+
+        });
+    },
+    info(req, res){
+        const classifier_id = req.param('classifier_id');
+        var lang = req.param('lang');
+        if (!lang || (lang !== 'fr' && lang !== 'en')) lang = 'en';
+
+        const credentials = CredentialService.getNLCCredentials(lang);
+
+        if (!classifier_id) return res.badRequest(null, {message: 'You should specify a "classifier_id" parameter!'});
+
+        NLCService.getClassifierInformation(credentials, classifier_id, function (err, result) {
+            return res.json({
+                error: err,
+                message: result
+            });
+        })
+    },
+    delete(req, res){
+        const classifier_id = req.param('classifier_id');
+        var lang = req.param('lang');
+        if (!lang || (lang !== 'fr' && lang !== 'en')) lang = 'en';
+
+        const credentials = CredentialService.getNLCCredentials(lang);
+
+        if (!classifier_id) return res.badRequest(null, {message: 'You should specify a "classifier_id" parameter!'});
+
+        NLCService.deleteClassifier(credentials, classifier_id, function (err, result) {
+            return res.json({
+                error: err,
+                message: result
+            });
+        })
+    },
+    deleteAllNLC(req, res){
+        NLC.destroy().exec(function (err, results) {
+            if (err) {
+                sails.log(err);
+                return res.json({
+                    error: err
+                });
+            }
+            if (results) {
+                sails.log(results);
+                return res.json(results);
+            }
+        });
+    },
+    list(req, res){
+        var lang = req.param('lang');
+        if (!lang || (lang !== 'fr' && lang !== 'en')) lang = 'en';
+
+        const credentials = CredentialService.getNLCCredentials(lang);
+
+        NLCService.getClassifiers(credentials, function (err, result) {
+            return res.json({
+                error: err,
+                message: result
+            });
+        })
+    },
+    classify(req, res){
+        const text = req.param('text');
+        const classifier_id = req.param('classifier_id');
+
+        var lang = req.param('lang');
+        if (!lang || (lang !== 'fr' && lang !== 'en')) lang = 'en';
+
+        const credentials = CredentialService.getNLCCredentials(lang);
+
+        if (!text) return res.badRequest(null, {message: 'You should send param \'text\''});
+        if (!classifier_id) return res.badRequest(null, {message: 'You should send param \'classifier_id\''});
+
+        NLCService.classify(credentials, text, classifier_id, function (err, result) {
+            return res.json({
+                error: err,
+                message: result
+            })
+        })
+    },
+    initType(req, res) {
+
+        var tab = [{
+            name: "balance",
+            type: "faq"
+        }, {
+            name: "limits",
+            type: "faq"
+        }, {
+            name: "international_option",
+            type: "faq"
+        }, {
+            name: "how_block_card",
+            type: "faq"
+        }, {
+            name: "contactless_card",
+            type: "faq"
+        }, {
+            name: "systematic_authorisation",
+            type: "faq"
+        }, {
+            name: "deferred_debit",
+            type: "faq"
+        }, {
+            name: "immediate_debit",
+            type: "faq"
+        }, {
+            name: "online_payment_cancellation",
+            type: "faq"
+        }, {
+            name: "against_fraud",
+            type: "faq"
+        }, {
+            name: "outstandings",
+            type: "faq"
+        }, {
+            name: "authorized_overdraft",
+            type: "faq"
+        }, {
+            name: "order_card",
+            type: "faq"
+        }, {
+            name: "premium_card_advantages",
+            type: "faq"
+        }, {
+            name: "internet_option",
+            type: "faq"
+        }, {
+            name: "password",
+            type: "faq"
+        }, {
+            name: "price_new_card",
+            type: "faq"
+        }, {
+            name: "new_card",
+            type: "intent"
+        }, {
+            name: "pb_card",
+            type: "intent"
+        }, {
+            name: "pb_withdrawal",
+            type: "intent"
+        }];
+
+        NLC.create(tab).exec(function (err, results) {
+            if (err) {
+                return res.json({
+                    error: err
+                });
+
+            }
+            return res.json({
+                data: results
+            });
+
+        });
+    },
+    findAllType(req, res) {
+        NLC.find().exec(function (err, results) {
+            if (err) {
+                sails.log(err);
+                return res.json({
+                    error: err
+                });
+            }
+            if (results) {
+                //sails.log(results);
+                return res.json({
+                    data: results
+                });
+
+            }
+        });
+
+
+    },
+    findAllTypeIntent(req, res) {
+
+
+        NLC.find({
+            type: 'intent'
+        }).exec(function (err, results) {
+            if (err) {
+                sails.log(err);
+                return res.json({
+                    error: err
+                });
+            }
+            if (results) {
+                sails.log(results);
+                return res.json({
+                    data: results
+                });
+            }
+        });
+
+
+    },
+    findAllTypeFAQ(req, res) {
+        NLC.find({
+            type: 'faq'
+        }).exec(function (err, results) {
+            if (err) {
+                sails.log(err);
+                return res.json({
+                    error: err
+                });
+            }
+            if (results) {
+                sails.log(results);
+                return res.json({
+                    data: results
+                });
+            }
+        });
+    },
+
+    testNLC(req, res) {
+        sails.log("TEST NLC ");
+
+        const sentence = req.param('sentence');
+        sails.log(sentence);
+        if (!sentence) return res.badRequest(null, {
+            message: 'You should specify a "sentence" parameter!'
+        });
+        const credentialsNLC = CredentialService.getNLCCredentials('en');
+        sails.log("TEST NLC 2 ");
+
+        NLCService.classify(credentialsNLC, sentence, classifier_id, function (err_nlc, res_nlc) {
+            sails.log("TEST NLC 3 ");
+            sails.log(res_nlc);
+
+            if (err_nlc) {
+                sails.log(err_nlc);
+                return res.json({
+                    error: err_nlc
+                });
+            }
+            sails.log(res_nlc);
+            return res.json({
+                error: 'null',
+                data: res_nlc
+            });
+        });
+        sails.log("TEST NLC 5");
+
+    },
+    new(req, res) {
+        const name = req.param('name');
+        const type = req.param('type');
+
+
+        if (!name) return res.badRequest(null, {
+            message: 'You should specify a "name" parameter!'
+        });
+        if (!type) return res.badRequest(null, {
+            message: 'You should specify a "type" parameter!'
+        });
+
+        NLC.create({
+            name: name,
+            type: type
+        }).exec(function (err, results) {
+            if (err) {
+                sails.log(err);
+                return res.json({
+                    error: err
+                });
+            }
+
+            if (results) {
+                sails.log(results);
+                return res.json(results);
+
+            }
+        })
+
+
+    },
+    deleteCategory(req, res) {
+
+        const id = req.param('id');
+
+        if (!id) return res.badRequest(null, {
+            message: 'You should specify a "id" parameter!'
+        });
+        sails.log(id + "delete nlcs");
+
+        NLC.destroy({
+            id: id
+        }).exec(function (err, results) {
+            sails.log("delete nlc test" + id);
+            if (err) {
+                sails.log(err);
+                return res.json({
+                    error: err
+                });
+            }
+            if (results) {
+                sails.log(results);
+                return res.json(results);
+            }
+        });
+    },
+    setResponse(req, res) {
+
+        const id = req.param('id');
+        const response = req.param('response');
+
+        if (!id) return res.badRequest(null, {
+            message: 'You should specify a "id" parameter!'
+        });
+        if (!response) return res.badRequest(null, {
+            message: 'You should specify a "response" parameter!'
+        });
+
+        NLC.update({
+            id: id
+        }, {response: response}).exec(function (err, results) {
+            sails.log("update response  nlc " + id);
+            if (err) {
+                sails.log(err);
+                return res.json({
+                    error: err
+                });
+            }
+            if (results) {
+                sails.log(results);
+                return res.json(results);
+            }
+        });
+    },
+
+    generateCSV(req, res) {
+
+        const type = req.param('type');
+
+        if (!type) return res.badRequest(null, {
+            message: 'You should specify a "type" parameter!'
+        });
+        NLC.find().exec(function (err, results) {
+            if (err) {
+                sails.log(err);
+                return res.json({
+                    error: err
+                });
+            }
+
+            if (results) {
+                sails.log("generate  csv");
+                var writer = csvWriter({
+                    sendHeaders: false
+                });
+                writer.pipe(fs.createWriteStream('public/' + type + '.csv'));
+                results.forEach(function (arrayItem) {
+                    writer.write({
+                        name: arrayItem.name,
+                        type: arrayItem.type,
+                        response: arrayItem.response
+                    });
+
+                });
+                writer.end();
+                //  sails.log(results);
+                return res.json(results);
+
+            }
+        });
+
+
+    },
+    getFile(req, res) {
+        const type = req.param('type');
+        if (!type || type != 'category') return res.badRequest(null, {
+            message: 'You should specify a "data_typz" parameter!'
+        });
+        res.setHeader('Content-disposition', 'attachment; filename=' + type + '.csv');
+        res.writeHead(200, {
+            'Content-Type': 'text/csv'
+        });
+        res.charset = 'UTF-8';
+//res.write("Hello, world");
+        NLC.find().exec(function (err, results) {
+            if (err) {
+                sails.log(err);
+                return res.json({
+                    error: err
+                });
+            }
+
+            if (results) {
+                sails.log("generate  csv");
+                // sails.log(results);
+                var writer = csvWriter({
+                    sendHeaders: false
+                });
+                writer.pipe(res);
+                results.forEach(function (arrayItem) {
+                    writer.write({
+                        name: arrayItem.name,
+                        type: arrayItem.type,
+                        response: arrayItem.response
+                    });
+
+                });
+                writer.end();
+
+                res.end();
+            }
+        });
+        // res.download('public/'+type + '.csv')
+    },
+    uploadFile(req, res) {
+        const type = req.param('type');
+        if (!type) return res.badRequest(null, {
+            message: 'You should specify a "type" parameter!'
+        });
+        req.file('csv').upload({
+            maxBytes: Number.MAX_VALUE
+        }, function (err, uploadedFiles) {
+            if (err) return res.send(500, err);
+
+            if (uploadedFiles.length === 0) return res.badRequest(null, {
+                message: 'You should send a csv file'
+            });
+
+            sails.log(uploadedFiles);
+            if (uploadedFiles[0] != null && uploadedFiles[0] != undefined) {
+                var filePath = uploadedFiles[0].fd;
+                var streamData = fs.createReadStream(uploadedFiles[0].fd).pipe(csvParser(['name', 'type', 'response']));
+                streamData.on('data', function (data) {
+                    NLC.newCategory(data.name, data.type, data.response);
+                });
+                streamData.on('end', function () {
+                    sails.log("All csv data are add")
+                    return res.json({
+                        file: "receive"
+                    });
+                });
+
+            }
+        });
+
+
+    }
+
+}

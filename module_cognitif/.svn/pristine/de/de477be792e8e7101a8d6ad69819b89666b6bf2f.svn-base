@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog xsi:noNamespaceSchemaLocation="WatsonDialogDocument_1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <flow>
+        <folder label="Main">
+            <output>
+                <prompt>
+                    <item>
+                        @(is_card_blocked)
+                    </item>
+                </prompt>
+                <getUserInput>
+                    <input>
+                        <grammar>
+                            <item>*</item>
+                        </grammar>
+                        <if>
+                            <cond varName="is_card_blocked" operator="EQUAL_TO_NO"/>
+                            <output>
+                                <prompt selectionType="RANDOM">
+                                    <item>
+                                        @(is_agency_network)
+                                    </item>
+                                </prompt>
+                                 <getUserInput> 
+                                     <search ref="is_agency_network">                         
+                                     </search>
+                                 </getUserInput>
+                            </output>
+                        </if>
+                        <output>
+                            <prompt>
+                                <item>@(redirect_advisor)</item>
+                            </prompt>
+                            <getUserInput>
+                                <input/>
+                            </getUserInput>
+                        </output>
+                    </input>
+                </getUserInput>
+            </output>
+        </folder>
+        <folder label="Library">
+            <folder label="Live Content" id="liveContent">
+                <folder label="Agency network" id="is_agency_network">
+                    <input>
+                        <grammar>
+                            <item>$ (yes)</item>
+                        </grammar>
+                        <action varName="is_agency_network" operator="SET_TO_YES"/>
+                        <goto ref="output1"/>
+                    </input>
+                    <input>
+                        <grammar>
+                            <item>$ (no)</item>
+                        </grammar>
+                        <action varName="is_agency_network" operator="SET_TO_NO"/>
+                        <goto ref="output1"/>
+                    </input>
+                </folder>
+                <output id="output1">
+                    <prompt>
+                        <item>@(two_options)</item>
+                    </prompt>
+                    <getUserInput>
+                        <search ref="two_options"/>
+                    </getUserInput>
+                </output>                
+                <folder label="Two options" id="two_options">
+                    <input>
+                        <grammar>
+                            <item>@(yes)</item>
+                        </grammar>
+                        <output>
+                            <prompt>
+                                <item>@(is_open)</item>
+                            </prompt>
+                            <getUserInput>
+                                <search ref="closed_open"/>
+                            </getUserInput>
+                        </output>
+                    </input>
+                    <input>
+                        <grammar>
+                            <item>@(no)</item>
+                        </grammar>
+                        <output>
+                            <prompt>
+                                <item>@(confirmation)</item>
+                            </prompt>
+                            <getUserInput>
+                                <search ref="check_agency"/>
+                            </getUserInput>
+                        </output>
+                    </input>
+                </folder>
+                <folder label="Agency open or closed" id="closed_open">
+                    <input>
+                        <grammar>
+                            <item>agency_closed</item>
+                        </grammar>
+                        <if>
+                            <cond varName="is_agency_network" operator="EQUAL_TO_NO">
+                            </cond>
+                            <output>
+                            <prompt>
+                                <item>@(meet_advisor_or_not_3d)</item>
+                            </prompt>
+                            <getUserInput>
+                                <search ref="agency_closed"/>
+                            </getUserInput>
+                        </output>
+                        </if>
+                        <output>
+                            <prompt>
+                                <item>@(meet_advisor_or_not_48)</item>
+                            </prompt>
+                            <getUserInput>
+                                <search ref="agency_closed"/>
+                            </getUserInput>
+                        </output>
+                    </input>
+                    <input>
+                        <grammar>
+                            <item>agency_open</item>
+                        </grammar>
+                        <output>
+                            <prompt>
+                                <item>@(go_to_agency)</item>
+                            </prompt>
+                        </output>
+                    </input>
+                </folder>
+                <folder label="Agency is closed" id="agency_closed">
+                    <input>
+                        <grammar>
+                            <item>@(meet_advisor)</item>
+                        </grammar>
+                        <output>
+                            <prompt>
+                                <item>[action->endConversation()]</item>
+                            </prompt>
+                            <getUserInput>
+                                <input/>
+                            </getUserInput>
+                        </output>
+                    </input>
+                    <input>
+                        <grammar>
+                            <item>@(send_by_post)</item>
+                        </grammar>
+                        <output>
+                            <prompt>
+                                <item>@(check_address)</item>
+                            </prompt>
+                            <getUserInput>
+                                <search ref="check_address"/>
+                            </getUserInput>
+                        </output>
+                    </input>
+                </folder>
+                <folder label="Check address">
+                    <input>
+                        <grammar>
+                            <item>@(yes)</item>
+                        </grammar>
+                        <output>
+                            <prompt>
+                                <item>Thank you, bye! [action->endConversation()]</item>
+                            </prompt>
+                        </output>
+                    </input>
+                    <input>
+                        <grammar>
+                            <item>@(no)</item>
+                        </grammar>
+                        <output>
+                            <prompt>
+                                <item>So what is your adddress ? </item>
+                            </prompt>
+                            <getUserInput>
+                                <goto ref="get_address"/>
+                            </getUserInput>
+                        </output>
+                    </input>
+                </folder>
+                <folder label="Check agency" id="check_agency">
+                    <input>
+                        <grammar>
+                            <item>@(yes)</item>
+                        </grammar>
+                        <output>
+                            <prompt>
+                                <item>[action->setVariable(is_cashpoint_down)]</item>
+                            </prompt>
+                            <if>
+                                <cond varName="is_cashpoint_down" operator="EQUAL_TO_NO"/>
+                                <output>
+                                    <prompt>
+                                        <item>
+                                            @(no_failure)
+                                        </item>
+                                    </prompt>
+                                    <getUserInput>
+                                        <input/>
+                                    </getUserInput>
+                                </output>
+                            </if>
+                            <output>
+                                <prompt>
+                                    <item>@(yes_failure)</item>
+                                </prompt>
+                                <goto ref="closed_open"/>
+                            </output>
+                        </output>
+                    </input>
+                    <input>
+                        <grammar>
+                            <item>@(no)</item>
+                        </grammar>
+                        <output>
+                            <prompt>
+                                <item>@(which_caspoint)</item>
+                            </prompt>
+                            <getUserInput>
+                                <goto ref="get_bank"/>
+                            </getUserInput>
+                        </output>
+                    </input>
+                </folder>
+                <input id="get_address">
+                    <grammar>
+                        <item>$ (address)={address}</item>
+                    </grammar>
+                    <action varName="address" operator="SET_TO">{address.source}</action>
+                    <output>
+                        <getUserInput>
+                            <input/>
+                        </getUserInput>
+                    </output>
+                </input>
+                <input id="get_bank">
+                    <grammar>
+                        <item>$ (bank) = {bank}</item>
+                    </grammar>
+                    <action varName="bank" operator="SET_TO">{bank.value:main}</action>
+                    <output>
+                        <prompt>
+                            <item>[action->setVariable(is_cashpoint_down)]</item>
+                        </prompt>
+                    </output>
+                </input> 
+            </folder>
+        </folder> 
+    </flow>
+    <entities>                          
+        <entity name="address">
+            <value>
+                <grammar>
+                    <item>*</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="cashpoint">
+            <value>
+                <grammar>
+                    <item>*</item>                    
+                </grammar>
+            </value>
+        </entity>
+        <entity name="bank">
+            <value name="soc_gen" value="societe generale">
+                <grammar>
+                    <item>societe generale</item>
+                    <item>société générale</item>
+                </grammar>
+            </value>
+            <value name="bnpparibas" value="bnpparibas">
+                <grammar>
+                    <item>bnpparibas</item>
+                    <item>bnp paribas</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="yes">
+            <value name="yes">
+                <grammar>
+                    <item>@(yes)</item>
+                </grammar>
+            </value>
+        </entity>
+        <entity name="no">
+            <value name="no">
+                <grammar>
+                    <item>@(no)</item>
+                </grammar>
+            </value>
+        </entity>
+    </entities>
+    <variables>
+        <var_folder name="Home">             
+            <var name="current_state" type="TEXT"/>
+            <var name="is_card_blocked" type="YESNO" initValue="No"/>
+            <var name="out_of_scope_count" type="NUMBER" initValue="0"/>
+            <var name="is_agency_network"  type="YESNO"/>
+            <var name="address" type="TEXT"/>
+            <var name="bank" type="TEXT"/>                      
+            <var name="is_cashpoint_down" type="YESNO" initValue="Yes"/>
+            <var name="agency_name" type="TEXT"/>
+            <var name="when_agency" type="TEXT"/>
+        </var_folder>
+    </variables>
+    <settings>
+        <setting name="USE_SPELLING_CORRECTIONS">2</setting>
+        <setting name="USE_STOP_WORDS">2</setting>
+        <setting name="USE_AUTOMATIC_STOPWORDS_DETECTION">1</setting>
+       <setting name="LANGUAGE" type="USER">@(language)</setting>
+        <setting name="CLS_SEARCH_MODE">0</setting>
+        <setting name="CLS_MODEL">0</setting>
+        <setting name="CLS_MODELNAME">@(nlcid)</setting>
+        <setting name="CLS_ENDPOINT">https://gateway.watsonplatform.net/natural-language-classifier/api</setting>
+        <setting name="CLS_USERNAME">@(username)</setting>
+        <setting name="CLS_PASSWORD">@(password)</setting>
+        <setting name="CLS_ADVANCED_SETTINGS">true</setting>
+        <setting name="CLS_MAXNBEST">3</setting>
+        <setting name="CLS_USE_OFFTOPIC">false</setting>
+    </settings>
+</dialog>

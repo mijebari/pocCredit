@@ -1,0 +1,12 @@
+/**
+ * Created by rlespagnol on 12/10/2016.
+ */
+/**
+ * Created by rlespagnol on 30/09/2016.
+ */
+const shortid = require('shortid');
+const fs = require('fs');
+
+module.exports = {
+   
+}

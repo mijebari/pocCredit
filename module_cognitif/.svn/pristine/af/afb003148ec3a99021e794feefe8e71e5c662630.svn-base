@@ -1,0 +1,105 @@
+/**
+ * Created by rlespagnol on 04/10/2016.
+ */
+const sugar_id = "d8359f88-75cb-77cb-9f94-57d7c6177f10";
+const sugar_card_id = "916620ed-a9bc-5d77-ef3b-57d7c61281ce";
+
+module.exports = {
+    initContext: function(client_id, context, cb){
+        const _this = this;
+        async.series([
+            // Set context
+            function (callback) {
+                // Set card info
+                _this.updateContext(context, function(err, results){
+                    callback(err, results);
+                });
+
+            }, function(callback){
+                ConversationService.algo(client_id, '', false, sugar_id, function (e, r) {
+                    callback(e,r)
+                });
+            }
+        ],function(err, results){
+            cb(err, results)
+        })
+    },
+    execute: function (client_id, inputs, test_result, name, cb) {
+        ConversationService.algo(client_id, 'conversation_start', false, sugar_id, function (err, result) {
+            async.mapSeries(inputs,
+                function (input, callback) {
+                    ConversationService.algo(client_id, input, false, sugar_id, function (e, r) {
+                        callback(e, r)
+                    });
+                },
+
+                function (err, results) {
+                    if (results.length === 0) return cb("Empty results");
+                    var result_str = results[results.length - 1].conversation.output.text.join('').replace('\n','').trim();
+                    var _test_result = test_result.trim();
+
+                    var obj = {
+                        name : name,
+                        passed : false,
+                        expected_result : result_str,
+                        obtained_result : _test_result,
+                    }
+
+                    if (levenshtein(result_str, _test_result) <= 10 ) {
+                        obj.passed = true;
+                    }
+
+                    return cb(err,obj);
+                });
+        });
+    },
+    updateContext: function (context, cb){
+        // Set card info
+        var card_ctx = context.card;
+        async.map(card_ctx, function(info, _callback){
+            ActionService.executeSetAction(sugar_card_id, info.field, info.value, 'card', false, function(_e, _r){
+                _callback(_e,_r);
+            })
+        }, function(err, results){
+            cb(err, results);
+        });
+    }
+};
+
+function levenshtein(a, b) {
+    if (a.length == 0) return b.length;
+    if (b.length == 0) return a.length;
+
+    // swap to save some memory O(min(a,b)) instead of O(a)
+    if (a.length > b.length) {
+        var tmp = a;
+        a = b;
+        b = tmp;
+    }
+
+    var row = [];
+    // init the row
+    for (var i = 0; i <= a.length; i++) {
+        row[i] = i;
+    }
+
+    // fill in the rest
+    for (var i = 1; i <= b.length; i++) {
+        var prev = i;
+        for (var j = 1; j <= a.length; j++) {
+            var val;
+            if (b.charAt(i - 1) == a.charAt(j - 1)) {
+                val = row[j - 1]; // match
+            } else {
+                val = Math.min(row[j - 1] + 1, // substitution
+                    prev + 1,     // insertion
+                    row[j] + 1);  // deletion
+            }
+            row[j - 1] = prev;
+            prev = val;
+        }
+        row[a.length] = prev;
+    }
+
+    return row[a.length];
+}
