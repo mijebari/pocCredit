@@ -331,7 +331,7 @@ background-color: #b7dcfe;
 
 .bloc {
     background-color: white;
-    margin:15px 20px;
+    margin:50px 10px;
     box-shadow: 5px 2px 18px 0 #888888;
     height: 85%;
 }
@@ -477,10 +477,7 @@ color:#fff;
 
 .container-dialog-history{
     height: 80%;
-    background:linear-gradient(to bottom, rgba(0, 0, 0, 0.01),rgba(0, 0, 0, 0.16));
-    border: 0px solid rgba(0, 0, 0, 0.08);
-    border-left-width: 1px;
-    border-right-width: 1px;
+    background:linear-gradient(to bottom, rgb(235, 231, 222),rgba(0, 0, 0, 0.16));
     overflow: scroll;
     padding-top: 11px;
 }
