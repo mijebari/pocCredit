@@ -487,36 +487,27 @@ color:#fff;
         border-radius: 0px 0px 15px 15px;
 }
 
-.container-title-step{
-    background-color: #009688;
-    color: white;
-           padding: 15px;
-                  padding-left: 30px;
-                  margin-bottom: 15px
-
-}
-
 .content-information{
     padding-left: 40px;
     font-size:x-small;
 }
 
-
-.container-title-information{
-    background-color: #009688;
-    color: white;
-           padding: 15px;
-                  padding-left: 30px;
-                  margin-bottom: 15px
-
+.refine {
+    font-weight: 700;
 }
-.container-title-result{
-    background: linear-gradient( #b52741, #881c30);
-    color: white;
-           padding: 15px;
-                  padding-left: 30px;
-                  margin-bottom: 15px
 
+.information-title {
+    background-color: #4d83b3;
+}
+
+.container-title-result,
+.container-title-step,
+.container-title-information {
+    background: #c7c4bc;
+    color: #333;
+    padding: 2px;
+    padding-left: 30px;
+    margin-bottom: 15px;
 }
 
 .information{
